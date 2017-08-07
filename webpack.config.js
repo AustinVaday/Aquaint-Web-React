@@ -7,18 +7,23 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 })
 
 module.exports = {
-  entry: './client/index.js',
-  output: {
-    path: path.resolve('dist'),
-    // below line only works for webpack 1.0
-    // path: './dist', 
-    filename: 'index_bundle.js'
-  },
-  module: {
-    loaders: [
-      { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },
-      { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ }
-    ]
-  },
-  plugins: [HtmlWebpackPluginConfig]
+    entry: './client/index.js',
+    output: {
+	path: path.resolve('dist'),
+	// below line only works for webpack 1.0
+	// path: './dist', 
+	filename: 'index_bundle.js'
+    },
+    module: {
+	loaders: [
+	    { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },
+	    { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ }
+	]
+    },
+    devServer: {
+	host: '0.0.0.0',
+	port: 8080,
+	disableHostCheck: true
+    },
+    plugins: [HtmlWebpackPluginConfig]
 }
