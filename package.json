@@ -7,6 +7,8 @@
     "start": "webpack-dev-server"
   },
   "dependencies": {
+    "amazon-cognito-identity-js": "^1.19.0",
+    "aws-sdk": "^2.94.0",
     "html-webpack-plugin": "^2.26.0",
     "path": "^0.12.7",
     "react": "^15.4.2",
