@@ -30,7 +30,7 @@ export class UserSignupForm extends React.Component {
     constructor(props) {
 	super(props);
 	this.state = {
-	    currentPage: 0,  // 0 for first part of sign-up, 1 for second part
+	    currentPage: 0,  // 0 for first part of sign-up, 1 for second part, 2 for user login
 	    email: '',
 	    fullname: '',
 	    username: '',
@@ -41,6 +41,7 @@ export class UserSignupForm extends React.Component {
 	this.handleChange = this.handleChange.bind(this);
 	this.handleContinue = this.handleContinue.bind(this);
 	this.handleSignup = this.handleSignup.bind(this);
+	this.handleLogin = this.handleLogin.bind(this);
     };
 
     handleChange(event) {
@@ -62,22 +63,33 @@ export class UserSignupForm extends React.Component {
 
 	console.log('User completes sign-up form: ' + JSON.stringify(this.state));
 
+	if (this.state.password != this.state.passwordVerify) {
+	    alert("Passwords don't match; please try again.");
+	}
 	// Sign up user in AWS Cognito Federated Identity
+	
     };
+
+    handleLogin(event) {
+	event.preventDefault();
+
+	this.setState({currentPage: 2});
+    }
 
     render() {
 	if (this.state.currentPage == 0) {
 	    return (
 		<form onSubmit={this.handleContinue}>
-		  <p>
-		    Email:
-		    <input type="text" name="email" value={this.state.email} onChange={this.handleChange}/>
-		  </p>
-		  <p>
-		    Full Name:
-		    <input type="text" name="fullname" value={this.state.fullname} onChange={this.handleChange}/>
-		  </p>
+		  Email:
+		  <input type="text" name="email" value={this.state.email} onChange={this.handleChange}/>
+		  Full Name:
+		  <input type="text" name="fullname" value={this.state.fullname} onChange={this.handleChange}/>
 		  <input type="submit" value="Continue"/>
+		  <p>
+		    <a href="#" onClick={this.handleLogin}>
+		      Already registered? Sign in here.
+		    </a>
+		  </p>
 		</form>
 	    );
 	} else if (this.state.currentPage == 1) {
@@ -91,6 +103,10 @@ export class UserSignupForm extends React.Component {
 		  <input type="password" name="passwordVerify" value={this.state.passwordVerify} onChange={this.handleChange}/>
 		  <input type="submit" value="Join Aquaint"/>
 		</form>
+	    );
+	} else if (this.state.currentPage == 2) {
+	    return (
+		<UserLoginForm />
 	    );
 	}
 	return null;
@@ -176,7 +192,6 @@ export class UserLoginForm extends React.Component {
 	      <input type="text" name="username" value={this.state.username} onChange={this.handleChange}/>
 	      Password:
 	      <input type="password" name="password" value={this.state.password} onChange={this.handleChange}/>
-	      Submit:
 	      <input type="submit" value="Log In"/>
 	    </form>
 	);
