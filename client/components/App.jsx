@@ -66,7 +66,31 @@ export class UserSignupForm extends React.Component {
 	if (this.state.password != this.state.passwordVerify) {
 	    alert("Passwords don't match; please try again.");
 	}
+	
 	// Sign up user in AWS Cognito Federated Identity
+	var poolData = {
+            UserPoolId : COGNITO_USER_POOL_ID,
+            ClientId : COGNITO_CLIENT_ID
+	};
+	var userPool = new CognitoUserPool(poolData);
+
+	var attributeList = [];
+
+	var dataEmail = {
+            Name : 'email',
+            Value : this.state.email
+	};
+	var attributeEmail = new CognitoUserAttribute(dataEmail);
+	attributeList.push(attributeEmail);
+
+	userPool.signUp(this.state.username, this.state.password, attributeList, null, function(err, result) {
+            if (err) {
+		alert(err);
+		return;
+            }
+            var cognitoUser = result.user;
+            console.log('user name is ' + cognitoUser.getUsername());
+	});
 	
     };
 
@@ -176,7 +200,7 @@ export class UserLoginForm extends React.Component {
 
 		// Instantiate aws sdk service objects now that the credentials have been updated.
 		// example: var s3 = new AWS.S3();
-
+		alert("AWS Cognito user login successful!")
             },
 
             onFailure: function(err) {
