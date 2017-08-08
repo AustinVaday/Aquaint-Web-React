@@ -22,11 +22,86 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: COGNITO_IDENTITY_POOL_ID,
 });
 
+export class UserSignupForm extends React.Component {
+
+    // Note: instead of using a variable (or an Enum) to store currentPage,
+    // it should be stored in the Component state, for possible re-rendering
+    
+    constructor(props) {
+	super(props);
+	this.state = {
+	    currentPage: 0,  // 0 for first part of sign-up, 1 for second part
+	    email: '',
+	    fullname: '',
+	    username: '',
+	    password: '',
+	    passwordVerify: ''
+	};
+
+	this.handleChange = this.handleChange.bind(this);
+	this.handleContinue = this.handleContinue.bind(this);
+	this.handleSignup = this.handleSignup.bind(this);
+    };
+
+    handleChange(event) {
+	this.setState({[event.target.name]: event.target.value});
+    };
+
+    handleContinue(event) {
+	event.preventDefault();
+
+	console.log("Changing to next signup page...");
+	// Component state must be set by setState() function for necessary
+	// parts to be re-rendered
+	// this.state.currentPage = 1;
+	this.setState({currentPage: 1});
+    };
+    
+    handleSignup(event) {
+	event.preventDefault();
+
+	console.log('User completes sign-up form: ' + JSON.stringify(this.state));
+
+	// Sign up user in AWS Cognito Federated Identity
+    };
+
+    render() {
+	if (this.state.currentPage == 0) {
+	    return (
+		<form onSubmit={this.handleContinue}>
+		  <p>
+		    Email:
+		    <input type="text" name="email" value={this.state.email} onChange={this.handleChange}/>
+		  </p>
+		  <p>
+		    Full Name:
+		    <input type="text" name="fullname" value={this.state.fullname} onChange={this.handleChange}/>
+		  </p>
+		  <input type="submit" value="Continue"/>
+		</form>
+	    );
+	} else if (this.state.currentPage == 1) {
+	    return (
+		<form onSubmit={this.handleSignup}>
+		  Username:
+		  <input type="text" name="username" value={this.state.username} onChange={this.handleChange}/>
+		  Password:
+		  <input type="password" name="password" value={this.state.password} onChange={this.handleChange}/>
+		  Verify Password:
+		  <input type="password" name="passwordVerify" value={this.state.passwordVerify} onChange={this.handleChange}/>
+		  <input type="submit" value="Join Aquaint"/>
+		</form>
+	    );
+	}
+	return null;
+    };	
+}
+
 export class UserLoginForm extends React.Component {
     // Make the form to be "Controlled Components"
     // that is, making the React state be the "single source of truth"
     // See: https://facebook.github.io/react/docs/forms.html
-    constructor(props){
+    constructor(props) {
 	super(props);
 	this.state = {
 	    username: '',
