@@ -1,5 +1,5 @@
 import React from 'react';
-import { CognitoUserPool, CognitoUserAttribute, CognitoUser } from 'amazon-cognito-identity-js';
+import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 
 export class App extends React.Component {
   render() {
@@ -53,20 +53,21 @@ export class UserLoginForm extends React.Component {
 
 	// Connect to AWS Cognito to authenticate user
 	var authenticationData = {
-            Username : this.state.username,
-            Password : this.state.password,
+            Username: this.state.username,
+            Password: this.state.password,
 	};
-	var authenticationDetails = new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData);
+	// var authenticationDetails = new AWS.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData);
+	var authenticationDetails = new AuthenticationDetails(authenticationData);
 	var poolData = {
             UserPoolId : COGNITO_USER_POOL_ID,
             ClientId : COGNITO_CLIENT_ID
 	};
-	var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+	var userPool = new CognitoUserPool(poolData);
 	var userData = {
             Username : this.state.username,
             Pool : userPool
 	};
-	var cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(userData);
+	var cognitoUser = new CognitoUser(userData);
 	cognitoUser.authenticateUser(authenticationDetails, {
             onSuccess: function (result) {
 		console.log('access token + ' + result.getAccessToken().getJwtToken());
