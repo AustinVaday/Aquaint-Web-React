@@ -1,0 +1,63 @@
+.welcome-div{
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-align: center;
+  font-weight: 350;
+  font-size: 0.8rem;
+  color:#95989A;
+}
+
+.welcome-header{
+   font-weight: 300;
+   font-size:2rem;
+   color: #2F3541;
+}
+
+.welcome-button{
+  margin-bottom: 1rem;
+  padding: 0.6rem;
+  background-color: transparent;
+  width: 200px;
+  border-style: solid;
+  border-width: 0.25px;
+  border-color: #95989A;
+  border-radius: 50px;
+}
+
+.welcome-hyperlink{
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-align: center;
+  font-weight: 300;
+  font-size:0.8rem;
+  letter-spacing: 1px;
+}
+
+.welcome-input{
+  padding: 0.3rem;
+  padding-left: 10px;
+  margin:0.5rem;
+  margin-top:0.25rem;
+  max-width: 30em;
+  height: 25px;
+  width: 250px;
+  border-style: solid;
+  border-width: 0.25px;
+  border-color: #95989A;
+  font-size:0.75rem;
+  background-color:transparent;
+  border-radius: 5px;
+}
+
+#continue {
+  margin-top: 0.25rem;
+  margin-bottom: .25rem;
+  border-color:transparent;
+  background-color:#0E85AC;
+  color: white;
+}
+
+.welcome-hyperlink:link{
+  letter-spacing: none;
+  font-weight: 350;
+  font-size: 0.8rem;
+  color:#95989A;
+}
