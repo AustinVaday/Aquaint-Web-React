@@ -101,41 +101,51 @@ export class UserSignupForm extends React.Component {
     }
 
     render() {
-	if (this.state.currentPage == 0) {
-	    return (
-		<form onSubmit={this.handleContinue}>
-		  Email:
-		  <input type="text" name="email" value={this.state.email} onChange={this.handleChange}/>
-		  Full Name:
-		  <input type="text" name="fullname" value={this.state.fullname} onChange={this.handleChange}/>
-		  <input type="submit" value="Continue"/>
-		  <p>
-		    <a href="#" onClick={this.handleLogin}>
-		      Already registered? Sign in here.
-		    </a>
-		  </p>
-		</form>
-	    );
-	} else if (this.state.currentPage == 1) {
-	    return (
-		<form onSubmit={this.handleSignup}>
-		  Username:
-		  <input type="text" name="username" value={this.state.username} onChange={this.handleChange}/>
-		  Password:
-		  <input type="password" name="password" value={this.state.password} onChange={this.handleChange}/>
-		  Verify Password:
-		  <input type="password" name="passwordVerify" value={this.state.passwordVerify} onChange={this.handleChange}/>
-		  <input type="submit" value="Join Aquaint"/>
-		</form>
-	    );
-	} else if (this.state.currentPage == 2) {
-	    return (
-		<UserLoginForm />
-	    );
-	}
-	return null;
-    };	
+        if (this.state.currentPage == 0) {
+            return (
+                <div className ="welcome-div">
+                  <img height="15%" src="./images/emblemSpinner.gif" />
+                  <h1 className="welcome-header">Let's get Aquainted.</h1>
+                  <p> Sign up with... </p>
+                  <button className="welcome-button">
+                    <a>Facebook</a></button>
+                  <p> Or, sign up with email </p>
+                  <form onSubmit={this.handleContinue}>
+                    <input className="welcome-input" type="text" name="email" placeholder="Email"  value={this.state.email} onChange={this.handleChange}/>
+                    <br />
+                    <input className="welcome-input" type="text" name="fullname" placeholder="Name" value={this.state.fullname} onChange={this.handleChange}/>
+                    <br />
+                    <button className="welcome-button" id="continue">
+                      <a className="welcome-hyperlink">Continue</a>
+                    </button>
+                    <p> Already registered? <a href="#" onClick={this.handleLogin}>
+			Sign in here.
+                    </a></p>
+                  </form>
+                </div>
+              );
+          } else if (this.state.currentPage == 1) {
+              return (
+                <div className ="welcome-div">
+                  <form onSubmit={this.handleSignup}>
+                    <h1 className="welcome-header">Welcome</h1>
+                    <input className="welcome-input" placeholder="Username"  name="username" value={this.state.username} onChange={this.handleChange} />
+                    <br />
+                    <input className="welcome-input" placeholder="Password" type="password" name="password" value={this.state.password} onChange={this.handleChange} />
+                    <br />
+                    <input className="welcome-input" placeholder="Verify Password" type="password" name="passwordVerify" value={this.state.passwordVerify} onChange={this.handleChange} />
+                    <br />
+                    <button className ="welcome-button" ><a>Join Aquaint</a></button>
+                  </form>
+                </div>
+              );
+          } else if (this.state.currentPage == 2) {
+              return ( <UserLoginForm /> );
+          }
+          return null;
+      }
 }
+
 
 export class UserLoginForm extends React.Component {
     // Make the form to be "Controlled Components"
