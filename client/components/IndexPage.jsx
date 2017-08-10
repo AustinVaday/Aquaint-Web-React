@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { UserSignupForm } from './UserSignupForm.jsx';
 
 let indexPageContents = (
@@ -257,4 +256,10 @@ let indexPageContents = (
     
 );
 
+export class IndexPage extends React.Component {
+    render(match) {
+	console.log('Index page render() called.');
+	return (indexPageContents);
+    }
+}
 
