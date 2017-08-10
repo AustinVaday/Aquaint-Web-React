@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { App, UserLoginForm } from './components/App.jsx';
+import { UserSignupForm } from './components/UserSignupForm.jsx';
 
-ReactDOM.render(<App />, document.getElementById('root'));
-ReactDOM.render(<UserLoginForm />, document.getElementById('userlogin'));
+ReactDOM.render(<UserSignupForm />, document.getElementById('userAuth'));
+

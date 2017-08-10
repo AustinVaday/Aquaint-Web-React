@@ -1,4 +1,5 @@
 const path = require('path');
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   template: './client/index.html',
@@ -9,7 +10,7 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 module.exports = {
     entry: './client/index.js',
     output: {
-	path: path.resolve('dist'),
+	path: path.resolve(__dirname, 'dist'),
 	// below line only works for webpack 1.0
 	// path: './dist', 
 	filename: 'index_bundle.js'
@@ -21,9 +22,9 @@ module.exports = {
 	]
     },
     devServer: {
-	host: '0.0.0.0',
+	host: 'localhost',
 	port: 8080,
-	disableHostCheck: true
+	disableHostCheck: false
     },
     plugins: [HtmlWebpackPluginConfig]
 }
