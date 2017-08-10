@@ -16,7 +16,6 @@ class Example extends React.Component {
     }
 }
 
-
 ReactDOM.render((
     <Router>
       <div>
@@ -26,4 +25,4 @@ ReactDOM.render((
     </Router>
 ), document.getElementById('root'));
 
-ReactDOM.render(<DisplayProfile />, document.getElementById('displayProfileTest'));
+// ReactDOM.render(<DisplayProfile />, document.getElementById('displayProfileTest'));
