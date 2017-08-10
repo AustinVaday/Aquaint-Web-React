@@ -1,12 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { UserSignupForm } from 'UserSignupForm.jsx';
+import { UserSignupForm } from './UserSignupForm.jsx';
 
-
-export let indexPageContents = (
+let indexPageContents = (
 
     <div>
-	<!-- NAVIGATION BEGIN -->
+	{/* NAVIGATION BEGIN */}
 	<nav class="navbar navbar-fixed-top">
 	    <div class="container_fluid">
 		<a class="navbar-brand goto" href="index.html#wrap"> <img src="./images/logo.svg" alt="Your logo" height="38" width="152" /> </a>
@@ -23,15 +22,15 @@ export let indexPageContents = (
 		</div>
 	    </div>
 	</nav>
-	<!-- NAVIGAION END -->
+	{/* NAVIGAION END */}
 
 
-	<!-- INTRO BEGIN -->
+	{/* INTRO BEGIN */}
 	<header id="full-intro" class="intro-block">
 	    <div class="container">
 		<div class="row">
 		    <div class="col-md-4 col-sm-12">
-			<!-- ReactJS interactive form of user authentication (login or sign-up) -->
+			{/* ReactJS interactive form of user authentication (login or sign-up) */}
 			<div id="userAuth"></div>
 
 			<div class="container-fluid" style="float:left" id="aquaint-login">
@@ -50,32 +49,15 @@ export let indexPageContents = (
 		</div>
 	    </div>
 
-	    <!--Learn more button-->
+	    {/*Learn more button*/}
 	    <a href="#getAquainted">
 		<div class="arrow bounce hidden-xs"></div>
 		<div class="arrowSmallScreen bounce visible-xs"></div>
 	    </a>
 	</header>
-	<!-- INTRO END -->
+	{/* INTRO END */}
 
 
-	<!-- Google Analytics -->
-	<script>
-	    (function(i, s, o, g, r, a, m) {
-		i['GoogleAnalyticsObject'] = r;
-		i[r] = i[r] || function() {
-		    (i[r].q = i[r].q || []).push(arguments)
-		}, i[r].l = 1 * new Date();
-		a = s.createElement(o),
-		    m = s.getElementsByTagName(o)[0];
-		a.async = 1;
-		a.src = g;
-		m.parentNode.insertBefore(a, m)
-	    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-	    ga('create', 'UA-61394116-2', 'auto');
-	    ga('send', 'pageview');
-	</script>
 
 
 	<section id="inspire" class="bg-picture2">
@@ -124,7 +106,7 @@ export let indexPageContents = (
 	    </div>
 	</section>
 
-	<!-- FEATURES BEGIN -->
+	{/* FEATURES BEGIN */}
 	<section id="getAquainted" class="img-block-3col bg-color2">
 	    <div class="title">
 		<h2 class="white">All-In-One Social Code</h2>
@@ -141,21 +123,21 @@ export let indexPageContents = (
 				    <img class="emblem-white-icon" src="./images/emblem-white.svg"></img>
 				    <b>Your Own Aesthetic Aquaint Code</b>
 				</h4>
-				<p font-style:22px>Easily share social media profiles on your advertising campaigns, social media posts, YouTube videos and more!</p>
+				{/* <p font-style:"22px">Easily share social media profiles on your advertising campaigns, social media profiles, Youtube videos and more! </p> */}
 			    </li>
 			    <li>
 				<h4 class="white">
 				    <img class="emblem-white-icon" src="./images/emblem-white.svg"></img>
 				    <b>Profile views</b>
 				</h4>
-				<p font-style:22px>Aquaint allows you to understand how effective your marketing campaigns are by sharing your unique Aquaint code. This allows you to adjust marketing tactics to produce better results and gain higher traffic. </p>
+				{/* <p font-style:22px>Aquaint allows you to understand how effective your marketing campaigns are by sharing your unique Aquaint code. This allows you to adjust marketing tactics to produce better results and gain higher traffic. </p */}>
 			    </li>
 			    <li>
 				<h4 class="white">
 				    <img class="emblem-white-icon" src="./images/emblem-white.svg"></img>
 				    <b>Engagements</b>
 				</h4>
-				<p font-style:22px>Our advanced technology provides engagement analytics to see how many people are clicking on each of your social media profiles. </p>
+				{/* <p font-style:22px>Our advanced technology provides engagement analytics to see how many people are clicking on each of your social media profiles. </p> */}
 			    </li>
 			</ul>
 		    </div>
@@ -168,7 +150,7 @@ export let indexPageContents = (
 		</div>
 	    </div>
 	</section>
-	<!-- FEATURES END -->
+	{/* FEATURES END */}
 
 	<section id="inspire1" class=" bg-picture">
 	    <div class="container">
@@ -176,7 +158,7 @@ export let indexPageContents = (
 	    </div>
 	</section>
 
-	<!-- BENEFITS1 BEGIN -->
+	{/* BENEFITS1 BEGIN */}
 	<section id="features" class="img-block-2col">
 	    <div class="container">
 		<div class="row">
@@ -208,9 +190,9 @@ export let indexPageContents = (
 		</div>
 	    </div>
 	</section>
-	<!-- BENEFITS1 END -->
+	{/* BENEFITS1 END */}
 
-	<!-- SOCIAL BEGIN -->
+	{/* SOCIAL BEGIN */}
 	<section id="social" class="bg-color3">
 	    <div class="container-fluid">
 		<div class="title">
@@ -225,20 +207,20 @@ export let indexPageContents = (
 
 	    </div>
 	</section>
-	<!-- SOCIAL END -->
+	{/* SOCIAL END */}
 
-	<!-- FOOTER BEGIN -->
+	{/* FOOTER BEGIN */}
 	<footer id="footer">
 	    <div class="container">
 		<a href="index.html#wrap" class="logo goto"> <img src="./images/logo_small.svg" alt="Your Logo" height="50" width="200" /> </a>
-		<p class="copyright">&copy; 2015-2017 Aquaint, Inc. <br> </p>
+		<p class="copyright">&copy; 2015-2017 Aquaint, Inc. </p>
 	    </div>
 	</footer>
-	<!-- FOOTER END -->
+	{/* FOOTER END */}
 
-	<!-- MODALS BEGIN-->
+	{/* MODALS BEGIN*/}
 
-	<!-- subscribe modal-->
+	{/* subscribe modal*/}
 	<div class="modal fade" id="modalMessage" tabindex="-1" role="dialog" aria-hidden="true">
 	    <div class="modal-dialog">
 		<div class="modal-content">
@@ -248,7 +230,7 @@ export let indexPageContents = (
 	    </div>
 	</div>
 
-	<!-- contact modal-->
+	{/* contact modal*/}
 	<div class="modal fade" id="modalContact" tabindex="-1" role="dialog" aria-hidden="true">
 	    <div class="modal-dialog">
 		<div class="modal-content">
@@ -256,10 +238,10 @@ export let indexPageContents = (
 		    <h3 class="modal-title">Contact</h3>
 		    <form action="./scripts/contact.php" role="form" id="contact_form">
 			<div class="form-group">
-			    <input type="text" class="form-control" id="contact_name" placeholder="Full name" name="name">
+			    <input type="text" class="form-control" id="contact_name" placeholder="Full name" name="name"/>
 			</div>
 			<div class="form-group">
-			    <input type="email" class="form-control" id="contact_email" placeholder="Email Address" name="email">
+			    <input type="email" class="form-control" id="contact_email" placeholder="Email Address" name="email"/>
 			</div>
 			<div class="form-group">
 			    <textarea class="form-control" rows="3" placeholder="Your message or question" id="contact_message" name="message"></textarea>
@@ -270,6 +252,9 @@ export let indexPageContents = (
 	    </div>
 	</div>
 
-	<!-- MODALS END-->
+	{/* MODALS END*/}
     </div>
+    
 );
+
+
