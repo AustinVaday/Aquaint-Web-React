@@ -59,7 +59,7 @@
 
 
     <body data-spy="scroll" data-target=".navMenuCollapse">
-
+	
 	<!-- PRELOADER-->
 
 	<div class="hidden-xs">
@@ -90,12 +90,13 @@
 
 	<!-- Facebook Login -->
 	<!-- using synchronous loading here, otherwise React may not find FB instance when rendering DOM -->
-	<script src="https://connect.facebook.net/en_US/sdk.js">
+	<!-- See: https://iamalivingcontradiction.wordpress.com/2015/09/21/how-to-use-facebook-login-with-react-and-babel/ -->
+	<script src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.4&appId=544667035683597">
 	 FB.init({
 	     appId            : '544667035683597',
 	     autoLogAppEvents : true,
 	     xfbml            : true,
-	     version          : 'v2.10'
+	     version          : 'v2.40'
 	 });
 	 FB.AppEvents.logPageView();	 
 	</script>

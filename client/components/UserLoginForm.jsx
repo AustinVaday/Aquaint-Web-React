@@ -67,6 +67,9 @@ export class UserLoginForm extends React.Component {
                 // Instantiate aws sdk service objects now that the credentials have been updated.
                 // example: var s3 = new AWS.S3();
                 alert("AWS Cognito user login successful!")
+		
+		var identityId = AWS.config.credentials.identityId;
+		alert(`Your Amazon Cognito Identity: ${identityId}`)
             },
 
             onFailure: function(err) {

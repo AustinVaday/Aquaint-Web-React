@@ -6,7 +6,8 @@ import {UserLoginForm} from './UserLoginForm.jsx';
 // Initialize the Amazon Cognito credentials provider
 var AWS = require('aws-sdk');
 AWS.config.region = AwsConfig.COGNITO_REGION; // Region
-AWS.config.credentials = new AWS.CognitoIdentityCredentials({IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID});
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID});
 
 // React Component for User Signup, including registering a new user on AWS services
 export class UserSignupForm extends React.Component {
@@ -112,6 +113,9 @@ export class UserSignupForm extends React.Component {
 		AWS.config.credentials.get(function(){
 		    // Access AWS resources here.
 		});
+
+		var identityId = AWS.config.credentials.identityId;
+		alert(`Your Amazon Cognito Identity: ${identityId}`)
 
 	    } else {
 		    alert('There was a problem logging you in from Facebook.');
