@@ -32,7 +32,7 @@ let indexPageContents = (
 		<div className="row">
 		    <div className="col-md-4 col-sm-12">
 			{/* ReactJS interactive form of user authentication (login or sign-up) */}
-			<div id="userAuth"><UserSignupForm /></div>
+			<div id="userAuth"><UserSignupForm fb={FB} /></div>
 
 			<div className="container-fluid" style={{float:'left'}} id="aquaint-login">
 			    <form action="./scripts/subscribe.php" method="post" id="subscribe_form">
@@ -259,6 +259,10 @@ let indexPageContents = (
 );
 
 export class IndexPage extends React.Component {
+    constructor(props) {
+	super(props);
+    }
+    
     render(match) {
 	console.log('Index page render() called.');
 	return (indexPageContents);

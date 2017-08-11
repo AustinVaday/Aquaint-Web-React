@@ -16,6 +16,8 @@ export class UserSignupForm extends React.Component {
 
     constructor(props) {
         super(props);
+
+	this.FB = props.fb;  // Facebook SDK instance
         this.state = {
             currentPage: 0, // 0 for first part of sign-up, 1 for second part, 2 for user login
             email: '',
@@ -29,6 +31,7 @@ export class UserSignupForm extends React.Component {
         this.handleContinue = this.handleContinue.bind(this);
         this.handleSignup = this.handleSignup.bind(this);
         this.handleLogin = this.handleLogin.bind(this);
+	this.facebookLogin = this.facebookLogin.bind(this);
     };
 
     handleChange(event) {
@@ -89,6 +92,34 @@ export class UserSignupForm extends React.Component {
         this.setState({currentPage: 2});
     }
 
+    facebookLogin(event) {
+	FB.login(function (response) {
+
+	    // Check if the user logged in successfully.
+	    if (response.authResponse) {
+
+		alert('You are now logged in from Facebook.');
+
+		// Add the Facebook access token to the Cognito credentials login map.
+		AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+		    IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
+		    Logins: {
+			'graph.facebook.com': response.authResponse.accessToken
+		    }
+		});
+
+		// Obtain AWS credentials
+		AWS.config.credentials.get(function(){
+		    // Access AWS resources here.
+		});
+
+	    } else {
+		    alert('There was a problem logging you in from Facebook.');
+	    }
+
+	});
+    }
+
     render() {
         if (this.state.currentPage == 0) {
             return (
@@ -98,7 +129,7 @@ export class UserSignupForm extends React.Component {
                     <p>
                         Sign up with...
                     </p>
-                    <button className="welcome-button">
+                    <button className="welcome-button" onClick={this.facebookLogin}>
                         <a>Facebook</a>
                     </button>
                     <p>
