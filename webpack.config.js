@@ -24,7 +24,10 @@ module.exports = {
     devServer: {
 	host: 'localhost',
 	port: 8080,
-	disableHostCheck: false
+	disableHostCheck: false,
+	// client-side dynamic routing by react-router
+	// 404s will fallback to /index.html
+	historyApiFallback: true,
     },
     plugins: [HtmlWebpackPluginConfig]
 }

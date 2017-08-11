@@ -1,63 +1,111 @@
 .welcome-div{
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   text-align: center;
-  font-weight: 350;
   font-size: 0.8rem;
-  color:#95989A;
+	color: #2F3541;
+	font-weight: 300;
 }
-
+.welcome-subtitle{
+	margin-top: -.5em;
+  padding-bottom: .75em;
+  font-size: 1.75em;
+  font-weight: 300;
+	letter-spacing: 0.5px;
+}
+.welcome-instruction{
+ padding-bottom: .25em;
+ font-size: 1.75em;
+ margin-bottom: 0.5em;
+}
 .welcome-header{
-   font-weight: 300;
-   font-size:2rem;
-   color: #2F3541;
+   font-weight: 375;
+   font-size:3.25rem;
 }
 
 .welcome-button{
-  margin-bottom: 1rem;
+  /*margin-bottom: 1rem;
   padding: 0.6rem;
   background-color: transparent;
   width: 200px;
   border-style: solid;
   border-width: 0.25px;
   border-color: #95989A;
-  border-radius: 50px;
-}
-
-.welcome-hyperlink{
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  text-align: center;
-  font-weight: 300;
-  font-size:0.8rem;
-  letter-spacing: 1px;
+  border-radius: 50px;*/
+ letter-spacing: 1px;
+ font-size:1.75em;
+ font-weight:300;
+ padding: 0.3rem;
+ color: #95989A;
+ max-width: 30em;
+ height: 2.75em;
+ width: 18em;
+ border-style: solid;
+ border-width: 0.25px;
+ border-color: #95989A;
+ background-color:transparent;
+ border-radius: 50px;
 }
 
 .welcome-input{
+	letter-spacing: 0.5px;
+  font-size:1.75em;
+  font-weight:300;
   padding: 0.3rem;
-  padding-left: 10px;
-  margin:0.5rem;
-  margin-top:0.25rem;
+	padding-left: 0.8em;
+	margin-bottom: 1em;
+  color: #95989A;
   max-width: 30em;
-  height: 25px;
-  width: 250px;
+  height: 2.75em;
+  width: 23em;
   border-style: solid;
   border-width: 0.25px;
   border-color: #95989A;
-  font-size:0.75rem;
   background-color:transparent;
-  border-radius: 5px;
+  border-radius: 0.25em;
+}
+
+#image-padding{
+	margin-top: -.2em;
+}
+
+#fb-padding{
+	margin:auto;
+	padding-left: 0.5em;
 }
 
 #continue {
   margin-top: 0.25rem;
-  margin-bottom: .25rem;
+  margin-bottom: 1rem;
   border-color:transparent;
   background-color:#0E85AC;
   color: white;
+	-webkit-transition: background-color 200ms linear;
+	-ms-transition: background-color 200ms linear;
+	transition: background-color 200ms linear;
+
 }
 
-.welcome-hyperlink:link{
-  letter-spacing: none;
-  font-weight: 350;
-  font-size: 0.8rem;
-  color:#95989A;
+#continue:hover{
+	background-color:#096D8E;
+	color: white;
+	-webkit-transition: background-color 200ms linear;
+  -ms-transition: background-color 200ms linear;
+  transition: background-color 200ms linear;
+}
+a:hover{
+	text-decoration: none;
+	color:inherit;
+}
+
+.welcome-continue{
+	text-decoration: none;
+	color:white;
+}
+.welcome-signin{
+	text-decoration: underline;
+}
+.welcome-signin:hover{
+	color:#0E85AC;
+	text-decoration: underline;
+
 }
