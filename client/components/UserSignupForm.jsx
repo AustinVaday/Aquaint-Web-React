@@ -1,5 +1,5 @@
 import React from 'react';
-import {CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails} from 'amazon-cognito-identity-js';
+import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 import * as AwsConfig from './AwsConfig';
 import {UserLoginForm} from './UserLoginForm.jsx';
 
@@ -115,10 +115,9 @@ export class UserSignupForm extends React.Component {
 		// Obtain AWS credentials
 		AWS.config.credentials.get(function(){
 		    // Access AWS resources here.
+		    var identityId = AWS.config.credentials.identityId;
+		    console.log(`Facebook Login: your Amazon Cognito Identity: ${identityId}`)
 		});
-
-		var identityId = AWS.config.credentials.identityId;
-		console.log(`Facebook Login: your Amazon Cognito Identity: ${identityId}`)
 
 	    } else {
 		    alert('There was a problem logging you in from Facebook.');
