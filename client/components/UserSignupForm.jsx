@@ -86,6 +86,7 @@ export class UserSignupForm extends React.Component {
 	    
 	    var identityId = AWS.config.credentials.identityId;
 	    console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${identityId}`)
+
         });
 
     };
@@ -117,14 +118,73 @@ export class UserSignupForm extends React.Component {
 		    // Access AWS resources here.
 		    var identityId = AWS.config.credentials.identityId;
 		    console.log(`Facebook Login: your Amazon Cognito Identity: ${identityId}`)
+
+		    var ddb = new AWS.DynamoDB();
+		    
+		    // first check if there is an Aquaint username associated
+		    // with this Identity ID			
+		    var identityTableParams = {
+			TableName: 'aquaint-user-identity',
+			Key: {
+			    'identityId': {S: identityId}
+			}
+		    };
+
+		    ddb.getItem(identityTableParams, function(err, data) {
+			if (err) {
+			    console.log("Error accessing DynamoDB table: ", err);
+			} else {
+			    console.log("Accessing aquaint-user-identity DynamoDB table success: ", data.Item);
+
+			    if (data != null) {
+				let username = data.Item['username']['S'];
+				console.log(`Cognito Identity has an Aquaint username assoicated: ${username}`);
+			    } else {
+				// create an Aquaint username, if this is the first time user
+				// Logs in by Facebook
+				var signup_username = prompt("Please choose a username for Aquaint.");
+				if (signup_username != null || signup_username != '') {
+				    // check if the username has been occupied or not
+				    // including users from Cognito User Pool or Facebook authentication
+				    let userTableParams = {
+					TableName: 'aquaint-users',
+					Key: {
+					    'username': {S: signup_username}
+					}
+				    };
+				    ddb.getItem(userTableParams, function(err, data) {
+					if (error == null) {
+					    if (data != null) {
+						alert("Username already occupied. Exit now.")
+					    } else {
+						// Username is available, create the user
+						let identityTableItem = {
+						    TableName: 'aquaint-user-identity',
+						    Item: {
+							'identityId': {S: identityId},
+							'username': {S: signup_username}
+						    }
+						};
+						ddb.putItem(identityTableItem, function(err, data) {
+						    if (err == null) {
+							console.log('Login by Facebook user registration successful.');
+						    }
+						});
+					    }
+					}
+				    });
+				}
+			    }
+			}
+		    });
 		});
-
+		
 	    } else {
-		    alert('There was a problem logging you in from Facebook.');
+		alert("There is a problem logging you in from Facebook.")
 	    }
-
 	});
     }
+
 
     render() {
         if (this.state.currentPage == 0) {
