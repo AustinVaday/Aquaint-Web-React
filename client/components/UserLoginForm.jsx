@@ -56,21 +56,44 @@ export class UserLoginForm extends React.Component {
                 console.log('access token + ' + result.getAccessToken().getJwtToken());
 
                 let awsLoginKey = 'cognito-idp.' + AwsConfig.COGNITO_REGION + '.amazonaws.com/' + AwsConfig.COGNITO_USER_POOL_ID;
+		console.log(`awsLoginKey = ${awsLoginKey}`);
                 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
                     IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
                     Logins: {
-                        // Change the key below according to the specific region your user pool is in.
-                        awsLoginKey: result.getIdToken().getJwtToken()
+                        // "you can not replace the login key with a variable because it will be interpreted literally"
+			// See Use case 17 on amazon-cognito-identity-js
+                        'cognito-idp.us-east-1.amazonaws.com/us-east-1_yyImSiaeD': result.getIdToken().getJwtToken()
                     }
                 });
 
                 // Instantiate aws sdk service objects now that the credentials have been updated.
                 // example: var s3 = new AWS.S3();
                 alert("AWS Cognito user login successful!")
-		
-		var identityId = AWS.config.credentials.identityId;
-		alert(`Your Amazon Cognito Identity: ${identityId}`)
-            },
+
+		AWS.config.credentials.refresh((error) => {
+		    if (error) {
+			console.error(error);
+		    } else {
+			var identityId = AWS.config.credentials.identityId;
+			console.log(`Cognito User Pool login: your Amazon Cognito Identity: ${identityId}`);
+		    }
+
+		});
+	    },
+
+	    // 	var cognitoIdentity = new AWS.CognitoIdentity()
+	    // 	cognitoIdentity.getId({
+            //         IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
+            //         Logins: {
+            //             awsLoginKey: result.getIdToken().getJwtToken()
+            //         }}), function (err, identityData) {
+	    // 		if (err) {
+	    // 		    console.log(err);
+	    // 		}
+
+	    // 		alert(`Your Amazon Cognito Identity by getID(): ${identityData}`);
+	    // 	    };
+            // },
 
             onFailure: function(err) {
                 alert(err);

@@ -82,7 +82,10 @@ export class UserSignupForm extends React.Component {
                 return;
             }
             var cognitoUser = result.user;
-            alert(`AWS Cognito user signup successful; Welcome, ${cognitoUser.getUsername()}!`);
+            alert(`AWS Cognito user signup successful; Welcome, ${cognitoUser.getUsername()}!`)
+	    
+	    var identityId = AWS.config.credentials.identityId;
+	    console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${identityId}`)
         });
 
     };
@@ -115,7 +118,7 @@ export class UserSignupForm extends React.Component {
 		});
 
 		var identityId = AWS.config.credentials.identityId;
-		alert(`Your Amazon Cognito Identity: ${identityId}`)
+		console.log(`Facebook Login: your Amazon Cognito Identity: ${identityId}`)
 
 	    } else {
 		    alert('There was a problem logging you in from Facebook.');
