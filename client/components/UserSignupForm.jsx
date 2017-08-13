@@ -5,6 +5,7 @@ import {UserLoginForm} from './UserLoginForm.jsx';
 
 // Initialize the Amazon Cognito credentials provider
 var AWS = require('aws-sdk');
+// TODO: change this variable name to AWS_REGION
 AWS.config.region = AwsConfig.COGNITO_REGION; // Region
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID});
@@ -33,8 +34,46 @@ export class UserSignupForm extends React.Component {
         this.handleSignup = this.handleSignup.bind(this);
         this.handleLogin = this.handleLogin.bind(this);
 	this.facebookLogin = this.facebookLogin.bind(this);
+	//this.completeUserRegistration = this.completeUserRegistration.bind(this);
     };
 
+    /*
+    completeUserRegistration(username) {
+    	// generate user scan code on Lambda
+    	var lambda = new AWS.Lambda({region: AwsConfig.AWS_REGION});
+    	var lambdaPayload = {
+    	    'action': 'createScanCodeForUser',
+    	    'target': username
+    	};
+    	var pullParams = {
+    	    FunctionName: 'createScanCodeForUser',
+    	    InvocationType: 'Event',
+    	    LogType: 'None',
+    	    Payload: JSON.stringify(lambdaPayload)
+    	};
+    	var pullResults;
+    	lambda.invoke(pullParams, function(err, data) {
+    	    if (err) {
+    		console.log(err);
+    	    } else {
+    		pullResults = JSON.parse(data.Payload);
+    		console.log("Invoking Lambda function successful: ", pullResults);
+    	    }
+    	});
+
+    	// create empty user entry on DynamoDB
+    	FB.api('/me', function(response) {
+    	    console.log(response);
+    	});
+    	let userTableParams = {
+    	    TableName: 'aquaint-users',
+    	    Item: {
+    		'username': username,	
+    	    }
+    	};
+    };
+    */
+    
     handleChange(event) {
         this.setState({
             [event.target.name]: event.target.value
@@ -136,7 +175,7 @@ export class UserSignupForm extends React.Component {
 			} else {
 			    console.log("Accessing aquaint-user-identity DynamoDB table success: ", data.Item);
 
-			    if (data != null) {
+			    if (data.Item != null) {
 				let username = data.Item['username']['S'];
 				console.log(`Cognito Identity has an Aquaint username assoicated: ${username}`);
 			    } else {
@@ -153,11 +192,11 @@ export class UserSignupForm extends React.Component {
 					}
 				    };
 				    ddb.getItem(userTableParams, function(err, data) {
-					if (error == null) {
-					    if (data != null) {
-						alert("Username already occupied. Exit now.")
+					if (err == null) {
+					    if (data.Item != null) {
+						alert("Username not available. Exit now.");
 					    } else {
-						// Username is available, create the user
+						// Username is available, link the identity ID to the user name
 						let identityTableItem = {
 						    TableName: 'aquaint-user-identity',
 						    Item: {
@@ -168,9 +207,56 @@ export class UserSignupForm extends React.Component {
 						ddb.putItem(identityTableItem, function(err, data) {
 						    if (err == null) {
 							console.log('Login by Facebook user registration successful.');
+							// completeUserRegistration(signup_username);
+
+							// TODO: put below code in a separate function
+    							// generate user scan code on Lambda
+    							var lambda = new AWS.Lambda();
+    							var lambdaPayload = {
+    							    'action': 'createScanCodeForUser',
+    							    'target': signup_username
+    							};
+    							var pullParams = {
+    							    FunctionName: 'createScanCodeForUser',
+    							    InvocationType: 'Event',
+    							    LogType: 'None',
+    							    Payload: JSON.stringify(lambdaPayload)
+    							};
+    							var pullResults;
+    							lambda.invoke(pullParams, function(err, data) {
+    							    if (err) {
+    								console.log(err);
+    							    } else {
+    								pullResults = JSON.parse(data.Payload);
+    								console.log("Invoking Lambda function successful: ", pullResults);
+    							    }
+    							});
+
+    							// create empty user entry on DynamoDB
+    							FB.api('/me', function(response) {
+							    let userTableNewEntryParams = {
+    								TableName: 'aquaint-users',
+    								Item: {
+    								    'username': {S: signup_username},
+								    'realname': {S: response['name']}
+    								}
+    							    };
+							    ddb.putItem(userTableNewEntryParams, function(err, data) {
+								if (err) {
+								    console.log(err);
+								} else {
+								    console.log("Initializing user's social media profiles list in DynamoDB successful.");
+								}
+							    });
+    							});
+
+						    } else {
+							console.log("Error accessing DynamoDB table:", err);
 						    }
 						});
 					    }
+					} else {
+					    console.log("Error accessing DynamoDB table: ", err);
 					}
 				    });
 				}
@@ -180,7 +266,7 @@ export class UserSignupForm extends React.Component {
 		});
 		
 	    } else {
-		alert("There is a problem logging you in from Facebook.")
+		alert("There is a problem logging you in from Facebook.");
 	    }
 	});
     }
