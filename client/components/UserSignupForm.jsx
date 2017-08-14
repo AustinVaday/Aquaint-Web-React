@@ -217,7 +217,7 @@ export class UserSignupForm extends React.Component {
     							    'target': signup_username
     							};
     							var pullParams = {
-    							    FunctionName: 'createScanCodeForUser',
+    							    FunctionName: 'mock_api',
     							    InvocationType: 'Event',
     							    LogType: 'None',
     							    Payload: JSON.stringify(lambdaPayload)
@@ -227,8 +227,8 @@ export class UserSignupForm extends React.Component {
     							    if (err) {
     								console.log(err);
     							    } else {
-    								pullResults = JSON.parse(data.Payload);
-    								console.log("Invoking Lambda function successful: ", pullResults);
+    								//pullResults = JSON.parse(data.Payload);
+    								console.log("Invoking Lambda function successful: ", data);
     							    }
     							});
 
