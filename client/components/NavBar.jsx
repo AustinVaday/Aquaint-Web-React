@@ -2,25 +2,41 @@ import React from 'react';
 
 export class NavBar extends React.Component {
     // See: https://facebook.github.io/react/docs/forms.html
+    // Note: the constuctor is only called the first time the component renders,
+    // not when the component gets re-rendered
     constructor(props) {
         super(props);
-        console.log(props.user);
-        this.user = props.user;
-        this.userImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/" + this.user;
-        this.userProfileUrl = "http://aquaint.us/" + this.user;
+        console.log('Nav bar: the current user is: ', props.user);
+
+	this.state = {
+            user: props.user
+	};
+        this.userImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/" + this.state.user;
+        this.userProfileUrl = "http://aquaint.us/" + this.state.user;
     }
+
+    componentWillReceiveProps(nextProps) {
+	this.setState(nextProps);
+	
+	this.userImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/" + this.state.user;
+        this.userProfileUrl = "http://aquaint.us/" + this.state.user;
+    }
+    
+    componentDidUpdate(prevProps, prevState) {
+	console.log("NavBar componentDidUpdate. Props: ", this.props);
+    }
+
 
     render() {
 
       // If user exists, display username in upper right corner and picture!
-      if (this.user) {
-        console.log("hello exists");
+      if (this.state.user) {
         return (
           <nav className="navbar navbar-fixed-top">
             <div className="container_fluid">
               <a className="navbar-brand goto" href="index.html#wrap"> <img src="./images/logo.svg" alt="Your logo" height="38" width="152" /> </a>
                 <ul className="nav">
-                  <li><a href={this.userProfileUrl}>{this.user}</a> </li>
+                  <li><a href={this.userProfileUrl}>{this.state.user}</a> </li>
                 </ul>
                 <a className="navbar-user-image" href={this.userProfileUrl}>
                   <img src={this.userImage} alt="Your username" className="img-circle" height="38" width="38" />
@@ -29,7 +45,6 @@ export class NavBar extends React.Component {
           </nav>
         );
       } else { // Display default
-        console.log("Hello does not exist");
         return (
           <nav className="navbar navbar-fixed-top">
             <div className="container_fluid">
@@ -38,7 +53,7 @@ export class NavBar extends React.Component {
               <button className="navbar-toggle menu-collapse-btn collapsed" data-toggle="collapse" data-target=".navMenuCollapse"> <span className="icon-bar"></span> <span className="icon-bar"></span> <span className="icon-bar"></span> </button>
               <div className="collapse navbar-collapse navMenuCollapse">
                   <ul className="nav">
-                <li><a href="#Aquaint">{this.user}</a> </li>
+                <li><a href="#Aquaint">{this.state.user}</a> </li>
                 <li><a href="#getAquainted">Aquaint Code</a> </li>
                 <li><a href="#features">Aqualytics</a></li>
                 <li><a href="#social">Stay tuned</a></li>

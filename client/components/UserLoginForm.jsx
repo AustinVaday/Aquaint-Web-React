@@ -95,7 +95,7 @@ export class UserLoginForm extends React.Component {
 		    }
 
 		});
-	    },
+	    }.bind(this),
 
 	    // 	var cognitoIdentity = new AWS.CognitoIdentity()
 	    // 	cognitoIdentity.getId({
