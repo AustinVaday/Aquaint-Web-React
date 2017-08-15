@@ -20,9 +20,13 @@ export class UserSignupForm extends React.Component {
     constructor(props) {
         super(props);
 
-	this.FB = props.fb;  // Facebook SDK instance
+	console.log("UserSignupForm constructor() called.");
+	
+	//this.FB = props.fb;  // Facebook SDK instance
+	//this.identityId = 'Testing Identity ID'; 
         this.state = {
             currentPage: 0, // 0 for first part of sign-up, 1 for second part, 2 for user login
+	    
             email: '',
             fullname: '',
             username: '',
@@ -30,7 +34,9 @@ export class UserSignupForm extends React.Component {
             passwordVerify: '',
 
 	    willRedirect: false,
-	    redirectURI: ''
+	    redirectURI: '',
+	    FbSignupUsername: '',
+	    identityId: ''  // Identifier from Cognito Federated Identity that uniquely distinguish a user
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -39,6 +45,7 @@ export class UserSignupForm extends React.Component {
         this.handleLogin = this.handleLogin.bind(this);
 	this.facebookLogin = this.facebookLogin.bind(this);
 	//this.completeUserRegistration = this.completeUserRegistration.bind(this);
+	this.completeFacebookSignup = this.completeFacebookSignup.bind(this);
     };
 
     /*
@@ -127,10 +134,10 @@ export class UserSignupForm extends React.Component {
             var cognitoUser = result.user;
             alert(`AWS Cognito user signup successful; Welcome, ${cognitoUser.getUsername()}!`);
 	    
-	    var identityId = AWS.config.credentials.identityId;
-	    console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${identityId}`);
+	    this.state.identityId = AWS.config.credentials.identityId;
+	    console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${this.state.identityId}`);
 
-        });
+        }.bind(this));
 
     };
 
@@ -159,8 +166,8 @@ export class UserSignupForm extends React.Component {
 		// Obtain AWS credentials
 		AWS.config.credentials.get(function(){
 		    // Access AWS resources here.
-		    var identityId = AWS.config.credentials.identityId;
-		    console.log(`Facebook Login: your Amazon Cognito Identity: ${identityId}`);
+		    this.state.identityId = AWS.config.credentials.identityId;
+		    console.log(`Facebook Login: your Amazon Cognito Identity: ${this.state.identityId}`);
 
 		    var ddb = new AWS.DynamoDB();
 		    
@@ -169,7 +176,7 @@ export class UserSignupForm extends React.Component {
 		    var identityTableParams = {
 			TableName: 'aquaint-user-identity',
 			Key: {
-			    'identityId': {S: identityId}
+			    'identityId': {S: this.state.identityId}
 			}
 		    };
 
@@ -190,93 +197,7 @@ export class UserSignupForm extends React.Component {
 				    redirectURI: '/' + username
 				});
 			    } else {
-				// create an Aquaint username, if this is the first time user
-				// Logs in by Facebook
-				var signup_username = prompt("Please choose a username for Aquaint.");
-				if (signup_username != null || signup_username != '') {
-				    // check if the username has been occupied or not
-				    // including users from Cognito User Pool or Facebook authentication
-				    let userTableParams = {
-					TableName: 'aquaint-users',
-					Key: {
-					    'username': {S: signup_username}
-					}
-				    };
-				    ddb.getItem(userTableParams, function(err, data) {
-					if (err == null) {
-					    if (data.Item != null) {
-						alert("Username not available. Exit now.");
-					    } else {
-						// Username is available, link the identity ID to the user name
-						let identityTableItem = {
-						    TableName: 'aquaint-user-identity',
-						    Item: {
-							'identityId': {S: identityId},
-							'username': {S: signup_username}
-						    }
-						};
-						ddb.putItem(identityTableItem, function(err, data) {
-						    if (err == null) {
-							console.log('Login by Facebook user registration successful.');
-							// completeUserRegistration(signup_username);
-
-							// TODO: put below code in a separate function
-    							// generate user scan code on Lambda
-    							var lambda = new AWS.Lambda();
-    							var lambdaPayload = {
-    							    'action': 'createScanCodeForUser',
-    							    'target': signup_username
-    							};
-    							var pullParams = {
-    							    FunctionName: 'mock_api',
-    							    InvocationType: 'Event',
-    							    LogType: 'None',
-    							    Payload: JSON.stringify(lambdaPayload)
-    							};
-    							var pullResults;
-    							lambda.invoke(pullParams, function(err, data) {
-    							    if (err) {
-    								console.log(err);
-    							    } else {
-    								//pullResults = JSON.parse(data.Payload);
-    								console.log("Invoking Lambda function successful: ", data);
-    							    }
-    							});
-
-    							// create empty user entry on DynamoDB
-    							FB.api('/me', function(response) {
-							    let userTableNewEntryParams = {
-    								TableName: 'aquaint-users',
-    								Item: {
-    								    'username': {S: signup_username},
-								    'realname': {S: response['name']}
-    								}
-    							    };
-							    ddb.putItem(userTableNewEntryParams, function(err, data) {
-								if (err) {
-								    console.log(err);
-								} else {
-								    console.log("Initializing user's social media profiles list in DynamoDB successful.");
-
-								    // User is now logged in; redirect user to his Aquaint profile
-								    this.setState({
-									willRedirect: true,
-									redirectURI: '/' + username
-								    });
-								}
-							    });
-    							});
-
-						    } else {
-							console.log("Error accessing DynamoDB table:", err);
-						    }
-						});
-					    }
-					} else {
-					    console.log("Error accessing DynamoDB table: ", err);
-					}
-				    });
-				}
+				this.setState({currentPage: 3});				
 			    }
 			}
 		    }.bind(this));
@@ -293,6 +214,103 @@ export class UserSignupForm extends React.Component {
     }
 
 
+    completeFacebookSignup(event) {
+	event.preventDefault();
+	// create an Aquaint username, if this is the first time user
+	// Logs in by Facebook
+	console.log("completeFacebookSignup function called.");
+	
+	var signup_username = this.state.FbSignupUsername;
+	if (signup_username != null || signup_username != '') {
+	    var ddb = new AWS.DynamoDB();
+	    
+	    // check if the username has been occupied or not
+	    // including users from Cognito User Pool or Facebook authentication
+	    let userTableParams = {
+		TableName: 'aquaint-users',
+		Key: {
+		    'username': {S: signup_username}
+		}
+	    };
+	    ddb.getItem(userTableParams, function(err, data) {
+		if (err == null) {
+		    if (data.Item != null) {
+			alert("This Aquaint username is not available; please try a different one.");
+			this.setState({ FbSignupUsername: '' });
+		    } else {
+			console.log(`completeFacebookSignup() reads identityID: ${this.state.identityId}`);
+			// Username is available, link the identity ID to the user name
+			let identityTableItem = {
+			    TableName: 'aquaint-user-identity',
+			    Item: {
+				'identityId': {S: this.state.identityId},
+				'username': {S: signup_username}
+			    }
+			};
+			ddb.putItem(identityTableItem, function(err, data) {
+			    if (err == null) {
+				console.log('Login by Facebook user registration successful.');
+				// completeUserRegistration(signup_username);
+
+				// TODO: put below code in a separate function
+    				// generate user scan code on Lambda
+    				var lambda = new AWS.Lambda();
+    				var lambdaPayload = {
+    				    'action': 'createScanCodeForUser',
+    				    'target': signup_username
+    				};
+    				var pullParams = {
+    				    FunctionName: 'mock_api',
+    				    InvocationType: 'Event',
+    				    LogType: 'None',
+    				    Payload: JSON.stringify(lambdaPayload)
+    				};
+    				var pullResults;
+    				lambda.invoke(pullParams, function(err, data) {
+    				    if (err) {
+    					console.log(err);
+    				    } else {
+    					//pullResults = JSON.parse(data.Payload);
+    					console.log("Invoking Lambda function successful: ", data);
+    				    }
+    				});
+
+    				// create empty user entry on DynamoDB
+    				FB.api('/me', function(response) {
+				    let userTableNewEntryParams = {
+    					TableName: 'aquaint-users',
+    					Item: {
+    					    'username': {S: signup_username},
+					    'realname': {S: response['name']}
+    					}
+    				    };
+				    ddb.putItem(userTableNewEntryParams, function(err, data) {
+					if (err) {
+					    console.log(err);
+					} else {
+					    console.log("Initializing user's social media profiles list in DynamoDB successful.");
+
+					    // User is now logged in; redirect user to his Aquaint profile
+					    this.setState({
+						willRedirect: true,
+						redirectURI: '/' + signup_username
+					    });
+					}
+				    }.bind(this));
+    				}.bind(this));
+
+			    } else {
+				console.log("Error accessing DynamoDB table:", err);
+			    }
+			}.bind(this));
+		    }
+		} else {
+		    console.log("Error accessing DynamoDB table: ", err);
+		}
+	    }.bind(this));
+	}
+    };
+    
     render() {
 	if (this.state.willRedirect) {
 	    return (
@@ -352,6 +370,20 @@ export class UserSignupForm extends React.Component {
 
         } else if (this.state.currentPage == 2) {
             return (<UserLoginForm/>);
+
+        } else if (this.state.currentPage == 3) {
+            return (
+                <div className="welcome-div">
+                    <form onSubmit={this.completeFacebookSignup}>
+                        <h1 className="welcome-header">Welcome</h1>
+                        <input className="welcome-input" placeholder="Choose an username for your Aquaint profile..." name="FbSignupUsername" value={this.state.FbSignupUsername} onChange={this.handleChange}/>
+                        <br/>
+                        <button type="submit" value="Join Aquaint">
+                            <a>Join Aquaint</a>
+                        </button>
+                    </form>
+                </div>
+            );
         }
         return null;
     }
