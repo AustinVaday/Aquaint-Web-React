@@ -1,7 +1,8 @@
 import React from 'react';
 import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 import * as AwsConfig from './AwsConfig';
-import {UserLoginForm} from './UserLoginForm.jsx';
+import { UserLoginForm } from './UserLoginForm.jsx';
+import { Route, Redirect } from 'react-router';
 
 // Initialize the Amazon Cognito credentials provider
 var AWS = require('aws-sdk');
@@ -26,7 +27,10 @@ export class UserSignupForm extends React.Component {
             fullname: '',
             username: '',
             password: '',
-            passwordVerify: ''
+            passwordVerify: '',
+
+	    willRedirect: false,
+	    redirectURI: ''
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -121,10 +125,10 @@ export class UserSignupForm extends React.Component {
                 return;
             }
             var cognitoUser = result.user;
-            alert(`AWS Cognito user signup successful; Welcome, ${cognitoUser.getUsername()}!`)
+            alert(`AWS Cognito user signup successful; Welcome, ${cognitoUser.getUsername()}!`);
 	    
 	    var identityId = AWS.config.credentials.identityId;
-	    console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${identityId}`)
+	    console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${identityId}`);
 
         });
 
@@ -156,7 +160,7 @@ export class UserSignupForm extends React.Component {
 		AWS.config.credentials.get(function(){
 		    // Access AWS resources here.
 		    var identityId = AWS.config.credentials.identityId;
-		    console.log(`Facebook Login: your Amazon Cognito Identity: ${identityId}`)
+		    console.log(`Facebook Login: your Amazon Cognito Identity: ${identityId}`);
 
 		    var ddb = new AWS.DynamoDB();
 		    
@@ -170,6 +174,7 @@ export class UserSignupForm extends React.Component {
 		    };
 
 		    ddb.getItem(identityTableParams, function(err, data) {
+			
 			if (err) {
 			    console.log("Error accessing DynamoDB table: ", err);
 			} else {
@@ -178,6 +183,12 @@ export class UserSignupForm extends React.Component {
 			    if (data.Item != null) {
 				let username = data.Item['username']['S'];
 				console.log(`Cognito Identity has an Aquaint username assoicated: ${username}`);
+
+				// User is now logged in; redirect user to his Aquaint profile
+				this.setState({
+				    willRedirect: true,
+				    redirectURI: '/' + username
+				});
 			    } else {
 				// create an Aquaint username, if this is the first time user
 				// Logs in by Facebook
@@ -246,6 +257,12 @@ export class UserSignupForm extends React.Component {
 								    console.log(err);
 								} else {
 								    console.log("Initializing user's social media profiles list in DynamoDB successful.");
+
+								    // User is now logged in; redirect user to his Aquaint profile
+								    this.setState({
+									willRedirect: true,
+									redirectURI: '/' + username
+								    });
 								}
 							    });
     							});
@@ -262,17 +279,27 @@ export class UserSignupForm extends React.Component {
 				}
 			    }
 			}
-		    });
-		});
+		    }.bind(this));
+		}.bind(this));
 		
 	    } else {
 		alert("There is a problem logging you in from Facebook.");
 	    }
-	});
+	}.bind(this));
+
+	// Note: these (annoyting) binds are necessary for anonymous functions
+	// to access React-buildin functions, Eg. setState()
+	// https://stackoverflow.com/questions/31045716/react-this-setstate-is-not-a-function
     }
 
 
     render() {
+	if (this.state.willRedirect) {
+	    return (
+		<Redirect to={this.state.redirectURI}/>
+	    );
+	}
+	
         if (this.state.currentPage == 0) {
             return (
                 <div className="welcome-div">
