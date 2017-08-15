@@ -11,15 +11,10 @@ export class NavBar extends React.Component {
 	this.state = {
             user: props.user
 	};
-        this.userImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/" + this.state.user;
-        this.userProfileUrl = "http://aquaint.us/" + this.state.user;
     }
 
     componentWillReceiveProps(nextProps) {
 	this.setState(nextProps);
-	
-	this.userImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/" + this.state.user;
-        this.userProfileUrl = "http://aquaint.us/" + this.state.user;
     }
     
     componentDidUpdate(prevProps, prevState) {
@@ -29,6 +24,9 @@ export class NavBar extends React.Component {
 
     render() {
 
+	var userImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/" + this.state.user;
+        var userProfileUrl = "http://aquaint.us/" + this.state.user;
+
       // If user exists, display username in upper right corner and picture!
       if (this.state.user) {
         return (
@@ -36,10 +34,10 @@ export class NavBar extends React.Component {
             <div className="container_fluid">
               <a className="navbar-brand goto" href="index.html#wrap"> <img src="./images/logo.svg" alt="Your logo" height="38" width="152" /> </a>
                 <ul className="nav">
-                  <li><a href={this.userProfileUrl}>{this.state.user}</a> </li>
+                  <li><a href={userProfileUrl}>{this.state.user}</a> </li>
                 </ul>
-                <a className="navbar-user-image" href={this.userProfileUrl}>
-                  <img src={this.userImage} alt="Your username" className="img-circle" height="38" width="38" />
+                <a className="navbar-user-image" href={userProfileUrl}>
+                  <img src={userImage} alt="Your username" className="img-circle" height="38" width="38" />
                 </a>
             </div>
           </nav>
