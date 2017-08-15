@@ -21,12 +21,12 @@ export class UserSignupForm extends React.Component {
         super(props);
 
 	console.log("UserSignupForm constructor() called.");
-	
+
 	//this.FB = props.fb;  // Facebook SDK instance
-	//this.identityId = 'Testing Identity ID'; 
+	//this.identityId = 'Testing Identity ID';
         this.state = {
             currentPage: 0, // 0 for first part of sign-up, 1 for second part, 2 for user login
-	    
+
             email: '',
             fullname: '',
             username: '',
@@ -79,12 +79,12 @@ export class UserSignupForm extends React.Component {
     	let userTableParams = {
     	    TableName: 'aquaint-users',
     	    Item: {
-    		'username': username,	
+    		'username': username,
     	    }
     	};
     };
     */
-    
+
     handleChange(event) {
         this.setState({
             [event.target.name]: event.target.value
@@ -133,7 +133,7 @@ export class UserSignupForm extends React.Component {
             }
             var cognitoUser = result.user;
             alert(`AWS Cognito user signup successful; Welcome, ${cognitoUser.getUsername()}!`);
-	    
+
 	    this.state.identityId = AWS.config.credentials.identityId;
 	    console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${this.state.identityId}`);
 
@@ -170,9 +170,9 @@ export class UserSignupForm extends React.Component {
 		    console.log(`Facebook Login: your Amazon Cognito Identity: ${this.state.identityId}`);
 
 		    var ddb = new AWS.DynamoDB();
-		    
+
 		    // first check if there is an Aquaint username associated
-		    // with this Identity ID			
+		    // with this Identity ID
 		    var identityTableParams = {
 			TableName: 'aquaint-user-identity',
 			Key: {
@@ -181,7 +181,7 @@ export class UserSignupForm extends React.Component {
 		    };
 
 		    ddb.getItem(identityTableParams, function(err, data) {
-			
+
 			if (err) {
 			    console.log("Error accessing DynamoDB table: ", err);
 			} else {
@@ -197,12 +197,12 @@ export class UserSignupForm extends React.Component {
 				    redirectURI: '/' + username
 				});
 			    } else {
-				this.setState({currentPage: 3});				
+				this.setState({currentPage: 3});
 			    }
 			}
 		    }.bind(this));
 		}.bind(this));
-		
+
 	    } else {
 		alert("There is a problem logging you in from Facebook.");
 	    }
@@ -219,11 +219,11 @@ export class UserSignupForm extends React.Component {
 	// create an Aquaint username, if this is the first time user
 	// Logs in by Facebook
 	console.log("completeFacebookSignup function called.");
-	
+
 	var signup_username = this.state.FbSignupUsername;
 	if (signup_username != null || signup_username != '') {
 	    var ddb = new AWS.DynamoDB();
-	    
+
 	    // check if the username has been occupied or not
 	    // including users from Cognito User Pool or Facebook authentication
 	    let userTableParams = {
@@ -310,26 +310,26 @@ export class UserSignupForm extends React.Component {
 	    }.bind(this));
 	}
     };
-    
+
     render() {
 	if (this.state.willRedirect) {
 	    return (
 		<Redirect to={this.state.redirectURI}/>
 	    );
 	}
-	
+
         if (this.state.currentPage == 0) {
             return (
                 <div className="welcome-div">
-                    <img height="15%" src="./images/emblemSpinner.gif"/>
+                    <img height="15%" src="./images/Aquaint_welcome_logo.svg"/>
                     <h1 className="welcome-header">Let's get Aquainted.</h1>
-                    <p>
-                        Sign up with...
-                    </p>
+                    <h2 className="welcome-subtitle">All your social media profiles in one place.</h2>
+                    <p className ="welcome-instruction"> Sign up with...</p>
                     <button className="welcome-button" onClick={this.facebookLogin}>
-                        <a>Facebook</a>
+                      <img  id="image-padding" height="50%" src="./images/facebook_login_icon.svg" /><a id="fb-padding">Facebook</a>
                     </button>
-                    <p>
+                    <br/><br/><br/>
+                    <p className ="welcome-instruction">
                         Or, sign up with email
                     </p>
                     <form onSubmit={this.handleContinue}>
@@ -338,13 +338,10 @@ export class UserSignupForm extends React.Component {
                         <input className="welcome-input" type="text" name="fullname" placeholder="Name" value={this.state.fullname} onChange={this.handleChange}/>
                         <br/>
                         <button className="welcome-button" id="continue">
-                            <a className="welcome-hyperlink">Continue</a>
+                            <a className="welcome-continue">Continue</a>
                         </button>
-                        <p>
-                            Already registered?
-                            <a href="#" onClick={this.handleLogin}>
-                                Sign in here.
-                            </a>
+                        <p className="welcome-instruction">
+                            Already registered? <a className="welcome-signin" href="#" onClick={this.handleLogin}> Sign in here.</a>
                         </p>
                     </form>
                 </div>
@@ -352,19 +349,20 @@ export class UserSignupForm extends React.Component {
 
         } else if (this.state.currentPage == 1) {
             return (
-                <div className="welcome-div">
-                    <form onSubmit={this.handleSignup}>
-                        <h1 className="welcome-header">Welcome</h1>
-                        <input className="welcome-input" placeholder="Username" name="username" value={this.state.username} onChange={this.handleChange}/>
-                        <br/>
-                        <input className="welcome-input" placeholder="Password" type="password" name="password" value={this.state.password} onChange={this.handleChange}/>
-                        <br/>
-                        <input className="welcome-input" placeholder="Verify Password" type="password" name="passwordVerify" value={this.state.passwordVerify} onChange={this.handleChange}/>
-                        <br/>
-                        <button className="welcome-button">
-                            <a>Join Aquaint</a>
-                        </button>
-                    </form>
+              <div className ="welcome-div">
+                <img height="15%" src="./images/Aquaint_welcome_logo.svg" />
+                <h1 className="welcome-header">Welcome</h1>
+                <h2 className="welcome-subtitle">You're one step away from a brand new experience</h2>
+                <br/><br/>
+                  <form onSubmit={this.handleSignup}>
+                     <input className="welcome-input" placeholder="Username"  name="username" value={this.state.username} onChange={this.handleChange} />
+                     <br />
+                     <input className="welcome-input" placeholder="Password" type="password" name="password" value={this.state.password} onChange={this.handleChange} />
+                     <br />
+                     <input className="welcome-input" placeholder="Verify Password" type="password" name="password" value={this.state.passwordVerify} onChange={this.handleChange} />
+                    <br />
+                    <button className ="welcome-button" id="continue"><a className="welcome-continue">Join Aquaint</a></button>
+                  </form>
                 </div>
             );
 
@@ -374,8 +372,11 @@ export class UserSignupForm extends React.Component {
         } else if (this.state.currentPage == 3) {
             return (
                 <div className="welcome-div">
+                <img height="15%" src="./images/Aquaint_welcome_logo.svg" />
+                <h1 className="welcome-header">Welcome</h1>
+                <h2 className="welcome-subtitle">You're one step away from a brand new experience</h2>
+                <br/><br/>
                     <form onSubmit={this.completeFacebookSignup}>
-                        <h1 className="welcome-header">Welcome</h1>
                         <input className="welcome-input" placeholder="Choose an username for your Aquaint profile..." name="FbSignupUsername" value={this.state.FbSignupUsername} onChange={this.handleChange}/>
                         <br/>
                         <button className="welcome-button" type="submit" value="Join Aquaint">

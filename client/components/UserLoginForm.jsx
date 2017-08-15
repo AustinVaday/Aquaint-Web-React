@@ -103,13 +103,18 @@ export class UserLoginForm extends React.Component {
 
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
-                Username:
-                <input type="text" name="username" value={this.state.username} onChange={this.handleChange}/>
-                Password:
-                <input type="password" name="password" value={this.state.password} onChange={this.handleChange}/>
-                <input type="submit" value="Log In"/>
-            </form>
+          <div className ="welcome-div">
+            <img height="15%" src="./images/Aquaint_welcome_logo.svg" />
+            <h1 className="welcome-header">Welcome back!</h1>
+            <br/><br/>
+              <form onSubmit={this.handleSubmit}>
+                 <input className="welcome-input" placeholder="Username"  name="username" value={this.state.username} onChange={this.handleChange} />
+                 <br />
+                 <input className="welcome-input" placeholder="Password" type="password" name="password" value={this.state.password} onChange={this.handleChange} />
+                 <br />
+                <button className ="welcome-button" id="continue"><a className="welcome-continue">Login</a></button>
+              </form>
+          </div>
         );
     }
 }
