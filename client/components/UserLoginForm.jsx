@@ -54,9 +54,18 @@ export class UserLoginForm extends React.Component {
         cognitoUser.authenticateUser(authenticationDetails, {
             onSuccess: function(result) {
                 console.log('access token + ' + result.getAccessToken().getJwtToken());
+                //let awsLoginKey = 'cognito-idp.' + AwsConfig.COGNITO_REGION + '.amazonaws.com/' + AwsConfig.COGNITO_USER_POOL_ID;
+		//console.log(`awsLoginKey = ${awsLoginKey}`);
 
-                let awsLoginKey = 'cognito-idp.' + AwsConfig.COGNITO_REGION + '.amazonaws.com/' + AwsConfig.COGNITO_USER_POOL_ID;
-		console.log(`awsLoginKey = ${awsLoginKey}`);
+		// Retrieve user attributes for an authenticated user
+		cognitoUser.getUserAttributes(function(err, result) {
+		    if (err) {
+			console.log(err);
+			return;
+		    } else {
+			console.log(`Get authenticated user attributes: ${result}`);
+		    }
+		});
                 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
                     IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
                     Logins: {

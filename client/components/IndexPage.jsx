@@ -6,7 +6,7 @@ let indexPageContents = (
     <div>
 	{/* NAVIGATION BEGIN */}
 	{
-  <NavBar user="austin"/>
+		<NavBar user="austin"/>
 	}
 	{/* NAVIGAION END */}
 

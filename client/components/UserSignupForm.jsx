@@ -137,6 +137,8 @@ export class UserSignupForm extends React.Component {
 	    this.state.identityId = AWS.config.credentials.identityId;
 	    console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${this.state.identityId}`);
 
+	    // TODO: Use case 17 integrating User Pools with Cognito Identity
+
         }.bind(this));
 
     };
