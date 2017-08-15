@@ -79,6 +79,13 @@ export class UserLoginForm extends React.Component {
                 // example: var s3 = new AWS.S3();
                 alert(`AWS Cognito user login successful; Welcome, ${cognitoUser.getUsername()}!`)
 
+		// Pass the user information to parent-level index page, for navigation bar
+		let userState = {
+		    isAuthorized: true,
+		    username: cognitoUser.getUsername()
+		};
+		this.props.indexPageUpdateState(userState);
+
 		AWS.config.credentials.refresh((error) => {
 		    if (error) {
 			console.error(error);

@@ -133,10 +133,17 @@ export class UserSignupForm extends React.Component {
             }
             var cognitoUser = result.user;
             alert(`AWS Cognito user signup successful; Welcome, ${cognitoUser.getUsername()}!`);
-
+	    
 	    this.state.identityId = AWS.config.credentials.identityId;
 	    console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${this.state.identityId}`);
 
+	    // Pass the user information to parent-level index page, for navigation bar
+	    let userState = {
+		isAuthorized: true,
+		username: cognitoUser.getUsername()
+	    };
+	    this.props.indexPageUpdateState(userState);
+	    
 	    // TODO: Use case 17 integrating User Pools with Cognito Identity
 
         }.bind(this));
@@ -192,6 +199,13 @@ export class UserSignupForm extends React.Component {
 			    if (data.Item != null) {
 				let username = data.Item['username']['S'];
 				console.log(`Cognito Identity has an Aquaint username assoicated: ${username}`);
+
+				// Pass the user information to parent-level index page, for navigation bar
+				let userState = {
+				    isAuthorized: true,
+				    username: username
+				};
+				this.props.indexPageUpdateState(userState);
 
 				// User is now logged in; redirect user to his Aquaint profile
 				this.setState({
@@ -292,6 +306,14 @@ export class UserSignupForm extends React.Component {
 					} else {
 					    console.log("Initializing user's social media profiles list in DynamoDB successful.");
 
+
+					    // Pass the user information to parent-level index page, for navigation bar
+					    let userState = {
+						isAuthorized: true,
+						username: signup_username
+					    };
+					    this.props.indexPageUpdateState(userState);
+
 					    // User is now logged in; redirect user to his Aquaint profile
 					    this.setState({
 						willRedirect: true,
@@ -369,7 +391,7 @@ export class UserSignupForm extends React.Component {
             );
 
         } else if (this.state.currentPage == 2) {
-            return (<UserLoginForm/>);
+            return (<UserLoginForm indexPageUpdateState={this.props.indexPageUpdateState}/>);
 
         } else if (this.state.currentPage == 3) {
             return (

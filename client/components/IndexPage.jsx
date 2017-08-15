@@ -5,11 +5,8 @@ let indexPageContents = (
 
     <div>
 	{/* NAVIGATION BEGIN */}
-	{
-		<NavBar user="austin"/>
-	}
+	<NavBar user={this.state.username}/>
 	{/* NAVIGAION END */}
-
 
 	{/* INTRO BEGIN */}
 	<header id="full-intro" className="intro-block">
@@ -17,7 +14,7 @@ let indexPageContents = (
 		<div className="row">
 		    <div className="col-md-4 col-sm-12">
 			{/* ReactJS interactive form of user authentication (login or sign-up) */}
-			<div id="userAuth"><UserSignupForm fb={FB} /></div>
+			<div id="userAuth"><UserSignupForm indexPageUpdateState={this.updateState} /></div>
 
 			<div className="container-fluid" style={{float:'left'}} id="aquaint-login">
 			    <form action="./scripts/subscribe.php" method="post" id="subscribe_form">
@@ -246,6 +243,20 @@ let indexPageContents = (
 export class IndexPage extends React.Component {
     constructor(props) {
 	super(props);
+
+	this.state = {
+	    isAuthorized: false,
+	    username: ''
+	};
+
+	this.updateState = this.updateState.bind(this);
+    }
+
+    // a general method for child components to change state of this parent
+    // Eg. if a user logs in to Aquaint
+    updateState(data) {
+	//event.preventDefault();
+	this.setState({data});
     }
     
     render(match) {
