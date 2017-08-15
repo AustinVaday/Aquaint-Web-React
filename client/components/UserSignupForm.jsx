@@ -378,7 +378,7 @@ export class UserSignupForm extends React.Component {
                         <h1 className="welcome-header">Welcome</h1>
                         <input className="welcome-input" placeholder="Choose an username for your Aquaint profile..." name="FbSignupUsername" value={this.state.FbSignupUsername} onChange={this.handleChange}/>
                         <br/>
-                        <button type="submit" value="Join Aquaint">
+                        <button className="welcome-button" type="submit" value="Join Aquaint">
                             <a>Join Aquaint</a>
                         </button>
                     </form>
