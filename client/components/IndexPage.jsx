@@ -1,28 +1,13 @@
 import React from 'react';
 import { UserSignupForm } from './UserSignupForm.jsx';
-
+import { NavBar } from './NavBar.jsx';
 let indexPageContents = (
 
     <div>
 	{/* NAVIGATION BEGIN */}
-	{/*
-	<nav class="navbar navbar-fixed-top">
-	    <div class="container_fluid">
-		<a class="navbar-brand goto" href="index.html#wrap"> <img src="./images/logo.svg" alt="Your logo" height="38" width="152" /> </a>
-		<a class="contact-btn icon-envelope" data-toggle="modal" data-target="#modalContact"></a>
-		<button class="navbar-toggle menu-collapse-btn collapsed" data-toggle="collapse" data-target=".navMenuCollapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-		<div class="collapse navbar-collapse navMenuCollapse">
-		    <ul class="nav">
-			<li><a href="#Aquaint">Aquaint</a> </li>
-			<li><a href="#getAquainted">Aquaint Code</a> </li>
-			<li><a href="#features">Aqualytics</a></li>
-			<li><a href="#social">Stay tuned</a></li>
-			<li><a href="http://www.blog.aquaint.us">Blog</a> </li>
-		    </ul>
-		</div>
-	    </div>
-	</nav>
-	*/}
+	{
+  <NavBar user="austin"/>
+	}
 	{/* NAVIGAION END */}
 
 
@@ -255,7 +240,7 @@ let indexPageContents = (
 
 	{/* MODALS END*/}
     </div>
-    
+
 );
 
 export class IndexPage extends React.Component {
@@ -268,4 +253,3 @@ export class IndexPage extends React.Component {
 	return (indexPageContents);
     }
 }
-
