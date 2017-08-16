@@ -339,7 +339,9 @@ export class UserSignupForm extends React.Component {
 	
 	if (this.state.willRedirect) {
 	    return (
-		<Redirect to={this.state.redirectURI} params={{indexPageState: this.state}}/>
+		<Redirect to={{
+		    pathname: this.state.redirectURI,
+		    userSignupFormState: this.state}} />
 	    );
 	}
 
