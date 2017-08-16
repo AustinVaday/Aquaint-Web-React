@@ -336,13 +336,13 @@ export class UserSignupForm extends React.Component {
     };
 
     render() {
-	/*
+	
 	if (this.state.willRedirect) {
 	    return (
-		<Redirect to={this.state.redirectURI}/>
+		<Redirect to={this.state.redirectURI} params={{indexPageState: this.state}}/>
 	    );
 	}
-	*/
+
 
         if (this.state.currentPage == 0) {
             return (

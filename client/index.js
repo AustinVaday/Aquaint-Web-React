@@ -4,30 +4,16 @@ import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import { UserSignupForm } from './components/UserSignupForm.jsx';
 import { DisplayProfile } from './components/DisplayProfile.jsx';
 import { IndexPage } from './components/IndexPage.jsx';
+import { UserProfilePage } from './components/UserProfilePage.jsx';
 
 // A class can be a component passed to react-router too, besides a function
 // "match" parameters are passed in as props in this case
-class UserProfileExample extends React.Component {
-    constructor(props) {
-	super(props);
-    }
-    
-    render() {
-	console.log(this.props);
-	console.log(`User page URI: ${this.props.location.pathname}`);
-	return (
-	    <div>
-		Welcome to your profile page, {this.props.match.params.username}! 
-	    </div>
-	);
-    }
-}
 
 ReactDOM.render((
     <Router>
       <div>
 	<Route exact path="/" component={IndexPage}/>
-	<Route path="/:username" component={UserProfileExample}/>
+	<Route path="/:username" component={UserProfilePage}/>
       </div>
     </Router>
 ), document.getElementById('root'));
