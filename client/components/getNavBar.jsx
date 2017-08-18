@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { LogoffUser } from '../states/actions';
+import { logoffUser } from '../states/actions';
 import { NavBar } from './NavBar.jsx';
 
 const mapStateToProps = state => {

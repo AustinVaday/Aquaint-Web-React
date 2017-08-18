@@ -1,9 +1,13 @@
 import React from 'react';
 import {CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails} from 'amazon-cognito-identity-js';
+import { Route, Redirect } from 'react-router';
+import { connect } from 'react-redux';
+
 import * as AwsConfig from './AwsConfig';
+import { loginUser } from '../states/actions'; 
 
 // React Component for User Login, including user authentication on AWS Cognito
-export class UserLoginForm extends React.Component {
+export class UserLoginFormLocal extends React.Component {
     // Make the form to be "Controlled Components"
     // that is, making the React state be the "single source of truth"
     // See: https://facebook.github.io/react/docs/forms.html
@@ -11,7 +15,9 @@ export class UserLoginForm extends React.Component {
         super(props);
         this.state = {
             username: '',
-            password: ''
+            password: '',
+
+	    redirectUri: null
         };
 
         // Resolve error of "Cannot read property 'setState' of undefined"
@@ -29,7 +35,7 @@ export class UserLoginForm extends React.Component {
     }
 
     handleSubmit(event) {
-        console.log('User tried to log in: ' + this.state.username + '; ' + this.state.password);
+        console.log('User tried to log in: ' + this.state.username);
         // Prevent broswer from sending a HTTP GET request with parameters
         // in form (and perhaps refreshing the page)
         event.preventDefault();
@@ -79,12 +85,8 @@ export class UserLoginForm extends React.Component {
                 // example: var s3 = new AWS.S3();
                 alert(`AWS Cognito user login successful; Welcome, ${cognitoUser.getUsername()}!`)
 
-		// Pass the user information to parent-level index page, for navigation bar
-		let userState = {
-		    isAuthorized: true,
-		    username: cognitoUser.getUsername()
-		};
-		this.props.indexPageUpdateState(userState);
+		// Update Redux global state of user authentication
+		this.props.dispatch(loginUser(cognitoUser.getUsername()));
 
 		AWS.config.credentials.refresh((error) => {
 		    if (error) {
@@ -93,6 +95,10 @@ export class UserLoginForm extends React.Component {
 			var identityId = AWS.config.credentials.identityId;
 			console.log(`Cognito User Pool login: your Amazon Cognito Identity: ${identityId}`);
 		    }
+
+		    this.setState({
+			redirectUri: '/' + cognitoUser.getUsername()
+		    });
 
 		});
 	    }.bind(this),
@@ -118,19 +124,29 @@ export class UserLoginForm extends React.Component {
     }
 
     render() {
-        return (
-          <div className ="welcome-div">
-            <img height="15%" src="./images/Aquaint_welcome_logo.svg" />
-            <h1 className="welcome-header">Welcome back!</h1>
-            <br/><br/>
-              <form onSubmit={this.handleSubmit}>
-                 <input className="welcome-input" placeholder="Username"  name="username" value={this.state.username} onChange={this.handleChange} />
-                 <br />
-                 <input className="welcome-input" placeholder="Password" type="password" name="password" value={this.state.password} onChange={this.handleChange} />
-                 <br />
-                <button className ="welcome-button" id="continue"><a className="welcome-continue">Login</a></button>
-              </form>
-          </div>
+	if (this.state.redirectUri) {
+	    return (
+		<Redirect to={{pathname: this.state.redirectUri}} />
+	    );
+	}
+	
+        return (    
+	    <div className ="welcome-div">
+	        <img height="15%" src="./images/Aquaint_welcome_logo.svg" />
+		<h1 className="welcome-header">Welcome back!</h1>
+		<br/><br/>
+		<form onSubmit={this.handleSubmit}>
+                    <input className="welcome-input" placeholder="Username"  name="username" value={this.state.username} onChange={this.handleChange} />
+                    <br />
+                    <input className="welcome-input" placeholder="Password" type="password" name="password" value={this.state.password} onChange={this.handleChange} />
+                    <br />
+                    <button className ="welcome-button" id="continue"><a className="welcome-continue">Login</a></button>
+		</form>
+	    </div>
         );
     }
 }
+
+// connet component to Redux
+let UserLoginForm = connect()(UserLoginFormLocal);
+export default UserLoginForm;

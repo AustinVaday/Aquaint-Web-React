@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import * as AwsConfig from './AwsConfig';
 import { loginUser } from '../states/actions'; 
-import { UserLoginForm } from './UserLoginForm.jsx';
+import UserLoginForm from './UserLoginForm.jsx';
 
 
 // Initialize the Amazon Cognito credentials provider
@@ -29,7 +29,7 @@ class UserSignupFormLocal extends React.Component {
 	//this.FB = props.fb;  // Facebook SDK instance
 	//this.identityId = 'Testing Identity ID';
         this.state = {
-            currentPage: 0, // 0 for first part of sign-up, 1 for second part, 2 for user login
+            currentPage: 0, // 0 for first part of sign-up, 1 for second part, 2 for user login, 3 for choosing a username if login by Facebook the first time
 
             email: '',
             fullname: '',
@@ -141,12 +141,8 @@ class UserSignupFormLocal extends React.Component {
 	    this.state.identityId = AWS.config.credentials.identityId;
 	    console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${this.state.identityId}`);
 
-	    // Pass the user information to parent-level index page, for navigation bar
-	    let userState = {
-		isAuthorized: true,
-		username: cognitoUser.getUsername()
-	    };
-	    this.props.indexPageUpdateState(userState);
+	    // Update Redux global state of user authentication
+	    this.props.dispatch(loginUser(cognitoUser.getUsername()));
 	    
 	    // TODO: Use case 17 integrating User Pools with Cognito Identity
 
@@ -204,15 +200,10 @@ class UserSignupFormLocal extends React.Component {
 				let username = data.Item['username']['S'];
 				console.log(`Cognito Identity has an Aquaint username assoicated: ${username}`);
 
-				// Pass the user information to parent-level index page, for navigation bar
-				let userState = {
-				    isAuthorized: true,
-				    username: username
-				};
-				this.props.indexPageUpdateState(userState);
-
-				// User is now logged in; redirect user to his Aquaint profile
+				// Update Redux global state of user authentication
 				this.props.dispatch(loginUser(username));
+				
+				// User is now logged in; redirect user to his Aquaint profile
 				
 				this.setState({
 				    willRedirect: true,
@@ -311,13 +302,8 @@ class UserSignupFormLocal extends React.Component {
 					} else {
 					    console.log("Initializing user's social media profiles list in DynamoDB successful.");
 
-
-					    // Pass the user information to parent-level index page, for navigation bar
-					    let userState = {
-						isAuthorized: true,
-						username: signup_username
-					    };
-					    this.props.indexPageUpdateState(userState);
+					    // Update Redux global state of user authentication
+					    this.props.dispatch(loginUser(signup_username));
 
 					    // User is now logged in; redirect user to his Aquaint profile
 					    this.setState({
@@ -341,15 +327,18 @@ class UserSignupFormLocal extends React.Component {
     };
 
     render() {
-	/*
+	
 	if (this.state.willRedirect) {
 	    return (
+		/*
 		<Redirect to={{
 		    pathname: this.state.redirectURI,
 		    userSignupFormState: this.state}} />
+		*/
+		<Redirect to={{pathname: this.state.redirectURI}} />
 	    );
 	}
-	*/
+	
 
         if (this.state.currentPage == 0) {
             return (

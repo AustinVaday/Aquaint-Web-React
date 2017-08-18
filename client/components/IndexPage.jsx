@@ -1,32 +1,13 @@
 import React from 'react';
 import UserSignupForm from './UserSignupForm.jsx';
-import GetNavBar from './getNavBar.jsx';
+import GetNavBar from './GetNavBar.jsx';
 
 export class IndexPage extends React.Component {
     
     constructor(props) {
 	super(props);
-
-	this.state = {
-	    isAuthorized: false,
-	    username: ''
-	};
-
-	this.updateState = this.updateState.bind(this);
     }
-
-    // a general method for child components to change state of this parent
-    // Eg. if a user logs in to Aquaint
-    updateState(data) {
-	//event.preventDefault();
-	console.log('updateState() in NavBar called: ', data);
-	this.setState(data);
-	// this.setState({
-	//     isAuthorized: data['isAuthorized'],
-	//     username: data['username']
-	// });
-    }
-
+    
     componentDidUpdate(prevProps, prevState) {
 	console.log("IndexPage componentDidUpdate. State: ", this.state);
     }
@@ -46,7 +27,7 @@ export class IndexPage extends React.Component {
 		  <div className="row">
 		    <div className="col-md-4 col-sm-12">
 		      {/* ReactJS interactive form of user authentication (login or sign-up) */}
-		      <div id="userAuth"><UserSignupForm indexPageUpdateState={this.updateState} /></div>
+		      <div id="userAuth"><UserSignupForm /></div>
 
 		      <div className="container-fluid" style={{float:'left'}} id="aquaint-login">
 			<form action="./scripts/subscribe.php" method="post" id="subscribe_form">
