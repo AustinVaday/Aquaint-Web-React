@@ -1,5 +1,5 @@
 import React from 'react';
-import {CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails} from 'amazon-cognito-identity-js';
+import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 import { Route, Redirect } from 'react-router';
 import { connect } from 'react-redux';
 
@@ -45,9 +45,9 @@ export class UserLoginFormLocal extends React.Component {
             Username: this.state.username,
             Password: this.state.password
         };
-        // var authenticationDetails = new AWS.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData);
         var authenticationDetails = new AuthenticationDetails(authenticationData);
-        var poolData = {
+
+	var poolData = {
             UserPoolId: AwsConfig.COGNITO_USER_POOL_ID,
             ClientId: AwsConfig.COGNITO_CLIENT_ID
         };
@@ -59,11 +59,10 @@ export class UserLoginFormLocal extends React.Component {
         var cognitoUser = new CognitoUser(userData);
         cognitoUser.authenticateUser(authenticationDetails, {
             onSuccess: function(result) {
-                console.log('access token + ' + result.getAccessToken().getJwtToken());
-                //let awsLoginKey = 'cognito-idp.' + AwsConfig.COGNITO_REGION + '.amazonaws.com/' + AwsConfig.COGNITO_USER_POOL_ID;
-		//console.log(`awsLoginKey = ${awsLoginKey}`);
+                console.log('Cognito User Pool authentication successful: ' + result);
 
 		// Retrieve user attributes for an authenticated user
+		/*
 		cognitoUser.getUserAttributes(function(err, result) {
 		    if (err) {
 			console.log(err);
@@ -72,6 +71,8 @@ export class UserLoginFormLocal extends React.Component {
 			console.log(`Get authenticated user attributes: ${result}`);
 		    }
 		});
+		*/
+		
                 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
                     IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
                     Logins: {
@@ -83,11 +84,6 @@ export class UserLoginFormLocal extends React.Component {
 
                 // Instantiate aws sdk service objects now that the credentials have been updated.
                 // example: var s3 = new AWS.S3();
-                alert(`AWS Cognito user login successful; Welcome, ${cognitoUser.getUsername()}!`)
-
-		// Update Redux global state of user authentication
-		this.props.dispatch(loginUser(cognitoUser.getUsername()));
-
 		AWS.config.credentials.refresh((error) => {
 		    if (error) {
 			console.error(error);
@@ -95,27 +91,19 @@ export class UserLoginFormLocal extends React.Component {
 			var identityId = AWS.config.credentials.identityId;
 			console.log(`Cognito User Pool login: your Amazon Cognito Identity: ${identityId}`);
 		    }
-
-		    this.setState({
-			redirectUri: '/' + cognitoUser.getUsername()
-		    });
-
 		});
+
+		let username = cognitoUser.getUsername();
+		alert(`AWS Cognito user login successful; Welcome, ${username}!`);
+		
+		// Update Redux global state of user authentication
+		this.props.dispatch(loginUser(username));
+		
+		this.setState({
+		    redirectUri: '/' + username
+		});
+		
 	    }.bind(this),
-
-	    // 	var cognitoIdentity = new AWS.CognitoIdentity()
-	    // 	cognitoIdentity.getId({
-            //         IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
-            //         Logins: {
-            //             awsLoginKey: result.getIdToken().getJwtToken()
-            //         }}), function (err, identityData) {
-	    // 		if (err) {
-	    // 		    console.log(err);
-	    // 		}
-
-	    // 		alert(`Your Amazon Cognito Identity by getID(): ${identityData}`);
-	    // 	    };
-            // },
 
             onFailure: function(err) {
                 alert(err);
