@@ -341,7 +341,7 @@ class UserSignupFormLocal extends React.Component {
     };
 
     render() {
-	
+	/*
 	if (this.state.willRedirect) {
 	    return (
 		<Redirect to={{
@@ -349,7 +349,7 @@ class UserSignupFormLocal extends React.Component {
 		    userSignupFormState: this.state}} />
 	    );
 	}
-
+	*/
 
         if (this.state.currentPage == 0) {
             return (

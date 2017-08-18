@@ -15,6 +15,7 @@ function userAuth(state = null, action) {
 	let tmp = Object.assign({}, { action.username });
 	console.log("Redux LOGIN_USER action.username = ", action.username, "; new state: ", tmp);
 	*/
+	console.log("Redux LOGIN_USER: action.username = ", action.username);
 	return action.username;
 	
     case LOGOFF_USER:
