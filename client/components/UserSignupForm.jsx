@@ -180,21 +180,20 @@ class UserSignupFormLocal extends React.Component {
 					'cognito-idp.us-east-1.amazonaws.com/us-east-1_yyImSiaeD': result.getIdToken().getJwtToken()
 				    }
 				});
-
+				
 				// call refresh method in order to authenticate user and get new temp credentials
 				AWS.config.credentials.refresh(function(error) {
 				    if (error) {
 					console.error(error);
 					return;
 				    } else {
-					console.log('User authorization succeeds; AWS credentials refreshed. AWS.config.credentials: ', AWS.config.credentials);
-
-					console.log("identityId = ", AWS.config.credentials.credentials.identityId);
-					this.identityId = AWS.config.credentials.credentials.identityId;
-					console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${this.identityId}`);
-
+					console.log('User authorization succeeds; AWS credentials refreshed.');
+					
 					// Update Redux global state of user authentication
 					this.props.dispatch(loginUser(signupUsername));
+
+					this.identityId = AWS.config.credentials.identityId;
+					console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${this.identityId}`);
 				    }
 				}.bind(this));
 
@@ -208,7 +207,6 @@ class UserSignupFormLocal extends React.Component {
 		    }
 		});
 	    }
-
         }.bind(this));
 
     };
