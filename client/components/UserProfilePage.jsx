@@ -5,6 +5,8 @@ import GetNavBar from './GetNavBar.jsx';
 export class UserProfilePage extends React.Component {
     constructor(props) {
 	super(props);
+	console.log("UserProfilePage constructor called. Props: ", this.props);
+	console.log("It has access to AWS SDK global instance: ", AWS);
     }
     
     render() {

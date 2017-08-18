@@ -9,7 +9,7 @@ import UserLoginForm from './UserLoginForm.jsx';
 
 
 // Initialize the Amazon Cognito credentials provider
-var AWS = require('aws-sdk');
+//var AWS = require('aws-sdk');
 // TODO: change this variable name to AWS_REGION
 AWS.config.region = AwsConfig.COGNITO_REGION; // Region
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
