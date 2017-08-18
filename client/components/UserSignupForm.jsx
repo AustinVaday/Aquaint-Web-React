@@ -1,8 +1,12 @@
 import React from 'react';
 import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
-import * as AwsConfig from './AwsConfig';
-import { UserLoginForm } from './UserLoginForm.jsx';
 import { Route, Redirect } from 'react-router';
+import { connect } from 'react-redux';
+
+import * as AwsConfig from './AwsConfig';
+import { LoginUser } from '../state/actions'; 
+import { UserLoginForm } from './UserLoginForm.jsx';
+
 
 // Initialize the Amazon Cognito credentials provider
 var AWS = require('aws-sdk');
@@ -12,7 +16,7 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID});
 
 // React Component for User Signup, including registering a new user on AWS services
-export class UserSignupForm extends React.Component {
+class UserSignupForm extends React.Component {
 
     // Note: instead of using a variable (or an Enum) to store currentPage,
     // it should be stored in the Component state, for possible re-rendering
@@ -208,6 +212,8 @@ export class UserSignupForm extends React.Component {
 				this.props.indexPageUpdateState(userState);
 
 				// User is now logged in; redirect user to his Aquaint profile
+				this.props.dispatch(loginUser(username));
+				
 				this.setState({
 				    willRedirect: true,
 				    redirectURI: '/' + username
@@ -228,7 +234,6 @@ export class UserSignupForm extends React.Component {
 	// to access React-buildin functions, Eg. setState()
 	// https://stackoverflow.com/questions/31045716/react-this-setstate-is-not-a-function
     }
-
 
     completeFacebookSignup(event) {
 	event.preventDefault();
@@ -417,3 +422,6 @@ export class UserSignupForm extends React.Component {
         return null;
     }
 }
+
+// connect component to Redux 
+export UserSignupForm = connect()(UserSignupForm);
