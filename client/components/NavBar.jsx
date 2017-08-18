@@ -32,6 +32,7 @@ export class NavBar extends React.Component {
 		    <a className="navbar-brand goto" href="index.html#wrap"> <img src="./images/logo.svg" alt="Your logo" height="38" width="152" /> </a>
                     <ul className="nav">
                       <li><a href={userProfileUrl}>{this.props.user}</a> </li>
+		      <button onClick={this.props.onSignoutClick}>Sign out</button>
                     </ul>
                     <a className="navbar-user-image" href={userProfileUrl}>
                       <img src={userImage} alt="Your username" className="img-circle" height="38" width="38" />

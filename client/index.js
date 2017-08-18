@@ -27,29 +27,3 @@ ReactDOM.render((
 ), document.getElementById('root'));
 
 // ReactDOM.render(<DisplayProfile />, document.getElementById('displayProfileTest'));
-
-/*
-class UserProfileExample extends React.Component {
-    constructor(props) {
-	super(props);
-    }
-    
-    render() {
-	//console.log(`User page URI: ${this.props.location.pathname}`);
-	return (
-	    <div>
-		Welcome to your profile page, {this.props.username}! 
-	    </div>
-	);
-    }
-}
-
-// Wrapper function to redirect to the actual UserProfile React component
-// Because react-router is expecting a function for rendering, not a class
-// Othwersie the parameters would not be passed correctly
-const UserProfileRoute = ({ match }) => (
-    <div>
-      <UserProfileExample username={match.params.username}/>
-  </div>
-)
-*/
