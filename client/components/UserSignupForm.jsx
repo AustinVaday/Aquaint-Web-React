@@ -4,7 +4,7 @@ import { Route, Redirect } from 'react-router';
 import { connect } from 'react-redux';
 
 import * as AwsConfig from './AwsConfig';
-import { LoginUser } from '../state/actions'; 
+import { loginUser } from '../states/actions'; 
 import { UserLoginForm } from './UserLoginForm.jsx';
 
 
@@ -16,7 +16,7 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID});
 
 // React Component for User Signup, including registering a new user on AWS services
-class UserSignupForm extends React.Component {
+class UserSignupFormLocal extends React.Component {
 
     // Note: instead of using a variable (or an Enum) to store currentPage,
     // it should be stored in the Component state, for possible re-rendering
@@ -24,7 +24,7 @@ class UserSignupForm extends React.Component {
     constructor(props) {
         super(props);
 
-	console.log("UserSignupForm constructor() called.");
+	console.log("UserSignupForm constructor() called. Props: ", this.props);
 
 	//this.FB = props.fb;  // Facebook SDK instance
 	//this.identityId = 'Testing Identity ID';
@@ -424,4 +424,5 @@ class UserSignupForm extends React.Component {
 }
 
 // connect component to Redux 
-export UserSignupForm = connect()(UserSignupForm);
+let UserSignupForm = connect()(UserSignupFormLocal);
+export default UserSignupForm;

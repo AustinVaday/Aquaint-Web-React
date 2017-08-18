@@ -1,6 +1,6 @@
 import React from 'react';
-import { UserSignupForm } from './UserSignupForm.jsx';
-import { NavBar } from './NavBar.jsx';
+import UserSignupForm from './UserSignupForm.jsx';
+import GetNavBar from './getNavBar.jsx';
 
 export class IndexPage extends React.Component {
     
@@ -37,7 +37,7 @@ export class IndexPage extends React.Component {
 	    
 	    <div>
 	      {/* NAVIGATION BEGIN */}
-	      <NavBar user={this.state.username}/>
+	      <GetNavBar />
 	      {/* NAVIGAION END */}
 
 	      {/* INTRO BEGIN */}

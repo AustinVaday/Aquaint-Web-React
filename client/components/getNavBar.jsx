@@ -4,7 +4,7 @@ import { NavBar } from './NavBar.jsx';
 
 const mapStateToProps = state => {
     return {
-	username: state.userAuth
+	user: state.userAuth
     };
 };
 
@@ -16,7 +16,9 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export const getNavBar = connect(
+const GetNavBar = connect(
     mapStateToProps,
     mapDispatchToProps
 )(NavBar);
+
+export default GetNavBar;

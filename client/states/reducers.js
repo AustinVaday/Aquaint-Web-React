@@ -11,10 +11,14 @@ const initialState = {
 function userAuth(state = null, action) {
     switch (action.type) {
     case LOGIN_USER:
-	return Object.assign({}, action.username);
+	/*
+	let tmp = Object.assign({}, { action.username });
+	console.log("Redux LOGIN_USER action.username = ", action.username, "; new state: ", tmp);
+	*/
+	return action.username;
 	
     case LOGOFF_USER:
-	return Object.assign({}, null);
+	return null;
 	
     default:
 	return state;
