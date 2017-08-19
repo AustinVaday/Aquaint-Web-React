@@ -49,7 +49,7 @@ export class UserProfilePage extends React.Component {
 	this.getUserSmpList('austin');
     }
 
-    getUserSmpList(user) {
+    getUserSmpDict(user) {
 	var ddb = new AWS.DynamoDB();
 	var ddbTableParams = {
 	    TableName: 'aquaint-users',
