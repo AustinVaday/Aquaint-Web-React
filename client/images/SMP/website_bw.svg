@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="4495 4018.641 68.717 68.717">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        clip-rule: evenodd;
+      }
+
+      .cls-2 {
+        clip-path: url(#clip-path);
+      }
+
+      .cls-3 {
+        fill: #989898;
+      }
+
+      .cls-4 {
+        fill: #95989a;
+        font-size: 20px;
+        font-family: HelveticaNeue, Helvetica Neue;
+      }
+
+      .cls-5 {
+        fill: #fff;
+      }
+    </style>
+    <clipPath id="clip-path">
+      <path id="Path_209" data-name="Path 209" class="cls-1" d="M34.359-32A34.359,34.359,0,1,0,68.717,2.359,34.359,34.359,0,0,0,34.359-32Z" transform="translate(0 32)"/>
+    </clipPath>
+  </defs>
+  <g id="Group_278" data-name="Group 278" transform="translate(4123 3326)">
+    <g id="Group_160" data-name="Group 160" class="cls-2" transform="translate(372 692.641)">
+      <path id="Path_208" data-name="Path 208" class="cls-3" d="M-5,53.191H85.191V-37H-5Z" transform="translate(-5.737 26.263)"/>
+      <text id="www" class="cls-4" transform="translate(18 40.359)"><tspan x="0" y="0">www</tspan></text>
+      <path id="html" class="cls-5" d="M22.527,46.916,0,35.193V30.064L22.527,18.293v6.636L6.773,32.707l15.754,7.569ZM39.613,12,30.054,54H24.476l9.559-42ZM57.229,32.707,41.473,24.93V18.294L64,30.064v5.129L41.473,46.916v-6.64Z" transform="translate(556 -178.641)"/>
+    </g>
+    <path id="html-2" data-name="html" class="cls-5" d="M13.409,32.783,0,25.805V22.752l13.409-7.007V19.7l-9.377,4.63,9.377,4.505ZM23.579,12l-5.69,25h-3.32l5.69-25ZM34.065,24.326,24.686,19.7v-3.95L38.1,22.752v3.053L24.686,32.783V28.831Z" transform="translate(387 703)"/>
+  </g>
+</svg>

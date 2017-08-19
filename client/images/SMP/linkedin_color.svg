@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="3696.314 4022.845 68.72 68.72">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: rgba(0,0,0,0);
+        clip-rule: evenodd;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+
+      .cls-3 {
+        clip-path: url(#clip-path);
+      }
+
+      .cls-4 {
+        fill: #1178b5;
+      }
+    </style>
+    <clipPath id="clip-path">
+      <path id="Path_284" data-name="Path 284" class="cls-1" d="M207.54,19.508h-7.119V8.367c0-2.656-.047-6.073-3.7-6.073-3.7,0-4.269,2.895-4.269,5.884v11.33h-7.113V-3.4h6.825V-.268h.1A7.479,7.479,0,0,1,199-3.97c7.209,0,8.541,4.744,8.541,10.914ZM177.312-6.53a4.129,4.129,0,0,1-4.132-4.13,4.129,4.129,0,0,1,4.132-4.13,4.13,4.13,0,0,1,4.125,4.13,4.13,4.13,0,0,1-4.125,4.13Zm3.561,26.038h-7.128V-3.4h7.128ZM190.36-32a34.36,34.36,0,1,0,34.36,34.36A34.359,34.359,0,0,0,190.36-32Z" transform="translate(-156 31.999)"/>
+    </clipPath>
+  </defs>
+  <g id="Group_273" data-name="Group 273" transform="translate(3696.314 4022.845)">
+    <circle id="Ellipse_11" data-name="Ellipse 11" class="cls-2" cx="27.5" cy="27.5" r="27.5" transform="translate(6.995 6.999)"/>
+    <g id="Group_247" data-name="Group 247" class="cls-3">
+      <path id="Path_283" data-name="Path 283" class="cls-4" d="M151,53.2h90.2V-37H151Z" transform="translate(-161.737 26.262)"/>
+    </g>
+  </g>
+</svg>

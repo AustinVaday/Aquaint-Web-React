@@ -109,3 +109,72 @@ a:hover{
 	text-decoration: underline;
 
 }
+
+.profile-button{
+	background-color: white;
+	border-radius: 50px;
+	margin-left: 1em;
+}
+
+.profile-button:focus{
+	outline:0;
+}
+.profile-button:hover{
+	-webkit-transition: background-color 200ms linear;
+	-ms-transition: background-color 200ms linear;
+	transition: background-color 200ms linear;
+}
+
+.profile-button-img{
+	height: 6%;
+	transition: all .1s ease-in-out;
+}
+.profile-button-img:hover{
+transform: scale(1.2);
+}
+.profile-section{
+	text-align: center;
+}
+.profile-add-box{
+	margin-top: 5em;
+	text-align: center;
+}
+
+.profile-new-username{
+	border: 0px solid #000000;
+border-bottom-width: 1px;
+background-color: transparent;
+margin-bottom: 3em;
+letter-spacing: 1px;
+font-size:1.25em;
+font-weight:300;
+}
+.profile-new-username:focus{
+	outline:0;
+}
+.profile-edit-button{
+	display: inline-block;
+	margin-left: 1em;
+	letter-spacing: 1px;
+	font-size:1.25em;
+	font-weight:300;
+	color: white;
+	height: 6%;
+	width: 8em;
+	border-style: solid;
+	border-width: 0.25px;
+	background-color:#0F7A9D;
+	border-radius: 25px;
+}
+#add{
+	margin-left: 0em;
+}
+.profile-edit-button:hover{
+	background-color:#096D8E;
+	-webkit-transition: background-color 200ms linear;
+	-ms-transition: background-color 200ms linear;
+	transition: background-color 200ms linear;
+}
+.profile-edit-button:focus{
+	outline:0;
+}
