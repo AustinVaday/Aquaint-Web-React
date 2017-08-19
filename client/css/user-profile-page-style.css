@@ -1,0 +1,21 @@
+.profile-section{
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+   color: #2F3541;
+   font-weight: 300;
+   margin-top: 5em;
+   text-align: center;
+}
+.profile-section .profile-picture{
+  object-fit: cover;
+  height: 12em;
+  width: 12em;
+  border-radius: 0.3em;
+}
+.profile-section .profile-name{
+  margin-top: 0.4em;
+   font-weight: 300;
+   font-size:1.75em;
+}
+.profile-section .profile-bio{
+  margin-top: -9px;
+}
