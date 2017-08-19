@@ -16,6 +16,8 @@ export class UserProfilePage extends React.Component {
 	console.log("UserProfilePage constructor called. Props: ", this.props);
 	console.log("It has access to AWS SDK global instance: ", AWS);
 
+	// TODO: get username from URL
+	this.user = '';
 	this.state = {
             currentPage: 1, // 1 for displaying, 2 for adding
             newUserProfile: "",
@@ -48,12 +50,12 @@ export class UserProfilePage extends React.Component {
 	this.getUserSmpList('austin');
     }
 
-    getUserSmpDict(user) {
+    getUserSmpDict() {
 	var ddb = new AWS.DynamoDB();
 	var ddbTableParams = {
 	    TableName: 'aquaint-users',
 	    Key: {
-		'username': {S: user}
+		'username': {S: this.user}
 	    }
 	};
 	ddb.getItem(ddbTableParams, function(err, data) {
@@ -75,6 +77,68 @@ export class UserProfilePage extends React.Component {
 
 		this.setState({ userSmpDict: socialDict });
 	    }
+	}.bind(this));
+    }
+
+    addUserSmp(SmpName, SmpValue) {
+	// first update the local state, so the changes will reflect on UI immediately
+	var socialDictUpdate = this.state.userSmpDict;
+	if (socialDictUpdate[SmpName]) {
+	    socialDictUpdate[SmpName].push(SmpValue);
+	} else {
+	    socialDictUpdate[SmpName] = [SmpValue];
+	}
+	this.setState({ userSmpDict: socialDictUpdate });
+
+	// then upload this new user dictionary onto DynamoDB, asynchronously
+	var ddb = new AWS.DynamoDB();
+	var ddbTableParams = {
+	    TableName: 'aquaint-users',
+	    Key: {
+		'username': {S: this.user}
+	    }
+	};
+	ddb.getItem(ddbTableParams, function(err, data) {
+	    if (err) {
+		console.log("Error accessing DynamoDB table: ", err);
+		return;
+	    }
+
+	    // first, retrieve up-to-date data from DynamoDB and apply the changes
+	    // Note that the retrieved data is the newest so there will be no
+	    // race condition if user is modifying profile on
+	    // multiple devices simultaneously
+	    var socialDictUpload = data.Item;
+	    if (socialDictUpload.accounts.M[SmpName].L) {
+		socialDictUpload.accounts.M[SmpName].L.push({
+		    S: SmpValue
+		});
+	    } else {
+		let singleSocialList = {
+		    L: [
+			{
+			    S: SmpValue
+			}
+		    ]
+		};
+		socialDictUpload.accounts.M[SmpName] = singleSocialList;
+	    }
+
+	    // upload the updated data to DynamoDB
+	    var putParams = {
+		TableName: "aquaint-users",
+		Item: socialDictUpload
+	    };
+
+	    ddb.putItem(putParams, function(error, data) {
+		if (error) {
+		    console.log(error, error.stack);
+		} else {
+		    console.log("DATA STORED TO DYNAMO! CHECK DYNAMO TO VERIFY.");
+		    console.log(data);
+		}
+	    });
+	    
 	}.bind(this));
     }
     
