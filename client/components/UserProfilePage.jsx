@@ -1,5 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import * as AwsConfig from './AwsConfig';
+
+AWS.config.region = AwsConfig.COGNITO_REGION; // Region
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID});
 
 export class UserProfilePage extends React.Component {
     // TODO: 1) connect to database for props
@@ -14,26 +19,65 @@ export class UserProfilePage extends React.Component {
 	this.state = {
             currentPage: 1, // 1 for displaying, 2 for adding
             newUserProfile: "",
+
+	    userRealname: '',
+	    userSmpDict: {}
         };
 
 	// test data
-	this.userSmpData = {} //should be from User's JSON data
-	this.userSmpData["google"]="austin";
-	this.userSmpData["twitter"]="austin";
-	this.userSmpData["facebook"]="austin";
-	this.userSmpData["slack"]="austin";
-	this.userSmpData["tumblr"]="austin";
-        this.userSmpData["soundcloud"]="austin";
-        this.userSmpData["ios"]="austin";
-        this.userSmpData["android"]="austin";
-        this.userSmpData["youtube"]="austin";
-
+	/*
+	this.state.userSmpDict = {} //should be from User's JSON data
+	this.state.userSmpDict["google"]="austin";
+	this.state.userSmpDict["twitter"]="austin";
+	this.state.userSmpDict["facebook"]="austin";
+	this.state.userSmpDict["slack"]="austin";
+	this.state.userSmpDict["tumblr"]="austin";
+        this.state.userSmpDict["soundcloud"]="austin";
+        this.state.userSmpDict["ios"]="austin";
+        this.state.userSmpDict["android"]="austin";
+        this.state.userSmpDict["youtube"]="austin";
+	*/
+	
 	// constant order
 	this.profileList = ['facebook','snapchat','youtube','tumblr', 'soundcloud', 'website', 'ios', 'android', 'google','twitter','instagram','slack','linkedin'];
 	this.orderedProfiles = this.profileList.sort();
 
+	// member function bindings
+	this.getUserSmpList = this.getUserSmpList.bind(this);
+
+	this.getUserSmpList('austin');
     }
 
+    getUserSmpList(user) {
+	var ddb = new AWS.DynamoDB();
+	var ddbTableParams = {
+	    TableName: 'aquaint-users',
+	    Key: {
+		'username': {S: user}
+	    }
+	};
+	ddb.getItem(ddbTableParams, function(err, data) {
+	    if (err) {
+		console.log("Error accessing DynamoDB table: ", err);
+	    } else {
+		console.log("User entry in aquaint-user table:", data);
+		var socialDict = {};
+		
+		if (data.Item != null) {
+		    for (var socialMapElem in data.Item.accounts.M) {
+			var singleSocialArray = [];
+			for (var socialId in data.Item.accounts.M[socialMapElem].L) {
+			    singleSocialArray.push(data.Item.accounts.M[socialMapElem].L[socialId].S);
+			}
+			socialDict[socialMapElem] = singleSocialArray;
+		    }
+		}
+
+		this.setState({ userSmpDict: socialDict });
+	    }
+	}.bind(this));
+    }
+    
     editProfile(event) {
         event.preventDefault();
         this.setState({
@@ -72,9 +116,10 @@ export class UserProfilePage extends React.Component {
     }
 
     render() {
-	console.log(this.userSmpData);
+	console.log(this.state.userSmpDict);
+	
 	var activatedSMP = [];
-	var existingSMP = Object.keys(this.userSmpData).sort();
+	var existingSMP = Object.keys(this.state.userSmpDict).sort();
 	for (var i = 0; i < existingSMP.length; i++) {
             var sm = existingSMP[i];
             var dir = "./images/SMP/"+sm+"_color.svg";
@@ -83,6 +128,7 @@ export class UserProfilePage extends React.Component {
 		  <img type="submit" className="profile-button-img" src={dir}/>
 		</button>);
 	}
+	
 	var allSMP = activatedSMP.slice();
 	for (var i = 0; i < this.orderedProfiles.length; i++){
 	    if(!existingSMP.includes(this.orderedProfiles[i])){
@@ -104,7 +150,9 @@ export class UserProfilePage extends React.Component {
 		  {activatedSMP}
 		  <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Add Profiles</button>
 		</div>);
-	} else if (this.state.currentPage==2) {
+	}
+	
+	else if (this.state.currentPage==2) {
             console.log("in state 2");
             return (
 		<div>
@@ -129,6 +177,7 @@ export class UserProfilePage extends React.Component {
 		  </div>
 		</div>);
 	}
+
         return null;
     }
 }
