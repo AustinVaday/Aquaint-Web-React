@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import GetNavBar from './GetNavBar.jsx';
-import UserProfilePage from './UserProfilePage.jsx';
+import { UserProfilePage } from './UserProfilePage.jsx';
 
 export class UserProfilePageWrapper extends React.Component {
 
@@ -12,15 +12,18 @@ export class UserProfilePageWrapper extends React.Component {
   }
 
   render() {
+    // Get username by removing the backslash character in the beginning
+    var user = this.props.match.url.substring(1);
+    var userImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/" + user;
+    var userScanCodeImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/scancodes/" + user;
     return (
       <div>
         <GetNavBar />
           <header id = "full-intro" className = "intro-block" >
             <div className="container">
-              <div className="row">
-                  <div className="col-md-4 col-sm-12">
-                    <UserProfilePage />
-                  </div>
+              <div className="profile-section">
+                <img src={userImage} className="profile-picture" />
+                <UserProfilePage {...this.props} />
               </div>
             </div>
           </header>

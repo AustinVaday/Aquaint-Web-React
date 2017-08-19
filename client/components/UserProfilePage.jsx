@@ -99,20 +99,26 @@ export class UserProfilePage extends React.Component {
             console.log("in state 1");
             return (
 		<div>
+      <h2 className="profile-name"> Austin's Name Here </h2>
+      <p className="profile-bio"> Austin's bio here UCLA 83 wooh </p>
 		  {activatedSMP}
-		  <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Edit Profiles</button>
+		  <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Add Profiles</button>
 		</div>);
 	} else if (this.state.currentPage==2) {
             console.log("in state 2");
             return (
 		<div>
+      <h2 className="profile-name"> Austin's Name Here </h2>
+      <p className="profile-bio"> Austin's bio here UCLA 83 wooh </p>
 		  {allSMP}
 		  <button type="submit" className="profile-edit-button" onClick={this.finishEdit}>Finish</button>
 		</div>);
 	} else if (this.state.currentPage==3) {
             console.log("in state 3");
             return (
-		<div className="profile-section">
+		<div>
+      <h2 className="profile-name"> Austin's Name Here </h2>
+      <p className="profile-bio"> Austin's bio here UCLA 83 wooh </p>
 		  {allSMP}
 		  <div className="profile-add-box">
 		    <form onSubmit={this.handleSubmit}>
