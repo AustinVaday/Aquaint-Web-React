@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import GetNavBar from './GetNavBar.jsx'; 
 
 export class UserProfilePage extends React.Component {
     // TODO: 1) connect to database for props
@@ -8,6 +7,7 @@ export class UserProfilePage extends React.Component {
 
     constructor(props) {
 	super(props);
+  console.log("UserProfilePage constructor called.")
 	console.log("UserProfilePage constructor called. Props: ", this.props);
 	console.log("It has access to AWS SDK global instance: ", AWS);
 
@@ -40,28 +40,28 @@ export class UserProfilePage extends React.Component {
             currentPage: 2,
         });
     }
-    
+
     finishEdit(event) {
         event.preventDefault();
         this.setState({
             currentPage: 1,
         });
     }
-    
+
     formPopUp(event) {
         event.preventDefault();
         this.setState({
             currentPage: 3,
         });
     }
-    
+
     finishAdd(event) {
         event.preventDefault();
         this.setState({
             currentPage: 2,
         });
     }
-    
+
     handleChange(event) {
         // Update React state when the form's input changes
         // For example, when user types 'a' into the password field
@@ -70,7 +70,7 @@ export class UserProfilePage extends React.Component {
             [event.target.name]: event.target.value
         });
     }
-    
+
     render() {
 	console.log(this.userSmpData);
 	var activatedSMP = [];
@@ -94,12 +94,11 @@ export class UserProfilePage extends React.Component {
 		    </button>);
 	    }
 	}
-	
+
 	if (this.state.currentPage==1) {
             console.log("in state 1");
             return (
 		<div>
-		  
 		  {activatedSMP}
 		  <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Edit Profiles</button>
 		</div>);
@@ -107,7 +106,6 @@ export class UserProfilePage extends React.Component {
             console.log("in state 2");
             return (
 		<div>
-		  <GetNavBar />
 		  {allSMP}
 		  <button type="submit" className="profile-edit-button" onClick={this.finishEdit}>Finish</button>
 		</div>);
@@ -115,7 +113,6 @@ export class UserProfilePage extends React.Component {
             console.log("in state 3");
             return (
 		<div className="profile-section">
-		  <GetNavBar />
 		  {allSMP}
 		  <div className="profile-add-box">
 		    <form onSubmit={this.handleSubmit}>
@@ -128,29 +125,4 @@ export class UserProfilePage extends React.Component {
 	}
         return null;
     }
-
-    /*
-    render() {
-    
-	return (
-	    <div>
-	      <GetNavBar />
-
-	      <header id="full-intro" className="intro-block">
-		<div className="container">
-		  <div className="row">
-		    <div className="col-md-4 col-sm-12">
-
-		      <p>
-			Welcome to your profile page, <br/>{this.props.match.params.username}!
-		      </p>
-		      
-		    </div>
-		  </div>
-		</div>
-	      </header>
-	    </div>
-	);
-    }
-    */
 }
