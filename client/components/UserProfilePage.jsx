@@ -12,12 +12,12 @@ export class UserProfilePage extends React.Component {
 
     constructor(props) {
 	super(props);
-  console.log("UserProfilePage constructor called.")
+	console.log("UserProfilePage constructor called.");
 	console.log("UserProfilePage constructor called. Props: ", this.props);
 	console.log("It has access to AWS SDK global instance: ", AWS);
 
 	// TODO: get username from URL
-	this.user = '';
+	this.user = 'max-hello-sns';
 	this.state = {
             currentPage: 1, // 1 for displaying, 2 for adding
             newUserProfile: "",
@@ -45,9 +45,14 @@ export class UserProfilePage extends React.Component {
 	this.orderedProfiles = this.profileList.sort();
 
 	// member function bindings
-	this.getUserSmpList = this.getUserSmpList.bind(this);
-
-	this.getUserSmpList('austin');
+	this.getUserSmpDict = this.getUserSmpDict.bind(this);
+	this.addUserSmp = this.addUserSmp.bind(this);
+	this.editProfile = this.editProfile.bind(this);
+	this.finishEdit = this.finishEdit.bind(this);
+	this.formPopUp = this.formPopUp.bind(this);
+	this.finishAdd = this.finishAdd.bind(this);
+	
+	this.getUserSmpDict();
     }
 
     getUserSmpDict() {
@@ -65,7 +70,7 @@ export class UserProfilePage extends React.Component {
 		console.log("User entry in aquaint-user table:", data);
 		var socialDict = {};
 		
-		if (data.Item != null) {
+		if (data.Item.accouts != null) {
 		    for (var socialMapElem in data.Item.accounts.M) {
 			var singleSocialArray = [];
 			for (var socialId in data.Item.accounts.M[socialMapElem].L) {
@@ -80,13 +85,13 @@ export class UserProfilePage extends React.Component {
 	}.bind(this));
     }
 
-    addUserSmp(SmpName, SmpValue) {
+    addUserSmp(smpName, smpValue) {
 	// first update the local state, so the changes will reflect on UI immediately
 	var socialDictUpdate = this.state.userSmpDict;
-	if (socialDictUpdate[SmpName]) {
-	    socialDictUpdate[SmpName].push(SmpValue);
+	if (socialDictUpdate[smpName]) {
+	    socialDictUpdate[smpName].push(smpValue);
 	} else {
-	    socialDictUpdate[SmpName] = [SmpValue];
+	    socialDictUpdate[smpName] = [smpValue];
 	}
 	this.setState({ userSmpDict: socialDictUpdate });
 
@@ -105,24 +110,28 @@ export class UserProfilePage extends React.Component {
 	    }
 
 	    // first, retrieve up-to-date data from DynamoDB and apply the changes
-	    // Note that the retrieved data is the newest so there will be no
-	    // race condition if user is modifying profile on
-	    // multiple devices simultaneously
+	    // the retrieved data is the newest so there will be no race condition
+	    // if user is modifying profile on multiple devices simultaneously
 	    var socialDictUpload = data.Item;
-	    if (socialDictUpload.accounts.M[SmpName].L) {
-		socialDictUpload.accounts.M[SmpName].L.push({
-		    S: SmpValue
+	    if (socialDictUpload.accounts != null && socialDictUpload.accounts.M[smpName]) {
+		socialDictUpload.accounts.M[smpName].L.push({
+		    S: smpValue
 		});
 	    } else {
+		if (socialDictUpload.accounts == null) {
+		    socialDictUpload['accounts'] = {
+			    M: {}
+		    };
+		}
 		let singleSocialList = {
 		    L: [
 			{
-			    S: SmpValue
+			    S: smpValue
 			}
 		    ]
 		};
-		socialDictUpload.accounts.M[SmpName] = singleSocialList;
-	    }
+		socialDictUpload.accounts.M[smpName] = singleSocialList;
+	    } 
 
 	    // upload the updated data to DynamoDB
 	    var putParams = {
@@ -165,6 +174,12 @@ export class UserProfilePage extends React.Component {
 
     finishAdd(event) {
         event.preventDefault();
+
+	// TESTING ONLY
+	console.log("Finished editing form.");
+	this.addUserSmp('facebook', '12345678');
+	//this.addUserSmp('snapchat', 'wybmax');
+	
         this.setState({
             currentPage: 2,
         });
@@ -185,6 +200,7 @@ export class UserProfilePage extends React.Component {
 	var activatedSMP = [];
 	var existingSMP = Object.keys(this.state.userSmpDict).sort();
 	for (var i = 0; i < existingSMP.length; i++) {
+	    // TODO: we now suppose each social media site only contains 1 profile
             var sm = existingSMP[i];
             var dir = "./images/SMP/"+sm+"_color.svg";
     	    activatedSMP.push(
@@ -205,32 +221,30 @@ export class UserProfilePage extends React.Component {
 	    }
 	}
 
-	if (this.state.currentPage==1) {
+	if (this.state.currentPage == 1) {
             console.log("in state 1");
             return (
 		<div>
-      <h2 className="profile-name"> Austin's Name Here </h2>
-      <p className="profile-bio"> Austin's bio here UCLA 83 wooh </p>
+		  <h2 className="profile-name"> Austin's Name Here </h2>
+		  <p className="profile-bio"> Austin's bio here UCLA 83 wooh </p>
 		  {activatedSMP}
 		  <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Add Profiles</button>
 		</div>);
-	}
-	
-	else if (this.state.currentPage==2) {
+	} else if (this.state.currentPage == 2) {
             console.log("in state 2");
             return (
 		<div>
-      <h2 className="profile-name"> Austin's Name Here </h2>
-      <p className="profile-bio"> Austin's bio here UCLA 83 wooh </p>
+		  <h2 className="profile-name"> Austin's Name Here </h2>
+		  <p className="profile-bio"> Austin's bio here UCLA 83 wooh </p>
 		  {allSMP}
 		  <button type="submit" className="profile-edit-button" onClick={this.finishEdit}>Finish</button>
 		</div>);
-	} else if (this.state.currentPage==3) {
+	} else if (this.state.currentPage == 3) {
             console.log("in state 3");
             return (
 		<div>
-      <h2 className="profile-name"> Austin's Name Here </h2>
-      <p className="profile-bio"> Austin's bio here UCLA 83 wooh </p>
+		  <h2 className="profile-name"> Austin's Name Here </h2>
+		  <p className="profile-bio"> Austin's bio here UCLA 83 wooh </p>
 		  {allSMP}
 		  <div className="profile-add-box">
 		    <form onSubmit={this.handleSubmit}>
