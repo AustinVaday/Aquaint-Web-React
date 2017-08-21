@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+//import AddProfileForm from './AddProfileForm.jsx';
 import * as AwsConfig from './AwsConfig';
 
 AWS.config.region = AwsConfig.COGNITO_REGION; // Region
@@ -19,11 +20,13 @@ export class UserProfilePage extends React.Component {
 	this.user = this.props.match.params.username;
 	this.state = {
             currentPage: 1, // 1 for displaying, 2 for adding
-            newUserProfile: "",
+            newUserProfile: "", 
 
 	    userRealname: null,
 	    userSmpDict: {}
         };
+	// TODO: this variable may not be really necessary
+	this.socialNamePendingToAdd = null;  // the social media name being added in AddProfileForm
 
 	// test data
 	/*
@@ -50,6 +53,7 @@ export class UserProfilePage extends React.Component {
 	this.finishEdit = this.finishEdit.bind(this);
 	this.formPopUp = this.formPopUp.bind(this);
 	this.finishAdd = this.finishAdd.bind(this);
+	this.handleChange = this.handleChange.bind(this);
 	
 	this.getUserSmpDict();
     }
@@ -161,7 +165,7 @@ export class UserProfilePage extends React.Component {
 	    
 	}.bind(this));
     }
-    
+
     editProfile(event) {
         event.preventDefault();
         this.setState({
@@ -176,8 +180,11 @@ export class UserProfilePage extends React.Component {
         });
     }
 
-    formPopUp(event) {
+    formPopUp(socialMedia) {
         event.preventDefault();
+	console.log("FormPopUp: ", socialMedia);
+
+	this.socialNamePendingToAdd = socialMedia;
         this.setState({
             currentPage: 3,
         });
@@ -186,11 +193,14 @@ export class UserProfilePage extends React.Component {
     finishAdd(event) {
         event.preventDefault();
 
+	console.log(`Finished editing form; going to add ${this.state.newUserProfile} to ${this.socialNamePendingToAdd}`);
+	this.addUserSmp(this.socialNamePendingToAdd, this.state.newUserProfile);
+
 	// TESTING ONLY
-	console.log("Finished editing form.");
-	this.addUserSmp('facebook', '12345678');
+	//this.addUserSmp('facebook', '12345678');
 	//this.addUserSmp('snapchat', 'wybmax');
 	
+	this.socialNamePendingToAdd = null;
         this.setState({
             currentPage: 2,
         });
@@ -212,10 +222,10 @@ export class UserProfilePage extends React.Component {
 	var existingSMP = Object.keys(this.state.userSmpDict).sort();
 	for (var i = 0; i < existingSMP.length; i++) {
 	    // TODO: we now suppose each social media site only contains 1 profile
-            var sm = existingSMP[i];
-            var dir = "./images/SMP/"+sm+"_color.svg";
+            let sm = existingSMP[i];
+            let dir = "./images/SMP/"+sm+"_color.svg";
     	    activatedSMP.push(
-		<button key={i} type="submit" onClick={this.formPopUp} className="profile-button">
+		<button key={sm} type="submit" onClick={() => this.formPopUp(sm)} className="profile-button">
 		  <img type="submit" className="profile-button-img" src={dir}/>
 		</button>);
 	}
@@ -223,10 +233,10 @@ export class UserProfilePage extends React.Component {
 	var allSMP = activatedSMP.slice();
 	for (var i = 0; i < this.orderedProfiles.length; i++){
 	    if(!existingSMP.includes(this.orderedProfiles[i])){
-		var sm = this.orderedProfiles[i];
-		var dir = "./images/SMP/"+sm+"_bw.svg";
+		let sm = this.orderedProfiles[i];
+		let dir = "./images/SMP/"+sm+"_bw.svg";
 		allSMP.push(
-		    <button key={i} type="submit" onClick={this.formPopUp} className="profile-button">
+		    <button key={sm} type="submit" onClick={() => this.formPopUp(sm)} className="profile-button">
 		      <img type="submit" className="profile-button-img" src={dir}/>
 		    </button>);
 	    }
@@ -258,7 +268,7 @@ export class UserProfilePage extends React.Component {
 		  <p className="profile-bio">{this.user}'s dummy bio...</p>
 		  {allSMP}
 		  <div className="profile-add-box">
-		    <form onSubmit={this.handleSubmit}>
+		    <form>
 		      <input className="profile-new-username" placeholder="Your Username/URL"  name="newUserProfile" value={this.state.newUserProfile} onChange={this.handleChange} />
 		      <br/>
 		      <button type="submit" className="profile-edit-button" id="add" onClick={this.finishAdd}>Add</button>
