@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import * as AwsConfig from './AwsConfig';
 
 AWS.config.region = AwsConfig.COGNITO_REGION; // Region
@@ -12,17 +13,15 @@ export class UserProfilePage extends React.Component {
 
     constructor(props) {
 	super(props);
-	console.log("UserProfilePage constructor called.");
 	console.log("UserProfilePage constructor called. Props: ", this.props);
-	console.log("It has access to AWS SDK global instance: ", AWS);
+	//console.log("It has access to AWS SDK global instance: ", AWS);
 
-	// TODO: get username from URL
-	this.user = 'max-hello-sns';
+	this.user = this.props.match.params.username;
 	this.state = {
             currentPage: 1, // 1 for displaying, 2 for adding
             newUserProfile: "",
 
-	    userRealname: '',
+	    userRealname: null,
 	    userSmpDict: {}
         };
 
@@ -55,6 +54,12 @@ export class UserProfilePage extends React.Component {
 	this.getUserSmpDict();
     }
 
+    componentDidUpdate() {
+	console.log("UserProfilePage componentDidUpdate. State: ", this.state);
+    }
+
+    // get Aquaint user data (real name, social media profiles, etc.) from DynamoDB
+    // only needs to be called once in React component's constructor
     getUserSmpDict() {
 	var ddb = new AWS.DynamoDB();
 	var ddbTableParams = {
@@ -68,12 +73,16 @@ export class UserProfilePage extends React.Component {
 		console.log("Error accessing DynamoDB table: ", err);
 	    } else {
 		console.log("User entry in aquaint-user table:", data);
-		var socialDict = {};
+		if (this.state.userRealname == null) {
+		    this.setState({ userRealname: data.Item.realname.S });
+		}
 		
-		if (data.Item.accouts != null) {
+		var socialDict = {};
+		if (data.Item.accounts != null) {
 		    for (var socialMapElem in data.Item.accounts.M) {
 			var singleSocialArray = [];
 			for (var socialId in data.Item.accounts.M[socialMapElem].L) {
+			    console.log(socialMapElem + ": " + data.Item.accounts.M[socialMapElem].L[socialId].S);
 			    singleSocialArray.push(data.Item.accounts.M[socialMapElem].L[socialId].S);
 			}
 			socialDict[socialMapElem] = singleSocialArray;
@@ -85,6 +94,8 @@ export class UserProfilePage extends React.Component {
 	}.bind(this));
     }
 
+    // add a social media profile to this Aquaint user
+    // reflecting the change on UI and sending this change to AWS backend
     addUserSmp(smpName, smpValue) {
 	// first update the local state, so the changes will reflect on UI immediately
 	var socialDictUpdate = this.state.userSmpDict;
@@ -225,8 +236,8 @@ export class UserProfilePage extends React.Component {
             console.log("in state 1");
             return (
 		<div>
-		  <h2 className="profile-name"> Austin's Name Here </h2>
-		  <p className="profile-bio"> Austin's bio here UCLA 83 wooh </p>
+		  <h2 className="profile-name">{this.state.userRealname}</h2>
+		  <p className="profile-bio">{this.user}'s dummy bio...</p>
 		  {activatedSMP}
 		  <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Add Profiles</button>
 		</div>);
@@ -234,8 +245,8 @@ export class UserProfilePage extends React.Component {
             console.log("in state 2");
             return (
 		<div>
-		  <h2 className="profile-name"> Austin's Name Here </h2>
-		  <p className="profile-bio"> Austin's bio here UCLA 83 wooh </p>
+		  <h2 className="profile-name">{this.user}</h2>
+		  <p className="profile-bio">{this.user}'s dummy bio... </p>
 		  {allSMP}
 		  <button type="submit" className="profile-edit-button" onClick={this.finishEdit}>Finish</button>
 		</div>);
@@ -243,8 +254,8 @@ export class UserProfilePage extends React.Component {
             console.log("in state 3");
             return (
 		<div>
-		  <h2 className="profile-name"> Austin's Name Here </h2>
-		  <p className="profile-bio"> Austin's bio here UCLA 83 wooh </p>
+		  <h2 className="profile-name">{this.user}</h2>
+		  <p className="profile-bio">{this.user}'s dummy bio...</p>
 		  {allSMP}
 		  <div className="profile-add-box">
 		    <form onSubmit={this.handleSubmit}>
