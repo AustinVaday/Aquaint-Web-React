@@ -52,6 +52,10 @@ class UserSignupFormLocal extends React.Component {
 	this.completeFacebookSignup = this.completeFacebookSignup.bind(this);
     };
 
+    componentDidUpdate() {
+	console.log("UserSignupForm componentDidUpdate; State: ", this.state);
+    }
+    
     // Initialize a new Aquaint user in AWS databases
     completeUserRegistration(username) {
     	// generate user scan code on Lambda
@@ -326,8 +330,9 @@ class UserSignupFormLocal extends React.Component {
 
 				this.completeUserRegistration(signup_username);
 
+				// TODO: the URI redirection not working now
 				this.setState({
-				    redirectUri: '' + signup_username
+				    redirectUri: '/' + signup_username
 				});
 			    } else {
 				console.log("Error accessing DynamoDB table:", err);
@@ -345,7 +350,7 @@ class UserSignupFormLocal extends React.Component {
 	
 	if (this.state.redirectUri) {
 	    return (
-		<Redirect to={{pathname: this.state.redirectURI}} />
+		<Redirect to={{pathname: this.state.redirectUri}} />
 	    );
 	}
 	

@@ -86,7 +86,7 @@ export class UserProfilePage extends React.Component {
 		    for (var socialMapElem in data.Item.accounts.M) {
 			var singleSocialArray = [];
 			for (var socialId in data.Item.accounts.M[socialMapElem].L) {
-			    console.log(socialMapElem + ": " + data.Item.accounts.M[socialMapElem].L[socialId].S);
+			    //console.log(socialMapElem + ": " + data.Item.accounts.M[socialMapElem].L[socialId].S);
 			    singleSocialArray.push(data.Item.accounts.M[socialMapElem].L[socialId].S);
 			}
 			socialDict[socialMapElem] = singleSocialArray;
