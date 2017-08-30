@@ -389,7 +389,7 @@ class UserSignupFormLocal extends React.Component {
               <div className ="welcome-div">
                 <img height="15%" src="./images/Aquaint_welcome_logo.svg" />
                 <h1 className="welcome-header">Welcome</h1>
-                <h2 className="welcome-subtitle">You're one step away from a brand new experience</h2>
+                <h2 className="welcome-subtitle">You're one step away from a brand new experience.</h2>
                 <br/><br/>
                   <form onSubmit={this.handleSignup}>
                      <input className="welcome-input" placeholder="Username"  name="username" value={this.state.username} onChange={this.handleChange} />
@@ -411,7 +411,7 @@ class UserSignupFormLocal extends React.Component {
                 <div className="welcome-div">
                 <img height="15%" src="./images/Aquaint_welcome_logo.svg" />
                 <h1 className="welcome-header">Welcome</h1>
-                <h2 className="welcome-subtitle">You're one step away from a brand new experience</h2>
+                <h2 className="welcome-subtitle">You're one step away from a brand new experience.</h2>
                 <br/><br/>
                     <form onSubmit={this.completeFacebookSignup}>
                         <input className="welcome-input" placeholder="Choose an username for your Aquaint profile..." name="FbSignupUsername" value={this.state.FbSignupUsername} onChange={this.handleChange}/>
