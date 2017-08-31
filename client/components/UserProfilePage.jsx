@@ -19,7 +19,7 @@ export default class UserProfilePage extends React.Component {
 	this.user = this.props.match.params.username;
 	this.state = {
             currentPage: 1, // 1 for displaying, 2 for adding
-            newUserProfile: "", 
+            newUserProfile: "",
 
 	    userRealname: null,
 	    userSmpDict: {}
@@ -40,7 +40,7 @@ export default class UserProfilePage extends React.Component {
         this.state.userSmpDict["android"]="austin";
         this.state.userSmpDict["youtube"]="austin";
 	*/
-	
+
 	// constant order
 	this.profileList = ['facebook','snapchat','youtube','tumblr', 'soundcloud', 'website', 'ios', 'android', 'google','twitter','instagram','slack','linkedin'];
 	this.orderedProfiles = this.profileList.sort();
@@ -53,7 +53,8 @@ export default class UserProfilePage extends React.Component {
 	this.formPopUp = this.formPopUp.bind(this);
 	this.finishAdd = this.finishAdd.bind(this);
 	this.handleChange = this.handleChange.bind(this);
-	
+  this.handleProfileClick = this.handleProfileClick.bind(this);
+
 	this.getUserSmpDict();
     }
 
@@ -79,7 +80,7 @@ export default class UserProfilePage extends React.Component {
 		if (this.state.userRealname == null) {
 		    this.setState({ userRealname: data.Item.realname.S });
 		}
-		
+
 		var socialDict = {};
 		if (data.Item.accounts != null) {
 		    for (var socialMapElem in data.Item.accounts.M) {
@@ -145,7 +146,7 @@ export default class UserProfilePage extends React.Component {
 		    ]
 		};
 		socialDictUpload.accounts.M[smpName] = singleSocialList;
-	    } 
+	    }
 
 	    // upload the updated data to DynamoDB
 	    var putParams = {
@@ -161,7 +162,7 @@ export default class UserProfilePage extends React.Component {
 		    console.log(data);
 		}
 	    });
-	    
+
 	}.bind(this));
     }
 
@@ -198,7 +199,7 @@ export default class UserProfilePage extends React.Component {
 	// TESTING ONLY
 	//this.addUserSmp('facebook', '12345678');
 	//this.addUserSmp('snapchat', 'wybmax');
-	
+
 	this.socialNamePendingToAdd = null;
         this.setState({
             currentPage: 2,
@@ -214,21 +215,49 @@ export default class UserProfilePage extends React.Component {
         });
     }
 
+    handleProfileClick(sm,username) {
+      // Handle deep link to corresponding URL
+      
+    }
+
     render() {
 	console.log(this.state.userSmpDict);
-	
+
 	var activatedSMP = [];
-	var existingSMP = Object.keys(this.state.userSmpDict).sort();
+
+  // Convert dictionary to a list of arrays i.e.:
+  //   [ ['snapchat', 'austin1'],
+  //     ['snapchat', 'austin2'],
+  //     ['facebook', '123123123'] ]
+  var sortedKeys = Object.keys(this.state.userSmpDict).sort();
+  var existingSMP = [];
+
+  console.log("sortedKeys: ", sortedKeys);
+  for (var i in sortedKeys) {
+    var key = sortedKeys[i]
+    console.log("key: ", key);
+
+    for (var j in this.state.userSmpDict[key]) {
+      var username = this.state.userSmpDict[key][j];
+      console.log("username: ", username);
+      var tupleArray = [key, username];
+      existingSMP.push(tupleArray);
+    }
+  }
+
+  console.log("existingSMP new is: ", existingSMP);
+
+	// var existingSMP = Object.keys(this.state.userSmpDict).sort();
 	for (var i = 0; i < existingSMP.length; i++) {
 	    // TODO: we now suppose each social media site only contains 1 profile
-            let sm = existingSMP[i];
+            let sm = existingSMP[i][0];
             let dir = "./images/SMP/"+sm+"_color.svg";
     	    activatedSMP.push(
 		<button key={sm} type="submit" onClick={() => this.formPopUp(sm)} className="profile-button">
 		  <img type="submit" className="profile-button-img" src={dir}/>
 		</button>);
 	}
-	
+
 	var allSMP = activatedSMP.slice();
 	for (var i = 0; i < this.orderedProfiles.length; i++){
 	    if(!existingSMP.includes(this.orderedProfiles[i])){
@@ -245,13 +274,13 @@ export default class UserProfilePage extends React.Component {
 	console.log(`User permissions: this.userLoggedin = ${this.props.userLoggedin}, this.user = ${this.user}`);
 	const allowEdit = (this.props.userLoggedin != null && this.props.userLoggedin == this.user) ? true : false;
 	console.log("Can I edit this profile page now? ", allowEdit);
-	
+
 	if (this.state.currentPage == 1) {
             console.log("in state 1");
             return (
 		<div>
 		  <h2 className="profile-name">{this.state.userRealname}</h2>
-		  <p className="profile-bio">{this.user}'s dummy bio...</p>
+		  <p className="profile-bio">{this.user}''s dummy bio...</p>
 		  {activatedSMP}
 		  { allowEdit &&
 		      <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Add Profiles</button>
@@ -262,7 +291,7 @@ export default class UserProfilePage extends React.Component {
             return (
 		<div>
 		  <h2 className="profile-name">{this.user}</h2>
-		  <p className="profile-bio">{this.user}'s dummy bio... </p>
+		  <p className="profile-bio">{this.user}''s dummy bio... </p>
 		  {allSMP}
 		  <button type="submit" className="profile-edit-button" onClick={this.finishEdit}>Finish</button>
 		</div>);
@@ -271,7 +300,7 @@ export default class UserProfilePage extends React.Component {
             return (
 		<div>
 		  <h2 className="profile-name">{this.user}</h2>
-		  <p className="profile-bio">{this.user}'s dummy bio...</p>
+		  <p className="profile-bio">{this.user}''s dummy bio...</p>
 		  {allSMP}
 		  <div className="profile-add-box">
 		    <form>
@@ -286,4 +315,3 @@ export default class UserProfilePage extends React.Component {
         return null;
     }
 }
-
