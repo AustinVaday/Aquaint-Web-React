@@ -73,9 +73,15 @@ class UserSignupFormLocal extends React.Component {
 	console.log("UserSignupForm componentWillReceiveProps; nextProps: ", nextProps);
 	
 	// determine if the signup/login form should be shown based on user login status
+	// NOTE: if UserSignupForm's state is changed when the user logs in at UserLoginForm
+	// UserSignupForm will be unmounted and re-rendered first which interferes with
+	// UserLoginForm's synchronous re-direction by changing states
+	/*
 	if (this.props.user == null && nextProps.user != null) {
 	    this.setState({ currentPage: 4 });
-	} else if (this.props.user != null && nextProps.user == null) {
+	}
+	*/
+	if (this.props.user != null && nextProps.user == null) {
 	    this.setState({ currentPage: 0 });
 	}
     }
