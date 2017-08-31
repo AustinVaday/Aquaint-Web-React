@@ -7,7 +7,6 @@ import * as AwsConfig from './AwsConfig';
 import { loginUser } from '../states/actions'; 
 import UserLoginForm from './UserLoginForm.jsx';
 
-
 // Initialize the Amazon Cognito credentials provider
 // TODO: change this variable name to AWS_REGION
 AWS.config.region = AwsConfig.COGNITO_REGION; // Region
@@ -30,7 +29,7 @@ class UserSignupFormLocal extends React.Component {
         this.state = {
 	    // UI state of which part of the form it should display
 	    // TODO: make this an enum
-            currentPage: 0, // 0 for first part of sign-up, 1 for second part, 2 for user login, 3 for choosing a username if login by Facebook the first time
+            currentPage: 0, // 0 for first part of sign-up, 1 for second part, 2 for user login, 3 for choosing a username if login by Facebook the first time, 4 is user is already logged in
 
             email: '',
             fullname: '',
@@ -43,6 +42,12 @@ class UserSignupFormLocal extends React.Component {
 	    FbSignupUsername: ''
         };
 
+	// determine if the signup/login form should be shown based on user login status
+	const isUserLoggedin = (this.props.user != null) ? true : false;
+	if (isUserLoggedin) {
+	    this.state.currentPage = 4;
+	}
+	
         this.handleChange = this.handleChange.bind(this);
         this.handleContinue = this.handleContinue.bind(this);
         this.handleSignup = this.handleSignup.bind(this);
@@ -54,6 +59,31 @@ class UserSignupFormLocal extends React.Component {
 
     componentDidUpdate() {
 	console.log("UserSignupForm componentDidUpdate; State: ", this.state);
+	/*
+	const isUserLoggedin = (this.props.user != null) ? true : false;
+	if (isUserLoggedin) {
+	    this.setState({ currentPage: 4 });
+	} else {
+	    this.setState({ currentPage: 0 });
+	}
+	*/
+    }
+
+    componentWillReceiveProps(nextProps) {
+	console.log("UserSignupForm componentWillReceiveProps; nextProps: ", nextProps);
+	
+	// determine if the signup/login form should be shown based on user login status
+	// NOTE: if UserSignupForm's state is changed when the user logs in at UserLoginForm
+	// UserSignupForm will be unmounted and re-rendered first which interferes with
+	// UserLoginForm's synchronous re-direction by changing states
+	/*
+	if (this.props.user == null && nextProps.user != null) {
+	    this.setState({ currentPage: 4 });
+	}
+	*/
+	if (this.props.user != null && nextProps.user == null) {
+	    this.setState({ currentPage: 0 });
+	}
     }
     
     // Initialize a new Aquaint user in AWS databases
@@ -353,8 +383,16 @@ class UserSignupFormLocal extends React.Component {
 		<Redirect to={{pathname: this.state.redirectUri}} />
 	    );
 	}
-	
 
+	/*
+	const isUserLoggedin = (this.props.user != null) ? true : false;
+	if (isUserLoggedin) {
+	    this.setState({ currentPage: 4 });
+	} else {
+	    this.setState({ currentPage: 0 });
+	}
+	*/
+	
         if (this.state.currentPage == 0) {
             return (
                 <div className="welcome-div">
@@ -367,7 +405,7 @@ class UserSignupFormLocal extends React.Component {
                     </button>
                     <br/><br/><br/>
                     <p className ="welcome-instruction">
-                        Or, sign up with email
+                        Or, sign up with email:
                     </p>
                     <form onSubmit={this.handleContinue}>
                         <input className="welcome-input" type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange}/>
@@ -389,7 +427,7 @@ class UserSignupFormLocal extends React.Component {
               <div className ="welcome-div">
                 <img height="15%" src="./images/Aquaint_welcome_logo.svg" />
                 <h1 className="welcome-header">Welcome</h1>
-                <h2 className="welcome-subtitle">You're one step away from a brand new experience</h2>
+                <h2 className="welcome-subtitle">You're one step away from a brand new experience.</h2>
                 <br/><br/>
                   <form onSubmit={this.handleSignup}>
                      <input className="welcome-input" placeholder="Username"  name="username" value={this.state.username} onChange={this.handleChange} />
@@ -411,7 +449,7 @@ class UserSignupFormLocal extends React.Component {
                 <div className="welcome-div">
                 <img height="15%" src="./images/Aquaint_welcome_logo.svg" />
                 <h1 className="welcome-header">Welcome</h1>
-                <h2 className="welcome-subtitle">You're one step away from a brand new experience</h2>
+                <h2 className="welcome-subtitle">You're one step away from a brand new experience.</h2>
                 <br/><br/>
                     <form onSubmit={this.completeFacebookSignup}>
                         <input className="welcome-input" placeholder="Choose an username for your Aquaint profile..." name="FbSignupUsername" value={this.state.FbSignupUsername} onChange={this.handleChange}/>
@@ -422,11 +460,31 @@ class UserSignupFormLocal extends React.Component {
                     </form>
                 </div>
             );
+
+        } else if (this.state.currentPage == 4) {
+            return (
+                <div className="welcome-div">
+                    <img height="15%" src="./images/Aquaint_welcome_logo.svg"/>
+                    <h1 className="welcome-header">Let's get Aquainted.</h1>
+                    <h2 className="welcome-subtitle">All your social media profiles in one place.</h2>
+		</div>
+            );
         }
+	
         return null;
     }
 }
 
-// connect component to Redux 
-let UserSignupForm = connect()(UserSignupFormLocal);
+// connect component to Redux
+// TODO: make container components naming consistent: GetSomething or SomethingLocal
+const mapStateToProps = state => {
+    return {
+	user: state.userAuth
+    };
+};
+
+let UserSignupForm = connect(
+    mapStateToProps
+)(UserSignupFormLocal);
+
 export default UserSignupForm;

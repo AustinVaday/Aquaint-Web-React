@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 
 import { LOGIN_USER, LOGOFF_USER } from './actions';
 import * as AwsConfig from '../components/AwsConfig';
@@ -15,7 +16,7 @@ function userAuth(state = null, action) {
 	return action.username;
 	
     case LOGOFF_USER:
-	// if the user logs in by Facebook, logs it off first
+	// if the user logs in by Facebook, logs off from FB SDK
 	// TODO: this is asynchronous API call and redux reducer should be written in a different way
 	// See: http://redux.js.org/docs/advanced/AsyncActions.html
 	/*
@@ -27,7 +28,19 @@ function userAuth(state = null, action) {
 	    }
 	});
 	*/
-	
+
+	// if the user logs in by Cognito User Pool, clear localStorage entry
+	var poolData = {
+	    UserPoolId: AwsConfig.COGNITO_USER_POOL_ID,
+	    ClientId: AwsConfig.COGNITO_CLIENT_ID
+	};
+	var userPool = new CognitoUserPool(poolData);
+	var cognitoUser = userPool.getCurrentUser();
+
+	if (cognitoUser != null) {
+	    cognitoUser.signOut();
+	}
+
 	// Revoke AWS access permissions
 	AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 	    IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID});
