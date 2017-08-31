@@ -42,11 +42,12 @@ class UserSignupFormLocal extends React.Component {
 	    FbSignupUsername: ''
         };
 
+	// determine if the signup/login form should be shown based on user login status
 	const isUserLoggedin = (this.props.user != null) ? true : false;
 	if (isUserLoggedin) {
 	    this.state.currentPage = 4;
 	}
-
+	
         this.handleChange = this.handleChange.bind(this);
         this.handleContinue = this.handleContinue.bind(this);
         this.handleSignup = this.handleSignup.bind(this);
@@ -58,7 +59,25 @@ class UserSignupFormLocal extends React.Component {
 
     componentDidUpdate() {
 	console.log("UserSignupForm componentDidUpdate; State: ", this.state);
-	// TODO: handle if a user logs out, then the user signup/login form should appear
+	/*
+	const isUserLoggedin = (this.props.user != null) ? true : false;
+	if (isUserLoggedin) {
+	    this.setState({ currentPage: 4 });
+	} else {
+	    this.setState({ currentPage: 0 });
+	}
+	*/
+    }
+
+    componentWillReceiveProps(nextProps) {
+	console.log("UserSignupForm componentWillReceiveProps; nextProps: ", nextProps);
+	
+	// determine if the signup/login form should be shown based on user login status
+	if (this.props.user == null && nextProps.user != null) {
+	    this.setState({ currentPage: 4 });
+	} else if (this.props.user != null && nextProps.user == null) {
+	    this.setState({ currentPage: 0 });
+	}
     }
     
     // Initialize a new Aquaint user in AWS databases
@@ -358,6 +377,15 @@ class UserSignupFormLocal extends React.Component {
 		<Redirect to={{pathname: this.state.redirectUri}} />
 	    );
 	}
+
+	/*
+	const isUserLoggedin = (this.props.user != null) ? true : false;
+	if (isUserLoggedin) {
+	    this.setState({ currentPage: 4 });
+	} else {
+	    this.setState({ currentPage: 0 });
+	}
+	*/
 	
         if (this.state.currentPage == 0) {
             return (
