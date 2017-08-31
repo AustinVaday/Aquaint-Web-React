@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import GetNavBar from './GetNavBar.jsx';
-import { UserProfilePage } from './UserProfilePage.jsx';
+import GetUserProfilePage from './GetUserProfilePage.jsx';
 
 export class UserProfilePageWrapper extends React.Component {
 
@@ -23,7 +24,7 @@ export class UserProfilePageWrapper extends React.Component {
             <div className="container">
               <div className="profile-section">
                 <img src={userImage} className="profile-picture" />
-                <UserProfilePage {...this.props} />
+                <GetUserProfilePage {...this.props} />
               </div>
             </div>
           </header>
@@ -55,3 +56,4 @@ export class UserProfilePageWrapper extends React.Component {
     }
     */
 }
+

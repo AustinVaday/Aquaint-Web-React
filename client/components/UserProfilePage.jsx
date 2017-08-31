@@ -8,9 +8,8 @@ AWS.config.region = AwsConfig.COGNITO_REGION; // Region
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID});
 
-export class UserProfilePage extends React.Component {
+export default class UserProfilePage extends React.Component {
     // TODO: 1) connect to database for props
-    //       2) approperiate method for adding username (using state?)
 
     constructor(props) {
 	super(props);
@@ -242,6 +241,11 @@ export class UserProfilePage extends React.Component {
 	    }
 	}
 
+	// allow user to edit his own profile page if a user is logged in
+	console.log(`User permissions: this.userLoggedin = ${this.props.userLoggedin}, this.user = ${this.user}`);
+	const allowEdit = (this.props.userLoggedin != null && this.props.userLoggedin == this.user) ? true : false;
+	console.log("Can I edit this profile page now? ", allowEdit);
+	
 	if (this.state.currentPage == 1) {
             console.log("in state 1");
             return (
@@ -249,7 +253,9 @@ export class UserProfilePage extends React.Component {
 		  <h2 className="profile-name">{this.state.userRealname}</h2>
 		  <p className="profile-bio">{this.user}'s dummy bio...</p>
 		  {activatedSMP}
-		  <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Add Profiles</button>
+		  { allowEdit &&
+		      <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Add Profiles</button>
+		  }
 		</div>);
 	} else if (this.state.currentPage == 2) {
             console.log("in state 2");
@@ -280,3 +286,4 @@ export class UserProfilePage extends React.Component {
         return null;
     }
 }
+
