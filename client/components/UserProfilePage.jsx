@@ -215,9 +215,83 @@ export default class UserProfilePage extends React.Component {
         });
     }
 
-    handleProfileClick(sm,username) {
+    handleProfileClick(socialProvider, socialValue) {
       // Handle deep link to corresponding URL
-      
+      console.log("handle profile click, ", socialProvider, " ", socialValue);
+
+      ga('create', 'UA-61394116-2', 'auto');
+      ga('send', {
+        hitType: 'pageview',
+        page: location.pathname
+      });
+
+      // Create dictionary to fetch native url schemes
+      var nativeUrlSchemes = {
+        //"facebook": "",
+        "snapchat": "snapchat://add/",
+        "instagram": "instagram://user?username=",
+        "twitter": "twitter:///user?screen_name=",
+        "linkedin": "linkedin://profile/view?id=",
+        "youtube": "youtube:www.youtube.com/user/",
+        //"soundcloud": "",
+        "tumblr": "tumblr://x-callback-url/blog?blogName="
+        }
+      function attemptOpenNative(nativeUrl, webUrl) {
+            var desktopFallback = webUrl;
+            var mobileFallback = webUrl;
+            var app = nativeUrl;
+            if( /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
+              window.location = app;
+              window.setTimeout(function() {
+                  window.location = mobileFallback;
+              }, 25);
+            } else {
+              window.open(desktopFallback);
+            }
+            function killPopup() {
+              window.removeEventListener('pagehide', killPopup);
+            }
+            window.addEventListener('pagehide', killPopup);
+
+        }
+
+      function constructWebUrl(socialProvider, socialValue) {
+        var path = 'https://'
+        switch(socialProvider) {
+          case "snapchat" : path += socialProvider + '.com/add/' + socialValue;
+            break;
+          case "tumblr" : path += socialValue + '.' + socialProvider + '.com';
+            break;
+          default: path += socialProvider + '.com/' + socialValue;
+
+        }
+
+        return path
+      }
+
+        ga('send', {
+              hitType: 'event',
+              eventCategory: 'SocialClicks',
+              eventAction: 'click',
+              eventLabel: socialProvider,
+              transport: 'beacon'
+            });
+
+        if (socialProvider != "website" && socialProvider != "ios" && socialProvider != "android") {
+          var webUrl = constructWebUrl(socialProvider, socialValue);
+          if (socialProvider in nativeUrlSchemes) {
+            var nativeUrl = nativeUrlSchemes[socialProvider] + socialValue;
+            attemptOpenNative(nativeUrl, webUrl);
+          } else {
+            window.open(webUrl);
+          }
+          //window.open('https://' + socialProvider + '.com/' + socialValue);
+        } else {
+          window.open(socialValue);
+        }
+
+
+
     }
 
     render() {
@@ -251,9 +325,10 @@ export default class UserProfilePage extends React.Component {
 	for (var i = 0; i < existingSMP.length; i++) {
 	    // TODO: we now suppose each social media site only contains 1 profile
             let sm = existingSMP[i][0];
+            let username = existingSMP[i][1];
             let dir = "./images/SMP/"+sm+"_color.svg";
     	    activatedSMP.push(
-		<button key={sm} type="submit" onClick={() => this.formPopUp(sm)} className="profile-button">
+		<button key={sm} type="submit" onClick={() => this.handleProfileClick(sm, username)} className="profile-button">
 		  <img type="submit" className="profile-button-img" src={dir}/>
 		</button>);
 	}
