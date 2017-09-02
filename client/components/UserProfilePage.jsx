@@ -327,8 +327,9 @@ export default class UserProfilePage extends React.Component {
             let sm = existingSMP[i][0];
             let username = existingSMP[i][1];
             let dir = "./images/SMP/"+sm+"_color.svg";
+            let key = sm + '-' + i;
     	    activatedSMP.push(
-		<button key={sm} type="submit" onClick={() => this.handleProfileClick(sm, username)} className="profile-button">
+		<button key={key} type="submit" onClick={() => this.handleProfileClick(sm, username)} className="profile-button">
 		  <img type="submit" className="profile-button-img" src={dir}/>
 		</button>);
 	}
