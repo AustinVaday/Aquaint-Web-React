@@ -22,7 +22,6 @@ AWS.config.region = AwsConfig.COGNITO_REGION; // Region
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID});
 
-
 // A class can be a component passed to react-router too, besides a function
 // "match" parameters are passed in as props in this case
 const reactRender = () => {
@@ -39,9 +38,6 @@ const reactRender = () => {
 };
 
 // if the user is logged in previous sessions, read JWT from localStorage and keep logged in state
-var isUserLoggedin = false;
-//var isAppReady = false;  // start rendering the page when true; prevent race conditions on AWS credentials set up due to async calls
-
 // #1: Cognito User Pool
 var poolData = {
     UserPoolId: AwsConfig.COGNITO_USER_POOL_ID,
@@ -77,20 +73,16 @@ if (cognitoUser != null) {
 	    }
 	});
 
-	isUserLoggedin = true;
-	//isAppReady = true;
-	
 	// store user authentication state to Redux
 	store.dispatch(loginUser(cognitoUser.getUsername()));
 
 	reactRender();
 	return;
     });
-}
-
-// #2: Facebook Login
-// NOTE: check Facebook login status only if user is not logged in through Cognito User Pool
-if (!isUserLoggedin) {
+    
+} else {
+    // #2: Facebook Login
+    // NOTE: check Facebook login status only if user is not logged in through Cognito User Pool
     FB.getLoginStatus(function(response) {
 	console.log("Login status in FB SDK: ", response);
 	
@@ -125,8 +117,6 @@ if (!isUserLoggedin) {
 			if (data.Item != null) {
 			    let username = data.Item['username']['S'];
 			    console.log(`Cognito Identity has an Aquaint username assoicated: ${username}`);
-
-			    isUserLoggedin = true;
 			    
 			    // Update Redux global state of user authentication
 			    store.dispatch(loginUser(username));
@@ -142,11 +132,10 @@ if (!isUserLoggedin) {
 	    });
 	    
 	} else {
-	    // the user is not logged in from either Cognito User Pool nor Facebook
-	    //isAppReady = true;
+	    // User is not logged into either Cognito User Pool or Facebook
+	    reactRender();
+	    return;
 	}
     });
-};
+}
 
-//while(!isAppReady) {}
-//reactRender();
