@@ -21,7 +21,7 @@ export default class UserProfilePage extends React.Component {
 	this.user = this.props.match.params.username;
 	this.state = {
             currentPage: 1, // 1 for displaying, 2 for adding
-            newUserProfile: "", 
+            newUserProfile: "",
 
 	    userRealname: null,
 	    userSmpDict: {}
@@ -42,7 +42,7 @@ export default class UserProfilePage extends React.Component {
         this.state.userSmpDict["android"]="austin";
         this.state.userSmpDict["youtube"]="austin";
 	*/
-	
+
 	// constant order
 	this.profileList = ['facebook','snapchat','youtube','tumblr', 'soundcloud', 'website', 'ios', 'android', 'google','twitter','instagram','slack','linkedin'];
 	this.orderedProfiles = this.profileList.sort();
@@ -55,7 +55,8 @@ export default class UserProfilePage extends React.Component {
 	this.formPopUp = this.formPopUp.bind(this);
 	this.finishAdd = this.finishAdd.bind(this);
 	this.handleChange = this.handleChange.bind(this);
-	
+  this.handleProfileClick = this.handleProfileClick.bind(this);
+
 	this.getUserSmpDict();
     }
 
@@ -81,7 +82,7 @@ export default class UserProfilePage extends React.Component {
 		if (this.state.userRealname == null) {
 		    this.setState({ userRealname: data.Item.realname.S });
 		}
-		
+
 		var socialDict = {};
 		if (data.Item.accounts != null) {
 		    for (var socialMapElem in data.Item.accounts.M) {
@@ -148,7 +149,7 @@ export default class UserProfilePage extends React.Component {
 		    ]
 		};
 		socialDictUpload.accounts.M[smpName] = singleSocialList;
-	    } 
+	    }
 
 	    // upload the updated data to DynamoDB
 	    var putParams = {
@@ -164,7 +165,7 @@ export default class UserProfilePage extends React.Component {
 		    console.log(data);
 		}
 	    });
-	    
+
 	}.bind(this));
     }
 
@@ -237,7 +238,7 @@ export default class UserProfilePage extends React.Component {
 	// TESTING ONLY
 	//this.addUserSmp('facebook', '12345678');
 	//this.addUserSmp('snapchat', 'wybmax');
-	
+
 	this.socialNamePendingToAdd = null;
         this.setState({
             currentPage: 2,
@@ -253,21 +254,124 @@ export default class UserProfilePage extends React.Component {
         });
     }
 
+    handleProfileClick(socialProvider, socialValue) {
+      // Handle deep link to corresponding URL
+      console.log("handle profile click, ", socialProvider, " ", socialValue);
+
+      ga('create', 'UA-61394116-2', 'auto');
+      ga('send', {
+        hitType: 'pageview',
+        page: location.pathname
+      });
+
+      // Create dictionary to fetch native url schemes
+      var nativeUrlSchemes = {
+        //"facebook": "",
+        "snapchat": "snapchat://add/",
+        "instagram": "instagram://user?username=",
+        "twitter": "twitter:///user?screen_name=",
+        "linkedin": "linkedin://profile/view?id=",
+        "youtube": "youtube:www.youtube.com/user/",
+        //"soundcloud": "",
+        "tumblr": "tumblr://x-callback-url/blog?blogName="
+        }
+      function attemptOpenNative(nativeUrl, webUrl) {
+            var desktopFallback = webUrl;
+            var mobileFallback = webUrl;
+            var app = nativeUrl;
+            if( /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
+              window.location = app;
+              window.setTimeout(function() {
+                  window.location = mobileFallback;
+              }, 25);
+            } else {
+              window.open(desktopFallback);
+            }
+            function killPopup() {
+              window.removeEventListener('pagehide', killPopup);
+            }
+            window.addEventListener('pagehide', killPopup);
+
+        }
+
+      function constructWebUrl(socialProvider, socialValue) {
+        var path = 'https://'
+        switch(socialProvider) {
+          case "snapchat" : path += socialProvider + '.com/add/' + socialValue;
+            break;
+          case "tumblr" : path += socialValue + '.' + socialProvider + '.com';
+            break;
+          default: path += socialProvider + '.com/' + socialValue;
+
+        }
+
+        return path
+      }
+
+        ga('send', {
+              hitType: 'event',
+              eventCategory: 'SocialClicks',
+              eventAction: 'click',
+              eventLabel: socialProvider,
+              transport: 'beacon'
+            });
+
+        if (socialProvider != "website" && socialProvider != "ios" && socialProvider != "android") {
+          var webUrl = constructWebUrl(socialProvider, socialValue);
+          if (socialProvider in nativeUrlSchemes) {
+            var nativeUrl = nativeUrlSchemes[socialProvider] + socialValue;
+            attemptOpenNative(nativeUrl, webUrl);
+          } else {
+            window.open(webUrl);
+          }
+          //window.open('https://' + socialProvider + '.com/' + socialValue);
+        } else {
+          window.open(socialValue);
+        }
+
+
+
+    }
+
     render() {
 	console.log(this.state.userSmpDict);
-	
+
 	var activatedSMP = [];
-	var existingSMP = Object.keys(this.state.userSmpDict).sort();
+
+  // Convert dictionary to a list of arrays i.e.:
+  //   [ ['snapchat', 'austin1'],
+  //     ['snapchat', 'austin2'],
+  //     ['facebook', '123123123'] ]
+  var sortedKeys = Object.keys(this.state.userSmpDict).sort();
+  var existingSMP = [];
+
+  console.log("sortedKeys: ", sortedKeys);
+  for (var i in sortedKeys) {
+    var key = sortedKeys[i]
+    console.log("key: ", key);
+
+    for (var j in this.state.userSmpDict[key]) {
+      var username = this.state.userSmpDict[key][j];
+      console.log("username: ", username);
+      var tupleArray = [key, username];
+      existingSMP.push(tupleArray);
+    }
+  }
+
+  console.log("existingSMP new is: ", existingSMP);
+
+	// var existingSMP = Object.keys(this.state.userSmpDict).sort();
 	for (var i = 0; i < existingSMP.length; i++) {
 	    // TODO: we now suppose each social media site only contains 1 profile
-            let sm = existingSMP[i];
+            let sm = existingSMP[i][0];
+            let username = existingSMP[i][1];
             let dir = "./images/SMP/"+sm+"_color.svg";
+            let key = sm + '-' + i;
     	    activatedSMP.push(
-		<button key={sm} type="submit" onClick={() => this.formPopUp(sm)} className="profile-button">
+		<button key={key} type="submit" onClick={() => this.handleProfileClick(sm, username)} className="profile-button">
 		  <img type="submit" className="profile-button-img" src={dir}/>
 		</button>);
-	}	
-	
+	}
 	var allSMP = activatedSMP.slice();
 	for (var i = 0; i < this.orderedProfiles.length; i++){
 	    if(!existingSMP.includes(this.orderedProfiles[i])){
@@ -286,13 +390,13 @@ export default class UserProfilePage extends React.Component {
 	console.log(`User permissions: this.props.userLoggedin = ${this.props.userLoggedin}, this.user = ${this.user}`);
 	const allowEdit = (this.props.userLoggedin != null && this.props.userLoggedin == this.user) ? true : false;
 	console.log("Can I edit this profile page now? ", allowEdit);
-	
+
 	if (this.state.currentPage == 1) {
             console.log("in state 1");
             return (
 		<div>
 		  <h2 className="profile-name">{this.state.userRealname}</h2>
-		  <p className="profile-bio">{this.user}'s dummy bio...</p>
+		  <p className="profile-bio">{this.user}''s dummy bio...</p>
 		  {activatedSMP}
 		  { allowEdit &&
 		      <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Add Profiles</button>
@@ -303,7 +407,7 @@ export default class UserProfilePage extends React.Component {
             return (
 		<div>
 		  <h2 className="profile-name">{this.user}</h2>
-		  <p className="profile-bio">{this.user}'s dummy bio... </p>
+		  <p className="profile-bio">{this.user}''s dummy bio... </p>
 		  {allSMP}
 		  <button type="submit" className="profile-edit-button" onClick={this.finishEdit}>Finish</button>
 		</div>);
@@ -312,7 +416,7 @@ export default class UserProfilePage extends React.Component {
             return (
 		<div>
 		  <h2 className="profile-name">{this.user}</h2>
-		  <p className="profile-bio">{this.user}'s dummy bio...</p>
+		  <p className="profile-bio">{this.user}''s dummy bio...</p>
 		  {allSMP}
 		  <div className="profile-add-box">
 		    <form>
@@ -327,4 +431,3 @@ export default class UserProfilePage extends React.Component {
         return null;
     }
 }
-
