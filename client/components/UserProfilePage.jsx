@@ -201,6 +201,25 @@ export default class UserProfilePage extends React.Component {
 	    return;
 	}
 
+	if (socialMedia == "facebook") {
+	    FB.getLoginStatus(function(response) {
+		// if the user is not yet logged in from Facebook SDK
+		if (response.status != "connected") {
+		    FB.login(function(res) {
+			if (res.authResponse) {
+			    console.log("User logged in to FB SDK, userID: ", res.authResponse.userID);
+			    this.addUserSmp('facebook', res.authResponse.userID);
+			}
+		    }.bind(this));
+		    
+		} else {
+		    console.log("User logged in to FB SDK, userID: ", response.authResponse.userID);
+		    this.addUserSmp('facebook', response.authResponse.userID);
+		}
+	    }.bind(this));
+	    return;
+	}
+
 	this.socialNamePendingToAdd = socialMedia;
         this.setState({
             currentPage: 3,
