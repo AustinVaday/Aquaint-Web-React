@@ -93,6 +93,7 @@ export default class UserProfilePage extends React.Component {
 		}
 
 		this.setState({ userSmpDict: socialDict });
+		console.log("GetUserSmpDict: ", socialDict);
 	    }
 	}.bind(this));
     }
@@ -183,6 +184,23 @@ export default class UserProfilePage extends React.Component {
         event.preventDefault();
 	console.log("FormPopUp: ", socialMedia);
 
+	// for some social media sites that use particular ID for user profile URLs
+	// the user is directed to its own authorization page and we do the linking
+	if (socialMedia == "linkedin") {
+	    IN.User.authorize(function() {
+	        IN.API.Raw('/people/~?format=json').method('GET').result(function(response) {
+		    console.log("LinkedIn API response: ", response);
+		    
+		    var urlArray = response.siteStandardProfileRequest.url.split("id=");
+		    console.log("User's LinkedIn URL being stored: ", urlArray[1]);
+		    if (urlArray[1] != null) {
+			this.addUserSmp('linkedin', urlArray[1]);
+		    }
+		}.bind(this));
+	    }.bind(this));
+	    return;
+	}
+
 	this.socialNamePendingToAdd = socialMedia;
         this.setState({
             currentPage: 3,
@@ -227,7 +245,7 @@ export default class UserProfilePage extends React.Component {
 		<button key={sm} type="submit" onClick={() => this.formPopUp(sm)} className="profile-button">
 		  <img type="submit" className="profile-button-img" src={dir}/>
 		</button>);
-	}
+	}	
 	
 	var allSMP = activatedSMP.slice();
 	for (var i = 0; i < this.orderedProfiles.length; i++){
@@ -241,8 +259,10 @@ export default class UserProfilePage extends React.Component {
 	    }
 	}
 
+	console.log('existingSMP: ', existingSMP);
+
 	// allow user to edit his own profile page if a user is logged in
-	console.log(`User permissions: this.userLoggedin = ${this.props.userLoggedin}, this.user = ${this.user}`);
+	console.log(`User permissions: this.props.userLoggedin = ${this.props.userLoggedin}, this.user = ${this.user}`);
 	const allowEdit = (this.props.userLoggedin != null && this.props.userLoggedin == this.user) ? true : false;
 	console.log("Can I edit this profile page now? ", allowEdit);
 	

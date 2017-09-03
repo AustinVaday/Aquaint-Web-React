@@ -56,6 +56,11 @@ if (cognitoUser != null) {
     });
 }
 
+// TODO: user login persistence for Facebook Login
+FB.getLoginStatus(function(response) {
+    console.log("Login status in FB SDK: ", response);
+});
+
 
 
 // A class can be a component passed to react-router too, besides a function
