@@ -32,7 +32,7 @@ export class NavBar extends React.Component {
 		    <a className="navbar-brand goto" href="index.html#wrap"> <img src="./images/logo.svg" alt="Your logo" height="38" width="152" /> </a>
                     <ul className="nav">
                       <li><a href={userProfileUrl}>{this.props.user}</a> </li>
-		      <button onClick={this.props.onSignoutClick}>Sign out</button>
+		      <li><a onClick={this.props.onSignoutClick}>Sign out</a> </li>
                     </ul>
                     <a className="navbar-user-image" href={userProfileUrl}>
                       <img src={userImage} alt="Your username" className="img-circle" height="38" width="38" />
@@ -49,11 +49,13 @@ export class NavBar extends React.Component {
 		    <button className="navbar-toggle menu-collapse-btn collapsed" data-toggle="collapse" data-target=".navMenuCollapse"> <span className="icon-bar"></span> <span className="icon-bar"></span> <span className="icon-bar"></span> </button>
 		    <div className="collapse navbar-collapse navMenuCollapse">
                       <ul className="nav">
+			{/*
 			<li><a href="#Aquaint">{this.props.user}</a> </li>
 			<li><a href="#getAquainted">Aquaint Code</a> </li>
 			<li><a href="#features">Aqualytics</a></li>
 			<li><a href="#social">Stay tuned</a></li>
 			<li><a href="http://www.blog.aquaint.us">Blog</a> </li>
+			*/}
                       </ul>
 		    </div>
 		  </div>
