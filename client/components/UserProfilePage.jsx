@@ -4,9 +4,11 @@ import ReactDOM from 'react-dom';
 //import AddProfileForm from './AddProfileForm.jsx';
 import * as AwsConfig from './AwsConfig';
 
+/*
 AWS.config.region = AwsConfig.COGNITO_REGION; // Region
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID});
+*/
 
 export default class UserProfilePage extends React.Component {
     // TODO: 1) connect to database for props
