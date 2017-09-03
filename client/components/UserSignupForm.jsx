@@ -8,10 +8,11 @@ import { loginUser } from '../states/actions';
 import UserLoginForm from './UserLoginForm.jsx';
 
 // Initialize the Amazon Cognito credentials provider
-// TODO: change this variable name to AWS_REGION
+/*
 AWS.config.region = AwsConfig.COGNITO_REGION; // Region
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID});
+*/
 
 // React Component for User Signup, including registering a new user on AWS services
 class UserSignupFormLocal extends React.Component {

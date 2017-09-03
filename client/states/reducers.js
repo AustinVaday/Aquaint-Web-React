@@ -19,7 +19,6 @@ function userAuth(state = null, action) {
 	// if the user logs in by Facebook, logs off from FB SDK
 	// TODO: this is asynchronous API call and redux reducer should be written in a different way
 	// See: http://redux.js.org/docs/advanced/AsyncActions.html
-	/*
 	FB.getLoginStatus(function(response) {
 	    if (response.status == 'connected') {
 		FB.logout(function(response) {
@@ -27,7 +26,6 @@ function userAuth(state = null, action) {
 		});
 	    }
 	});
-	*/
 
 	// if the user logs in by Cognito User Pool, clear localStorage entry
 	var poolData = {

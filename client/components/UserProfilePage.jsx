@@ -4,9 +4,11 @@ import ReactDOM from 'react-dom';
 //import AddProfileForm from './AddProfileForm.jsx';
 import * as AwsConfig from './AwsConfig';
 
+/*
 AWS.config.region = AwsConfig.COGNITO_REGION; // Region
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID});
+*/
 
 export default class UserProfilePage extends React.Component {
     // TODO: 1) connect to database for props
@@ -94,6 +96,7 @@ export default class UserProfilePage extends React.Component {
 		}
 
 		this.setState({ userSmpDict: socialDict });
+		console.log("GetUserSmpDict: ", socialDict);
 	    }
 	}.bind(this));
     }
@@ -183,6 +186,42 @@ export default class UserProfilePage extends React.Component {
     formPopUp(socialMedia) {
         event.preventDefault();
 	console.log("FormPopUp: ", socialMedia);
+
+	// for some social media sites that use particular ID for user profile URLs
+	// the user is directed to its own authorization page and we do the linking
+	if (socialMedia == "linkedin") {
+	    IN.User.authorize(function() {
+	        IN.API.Raw('/people/~?format=json').method('GET').result(function(response) {
+		    console.log("LinkedIn API response: ", response);
+		    
+		    var urlArray = response.siteStandardProfileRequest.url.split("id=");
+		    console.log("User's LinkedIn URL being stored: ", urlArray[1]);
+		    if (urlArray[1] != null) {
+			this.addUserSmp('linkedin', urlArray[1]);
+		    }
+		}.bind(this));
+	    }.bind(this));
+	    return;
+	}
+
+	if (socialMedia == "facebook") {
+	    FB.getLoginStatus(function(response) {
+		// if the user is not yet logged in from Facebook SDK
+		if (response.status != "connected") {
+		    FB.login(function(res) {
+			if (res.authResponse) {
+			    console.log("User logged in to FB SDK, userID: ", res.authResponse.userID);
+			    this.addUserSmp('facebook', res.authResponse.userID);
+			}
+		    }.bind(this));
+		    
+		} else {
+		    console.log("User logged in to FB SDK, userID: ", response.authResponse.userID);
+		    this.addUserSmp('facebook', response.authResponse.userID);
+		}
+	    }.bind(this));
+	    return;
+	}
 
 	this.socialNamePendingToAdd = socialMedia;
         this.setState({
@@ -333,7 +372,6 @@ export default class UserProfilePage extends React.Component {
 		  <img type="submit" className="profile-button-img" src={dir}/>
 		</button>);
 	}
-
 	var allSMP = activatedSMP.slice();
 	for (var i = 0; i < this.orderedProfiles.length; i++){
 	    if(!existingSMP.includes(this.orderedProfiles[i])){
@@ -346,8 +384,10 @@ export default class UserProfilePage extends React.Component {
 	    }
 	}
 
+	console.log('existingSMP: ', existingSMP);
+
 	// allow user to edit his own profile page if a user is logged in
-	console.log(`User permissions: this.userLoggedin = ${this.props.userLoggedin}, this.user = ${this.user}`);
+	console.log(`User permissions: this.props.userLoggedin = ${this.props.userLoggedin}, this.user = ${this.user}`);
 	const allowEdit = (this.props.userLoggedin != null && this.props.userLoggedin == this.user) ? true : false;
 	console.log("Can I edit this profile page now? ", allowEdit);
 
