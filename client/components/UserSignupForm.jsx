@@ -88,7 +88,7 @@ class UserSignupFormLocal extends React.Component {
     }
     
     // Initialize a new Aquaint user in AWS databases
-    completeUserRegistration(username) {
+    completeUserRegistration(username, realname) {
     	// generate user scan code on Lambda
     	var lambda = new AWS.Lambda();
     	var lambdaPayload = {
@@ -111,33 +111,31 @@ class UserSignupFormLocal extends React.Component {
     	    }
     	});
 
-    	// create empty user entry on DynamoDB, using real name on Facebook
-    	FB.api('/me', function(response) {
-	    let userTableNewEntryParams = {
-    		TableName: 'aquaint-users',
-    		Item: {
-    		    'username': {S: username},
-		    'realname': {S: response['name']}
-    		}
-    	    };
+    	// create empty user entry on DynamoDB
+	let userTableNewEntryParams = {
+    	    TableName: 'aquaint-users',
+    	    Item: {
+    		'username': {S: username},
+		'realname': {S: realname}
+    	    }
+    	};
 
-	    var ddb = new AWS.DynamoDB();
-	    ddb.putItem(userTableNewEntryParams, function(err, data) {
-		if (err) {
-		    console.log(err);
-		} else {
-		    console.log("Initializing user's social media profiles list in DynamoDB successful.");
+	var ddb = new AWS.DynamoDB();
+	ddb.putItem(userTableNewEntryParams, function(err, data) {
+	    if (err) {
+		console.log(err);
+	    } else {
+		console.log("Initializing user's social media profiles list in DynamoDB successful.");
 
-		    // Update Redux global state of user authentication
-		    this.props.dispatch(loginUser(username));
+		// Update Redux global state of user authentication
+		this.props.dispatch(loginUser(username));
 
-		    // User is now logged in; redirect user to his Aquaint profile
-		    this.setState({
-			redirectUri: '/' + username
-		    });
-		}
-	    }.bind(this));
-    	}.bind(this));
+		// User is now logged in; redirect user to his Aquaint profile
+		this.setState({
+		    redirectUri: '/' + username
+		});
+	    }
+	}.bind(this));
 
     }
     
@@ -224,8 +222,7 @@ class UserSignupFormLocal extends React.Component {
 				    } else {
 					console.log('User authorization succeeds; AWS credentials refreshed.');
 					
-					// Update Redux global state of user authentication
-					this.props.dispatch(loginUser(signupUsername));
+					this.completeUserRegistration(signupUsername, this.state.realname);
 
 					this.identityId = AWS.config.credentials.identityId;
 					console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${this.identityId}`);
@@ -359,7 +356,9 @@ class UserSignupFormLocal extends React.Component {
 			    if (err == null) {
 				console.log('Login by Facebook user signup successful; initializing the new user now.');
 
-				this.completeUserRegistration(signup_username);
+				FB.api('/me', function(response) {
+				    this.completeUserRegistration(signup_username, response['name']);
+				}.bind(this));;
 
 			    } else {
 				console.log("Error accessing DynamoDB table:", err);
