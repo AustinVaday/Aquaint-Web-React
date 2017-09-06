@@ -78,12 +78,12 @@ export default class UserProfilePage extends React.Component {
 	    if (err) {
 		console.log("Error accessing DynamoDB table: ", err, "; AWS.config.credentials: ", AWS.config.credentials);
 		// NOTE: temporary solution to possible race conditions on
-		// setting AWS credentials, when an un-logged in user access a profile page
+		// setting AWS credentials, when user logs out and the current profile page is automatically refreshed
 		// we simply wait for 2 seconds and try fetching from Dynamo again
 		console.log("WARNING: possible race condition, re-accessing DynamoDB soon...");
 		setTimeout(function(){
 		    this.getUserSmpDict();
-		}, 2000);
+		}.bind(this), 2000);
 		
 	    } else {
 		console.log("User entry in aquaint-user table:", data);
