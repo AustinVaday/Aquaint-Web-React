@@ -1,11 +1,15 @@
 import React from 'react';
+import { Route, Redirect } from 'react-router';
+import { connect } from 'react-redux';
+
 import UserSignupForm from './UserSignupForm.jsx';
 import GetNavBar from './GetNavBar.jsx';
 
-export class IndexPage extends React.Component {
+export class IndexPageLocal extends React.Component {
     
     constructor(props) {
 	super(props);
+	console.log("IndexPage constructor called. Props: ", this.props);
     }
     
     componentDidUpdate(prevProps, prevState) {
@@ -14,6 +18,16 @@ export class IndexPage extends React.Component {
     
     render(match) {
 	console.log('Index page render() called.');
+
+	// if the user is logged in, we don't show index page anymore
+	// and redirects to the user's own profile page
+	if (this.props.user != null) {
+	    const redirectUri = '/' + this.props.user;
+	    return (
+		<Redirect to={{pathname: redirectUri}} />
+	    );
+	}
+	
 	return (
 	    
 	    <div>
@@ -251,3 +265,16 @@ export class IndexPage extends React.Component {
 	);
     }
 }
+
+// connect component to Redux
+const mapStateToProps = state => {
+    return {
+	user: state.userAuth
+    };
+};
+
+let IndexPage = connect(
+    mapStateToProps
+)(IndexPageLocal);
+
+export default IndexPage;
