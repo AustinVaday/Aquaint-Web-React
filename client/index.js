@@ -27,12 +27,12 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 const reactRender = () => {
     ReactDOM.render((
 	    <Router>
-	    <Provider store={store}>
-	    <div>
-	    <Route exact path="/" component={IndexPage}/>
-	    <Route path="/:username" component={UserProfilePageWrapper}/>
-	    </div>
-	    </Provider>
+	        <Provider store={store}>
+	        <div>
+	            <Route exact path="/" component={IndexPage}/>
+	            <Route path="/:username" component={UserProfilePageWrapper}/>
+	        </div>
+	        </Provider>
 	    </Router>
     ), document.getElementById('root'));
 };
