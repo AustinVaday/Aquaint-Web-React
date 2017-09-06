@@ -319,6 +319,8 @@ export default class UserProfilePage extends React.Component {
             break;
           case "tumblr" : path += socialValue + '.' + socialProvider + '.com';
             break;
+	  case "linkedin": path = "https://www.linkedin.com/profile/view?id=" + socialValue;
+	    break;  
           default: path += socialProvider + '.com/' + socialValue;
 
         }
