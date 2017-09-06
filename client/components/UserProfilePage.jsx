@@ -20,7 +20,10 @@ export default class UserProfilePage extends React.Component {
 
 	this.user = this.props.match.params.username;
 	this.state = {
-            currentPage: 1, // 1 for displaying, 2 for adding
+	    // 1 for displaying linked profiles
+	    // 2 for displaying pending social media that can be added
+	    // 3 for adding a social media
+            currentPage: 1, 
             newUserProfile: "",
 
 	    userRealname: null,
@@ -256,6 +259,7 @@ export default class UserProfilePage extends React.Component {
 	this.socialNamePendingToAdd = null;
         this.setState({
             currentPage: 2,
+	    newUserProfile: ''
         });
     }
 
