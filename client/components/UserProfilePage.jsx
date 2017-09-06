@@ -87,6 +87,11 @@ export default class UserProfilePage extends React.Component {
 		}.bind(this), 2000);
 		
 	    } else {
+		if (data.Item == null) {
+		    console.log("User entry does not exist in aquaint-users Dynamo table. Exit now.");
+		    return;
+		}
+		
 		console.log("User entry in aquaint-user table:", data);
 		if (this.state.userRealname == null) {
 		    this.setState({ userRealname: data.Item.realname.S });

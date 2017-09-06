@@ -59,15 +59,7 @@ class UserSignupFormLocal extends React.Component {
     };
 
     componentDidUpdate() {
-	console.log("UserSignupForm componentDidUpdate; State: ", this.state);
-	/*
-	const isUserLoggedin = (this.props.user != null) ? true : false;
-	if (isUserLoggedin) {
-	    this.setState({ currentPage: 4 });
-	} else {
-	    this.setState({ currentPage: 0 });
-	}
-	*/
+	//console.log("UserSignupForm componentDidUpdate; State: ", this.state);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -222,7 +214,7 @@ class UserSignupFormLocal extends React.Component {
 				    } else {
 					console.log('User authorization succeeds; AWS credentials refreshed.');
 					
-					this.completeUserRegistration(signupUsername, this.state.realname);
+					this.completeUserRegistration(signupUsername, this.state.fullname);
 
 					this.identityId = AWS.config.credentials.identityId;
 					console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${this.identityId}`);
