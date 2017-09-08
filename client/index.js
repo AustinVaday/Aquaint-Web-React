@@ -9,7 +9,7 @@ import * as AwsConfig from './components/AwsConfig';
 import { aquaintApp } from './states/reducers';
 import { UserSignupForm } from './components/UserSignupForm.jsx';
 import { DisplayProfile } from './components/DisplayProfile.jsx';
-import { IndexPage } from './components/IndexPage.jsx';
+import IndexPage from './components/IndexPage.jsx';
 import { UserProfilePageWrapper } from './components/UserProfilePageWrapper.jsx';
 import { UserNotFound } from './components/UserNotFound.jsx';
 import { loginUser } from './states/actions';

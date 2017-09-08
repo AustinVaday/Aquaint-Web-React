@@ -56,7 +56,7 @@ export default class UserProfilePage extends React.Component {
 	this.formPopUp = this.formPopUp.bind(this);
 	this.finishAdd = this.finishAdd.bind(this);
 	this.handleChange = this.handleChange.bind(this);
-  this.handleProfileClick = this.handleProfileClick.bind(this);
+	this.handleProfileClick = this.handleProfileClick.bind(this);
 
 	this.getUserSmpDict();
     }
@@ -77,7 +77,16 @@ export default class UserProfilePage extends React.Component {
 	};
 	ddb.getItem(ddbTableParams, function(err, data) {
 	    if (err) {
-		console.log("Error accessing DynamoDB table: ", err);
+		console.log("Error accessing DynamoDB table: ", err, "; AWS.config.credentials: ", AWS.config.credentials);
+		// NOTE: temporary solution to possible race conditions on
+		// setting AWS credentials, when user logs out and the current profile page is automatically refreshed,
+		// or an un-logged in user goes to a profile page
+		// we simply wait for 2 seconds and try fetching from Dynamo again
+		console.log("WARNING: possible race condition, re-accessing DynamoDB soon...");
+		setTimeout(function(){
+		    this.getUserSmpDict();
+		}.bind(this), 2000);
+		
 	    } else {
 		console.log("User entry in aquaint-user table:", data);
 

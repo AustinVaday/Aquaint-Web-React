@@ -361,10 +361,6 @@ class UserSignupFormLocal extends React.Component {
 
 				this.completeUserRegistration(signup_username);
 
-				// TODO: the URI redirection not working now
-				this.setState({
-				    redirectUri: '/' + signup_username
-				});
 			    } else {
 				console.log("Error accessing DynamoDB table:", err);
 			    }
