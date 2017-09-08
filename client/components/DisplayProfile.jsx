@@ -1,3 +1,7 @@
+// ******** DEPRECATED
+// This file is for demonstration only. Not used in the project.
+// ********
+
 import React from 'react';
 import {CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails} from 'amazon-cognito-identity-js';
 import * as AwsConfig from './AwsConfig';

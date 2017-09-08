@@ -12,7 +12,6 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 */
 
 export default class UserProfilePage extends React.Component {
-    // TODO: 1) connect to database for props
 
     constructor(props) {
 	super(props);
