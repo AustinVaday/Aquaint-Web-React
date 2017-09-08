@@ -21,7 +21,10 @@ export default class UserProfilePage extends React.Component {
 
 	this.user = this.props.match.params.username;
 	this.state = {
-            currentPage: 1, // 1 for displaying, 2 for adding
+	    // 1 for displaying linked profiles
+	    // 2 for displaying pending social media that can be added
+	    // 3 for adding a social media
+            currentPage: 1, 
             newUserProfile: "",
             userNotFound: false,
 	    userRealname: null,
@@ -88,6 +91,11 @@ export default class UserProfilePage extends React.Component {
 		}.bind(this), 2000);
 		
 	    } else {
+		if (data.Item == null) {
+		    console.log("User entry does not exist in aquaint-users Dynamo table. Exit now.");
+		    return;
+		}
+		
 		console.log("User entry in aquaint-user table:", data);
 
                 if (!data.Item) {
@@ -259,6 +267,7 @@ export default class UserProfilePage extends React.Component {
 	this.socialNamePendingToAdd = null;
         this.setState({
             currentPage: 2,
+	    newUserProfile: ''
         });
     }
 
@@ -318,6 +327,8 @@ export default class UserProfilePage extends React.Component {
             break;
           case "tumblr" : path += socialValue + '.' + socialProvider + '.com';
             break;
+	  case "linkedin": path = "https://www.linkedin.com/profile/view?id=" + socialValue;
+	    break;  
           default: path += socialProvider + '.com/' + socialValue;
 
         }

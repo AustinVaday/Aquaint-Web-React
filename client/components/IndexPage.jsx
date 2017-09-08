@@ -207,9 +207,9 @@ export class IndexPageLocal extends React.Component {
 		    <p>Follow us on social networks, while we work to improve yours. </p>
 		  </div>
 		  <ul className="soc-list wow flipInX">
-		    <li><a href="#" onClick={ window.open("https://twitter.com/AquaintApp") }><i className="icon soc-icon-twitter"></i></a></li>
-		    <li><a href="#" onClick={ window.open("https://www.facebook.com/aquaintapp") }><i className="icon soc-icon-facebook"></i></a></li>
-		    <li><a href="#" onClick={ window.open("https://instagram.com/aquaintapp") }><i className="icon soc-icon-instagram"></i></a></li>
+		    <li><a href="#" onClick={ () => window.open("https://twitter.com/AquaintApp") }><i className="icon soc-icon-twitter"></i></a></li>
+		    <li><a href="#" onClick={ () => window.open("https://www.facebook.com/aquaintapp") }><i className="icon soc-icon-facebook"></i></a></li>
+		    <li><a href="#" onClick={ () => window.open("https://instagram.com/aquaintapp") }><i className="icon soc-icon-instagram"></i></a></li>
 		  </ul>
 
 		</div>
