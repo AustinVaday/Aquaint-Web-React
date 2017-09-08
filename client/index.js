@@ -11,7 +11,8 @@ import { UserSignupForm } from './components/UserSignupForm.jsx';
 import { DisplayProfile } from './components/DisplayProfile.jsx';
 import { IndexPage } from './components/IndexPage.jsx';
 import { UserProfilePageWrapper } from './components/UserProfilePageWrapper.jsx';
-import { loginUser } from './states/actions'; 
+import { UserNotFound } from './components/UserNotFound.jsx';
+import { loginUser } from './states/actions';
 
 // Redux store, which should be one and only one instance in the app
 let store = createStore(aquaintApp);
@@ -27,12 +28,13 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 const reactRender = () => {
     ReactDOM.render((
 	    <Router>
-	    <Provider store={store}>
-	    <div>
-	    <Route exact path="/" component={IndexPage}/>
-	    <Route path="/:username" component={UserProfilePageWrapper}/>
-	    </div>
-	    </Provider>
+                <Provider store={store}>
+                    <div>
+                        <Route exact path="/" component={IndexPage}/>
+                        <Route path="/nonexist" component={UserNotFound}/>
+                        <Route path="/:username" component={UserProfilePageWrapper}/>
+                    </div>
+                </Provider>
 	    </Router>
     ), document.getElementById('root'));
 };
@@ -65,7 +67,7 @@ if (cognitoUser != null) {
 		console.log("cognitoUser userAttributes: ", attributes);
             }
         });
-	
+
 	AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 	    IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
 	    Logins: {
@@ -79,16 +81,16 @@ if (cognitoUser != null) {
 	reactRender();
 	return;
     });
-    
+
 } else {
     // #2: Facebook Login
     // NOTE: check Facebook login status only if user is not logged in through Cognito User Pool
     FB.getLoginStatus(function(response) {
 	console.log("Login status in FB SDK: ", response);
-	
+
 	if (response.status == "connected") {
 	    console.log("User is logged into Facebook and Aquaint app; restore login status: ", response);
-	    
+
 	    // Add the Facebook access token to the Cognito credentials login map.
 	    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 		IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
@@ -117,20 +119,20 @@ if (cognitoUser != null) {
 			if (data.Item != null) {
 			    let username = data.Item['username']['S'];
 			    console.log(`Cognito Identity has an Aquaint username assoicated: ${username}`);
-			    
+
 			    // Update Redux global state of user authentication
 			    store.dispatch(loginUser(username));
 
 			    reactRender();
 			    return;
-			    
+
 			} else {
 			    console.err("User has logged into the app by Facebook before, but no cognitoIdentity-username mapping is found.");
 			}
 		    }
 		});
 	    });
-	    
+
 	} else {
 	    // User is not logged into either Cognito User Pool or Facebook
 	    reactRender();
@@ -138,4 +140,3 @@ if (cognitoUser != null) {
 	}
     });
 }
-
