@@ -24,12 +24,12 @@ export class UserNotFound extends React.Component {
     };
     const translateStyle = {
       transform: 'translate3d(0px, 0px, 0px)'
-    }
+    };
     const whiteBg = {
       backgroundColor: 'white',
       borderRadius: '40px',
       margin: '5px 30px 5px 30px'
-    }
+    };
 
     return (
       <div>
