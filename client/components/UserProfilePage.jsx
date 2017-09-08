@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Redirect } from 'react-router';
 
 //import AddProfileForm from './AddProfileForm.jsx';
 import * as AwsConfig from './AwsConfig';
@@ -22,7 +23,7 @@ export default class UserProfilePage extends React.Component {
 	this.state = {
             currentPage: 1, // 1 for displaying, 2 for adding
             newUserProfile: "",
-
+            userNotFound: false,
 	    userRealname: null,
 	    userSmpDict: {}
         };
@@ -88,6 +89,13 @@ export default class UserProfilePage extends React.Component {
 		
 	    } else {
 		console.log("User entry in aquaint-user table:", data);
+
+                if (!data.Item) {
+                    console.log("Could not find user:", this.user);
+                    this.setState({ userNotFound: true });
+                    return;
+                }
+
 		if (this.state.userRealname == null) {
 		    this.setState({ userRealname: data.Item.realname.S });
 		}
@@ -344,6 +352,12 @@ export default class UserProfilePage extends React.Component {
 
     render() {
 	console.log(this.state.userSmpDict);
+
+        if (this.state.userNotFound) {
+            return(
+                <Redirect to={{pathname: '/nonexist'}}/> 
+            );
+        }
 
 	var activatedSMP = [];
 

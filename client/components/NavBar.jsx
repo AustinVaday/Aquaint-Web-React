@@ -29,7 +29,7 @@ export class NavBar extends React.Component {
             return (
 		<nav className="navbar navbar-fixed-top">
 		  <div className="container_fluid">
-		    <a className="navbar-brand goto" href="index.html#wrap"> <img src="./images/logo.svg" alt="Your logo" height="38" width="152" /> </a>
+		    <a className="navbar-brand goto" href="/"> <img src="./images/logo.svg" alt="Your logo" height="38" width="152" /> </a>
                     <ul className="nav">
                       <li><a href={userProfileUrl}>{this.props.user}</a> </li>
 		      <li><a onClick={this.props.onSignoutClick}>Sign out</a> </li>
@@ -44,7 +44,7 @@ export class NavBar extends React.Component {
             return (
 		<nav className="navbar navbar-fixed-top">
 		  <div className="container_fluid">
-		    <a className="navbar-brand goto" href="index.html#wrap"> <img src="./images/logo.svg" alt="Your logo" height="38" width="152" /> </a>
+		    <a className="navbar-brand goto" href="/"> <img src="./images/logo.svg" alt="Your logo" height="38" width="152" /> </a>
 		    <a className="contact-btn icon-envelope" data-toggle="modal" data-target="#modalContact"></a>
 		    <button className="navbar-toggle menu-collapse-btn collapsed" data-toggle="collapse" data-target=".navMenuCollapse"> <span className="icon-bar"></span> <span className="icon-bar"></span> <span className="icon-bar"></span> </button>
 		    <div className="collapse navbar-collapse navMenuCollapse">
