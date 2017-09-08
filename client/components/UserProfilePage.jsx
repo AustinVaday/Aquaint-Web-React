@@ -26,7 +26,7 @@ export default class UserProfilePage extends React.Component {
 	    // 3 for adding a social media
             currentPage: 1, 
             newUserProfile: "",
-            userNotFound: false,
+            userNotFound: null,
 	    userRealname: null,
 	    userSmpDict: {}
         };
@@ -90,19 +90,17 @@ export default class UserProfilePage extends React.Component {
 		    this.getUserSmpDict();
 		}.bind(this), 2000);
 		
-	    } else {
-		if (data.Item == null) {
-		    console.log("User entry does not exist in aquaint-users Dynamo table. Exit now.");
-		    return;
-		}
-		
+	    } else {		
 		console.log("User entry in aquaint-user table:", data);
 
                 if (!data.Item) {
-                    console.log("Could not find user:", this.user);
+                    console.log("User entry does not exist in aquaint-users Dynamo table. Could not find user:", this.user);
                     this.setState({ userNotFound: true });
                     return;
-                }
+                } else {
+		    console.log("User exists in aquaint-users Dynamo table.");
+		    this.setState({ userNotFound: false });
+		}
 
 		if (this.state.userRealname == null) {
 		    this.setState({ userRealname: data.Item.realname.S });
@@ -425,43 +423,45 @@ export default class UserProfilePage extends React.Component {
 	const allowEdit = (this.props.userLoggedin != null && this.props.userLoggedin == this.user) ? true : false;
 	console.log("Can I edit this profile page now? ", allowEdit);
 
-	if (this.state.currentPage == 1) {
-            console.log("in state 1");
-            return (
-		<div>
-		  <h2 className="profile-name">{this.state.userRealname}</h2>
-		  <p className="profile-bio">{this.user}''s dummy bio...</p>
-		  {activatedSMP}
-		  { allowEdit &&
-		      <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Add Profiles</button>
-		  }
-		</div>);
-	} else if (this.state.currentPage == 2) {
-            console.log("in state 2");
-            return (
-		<div>
-		  <h2 className="profile-name">{this.user}</h2>
-		  <p className="profile-bio">{this.user}''s dummy bio... </p>
-		  {allSMP}
-		  <button type="submit" className="profile-edit-button" onClick={this.finishEdit}>Finish</button>
-		</div>);
-	} else if (this.state.currentPage == 3) {
-            console.log("in state 3");
-            return (
-		<div>
-		  <h2 className="profile-name">{this.user}</h2>
-		  <p className="profile-bio">{this.user}''s dummy bio...</p>
-		  {allSMP}
-		  <div className="profile-add-box">
-		    <form>
-		      <input className="profile-new-username" placeholder="Your Username/URL"  name="newUserProfile" value={this.state.newUserProfile} onChange={this.handleChange} />
-		      <br/>
-		      <button type="submit" className="profile-edit-button" id="add" onClick={this.finishAdd}>Add</button>
-		    </form>
-		  </div>
-		</div>);
+	if (this.state.userNotFound == false) {
+	    console.log("User found! Rendering UserProfilePage.");
+	    if (this.state.currentPage == 1) {
+		console.log("in state 1");
+		return (
+		    <div>
+		      <h2 className="profile-name">{this.state.userRealname}</h2>
+		      <p className="profile-bio">{this.user}''s dummy bio...</p>
+		      {activatedSMP}
+		      { allowEdit &&
+			  <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Add Profiles</button>
+			  }
+		    </div>);
+	    } else if (this.state.currentPage == 2) {
+		console.log("in state 2");
+		return (
+		    <div>
+		      <h2 className="profile-name">{this.user}</h2>
+		      <p className="profile-bio">{this.user}''s dummy bio... </p>
+		      {allSMP}
+		      <button type="submit" className="profile-edit-button" onClick={this.finishEdit}>Finish</button>
+		    </div>);
+	    } else if (this.state.currentPage == 3) {
+		console.log("in state 3");
+		return (
+		    <div>
+		      <h2 className="profile-name">{this.user}</h2>
+		      <p className="profile-bio">{this.user}''s dummy bio...</p>
+		      {allSMP}
+		      <div className="profile-add-box">
+			<form>
+			  <input className="profile-new-username" placeholder="Your Username/URL"  name="newUserProfile" value={this.state.newUserProfile} onChange={this.handleChange} />
+			  <br/>
+			  <button type="submit" className="profile-edit-button" id="add" onClick={this.finishAdd}>Add</button>
+			</form>
+		      </div>
+		    </div>);
+	    }
 	}
-
         return null;
     }
 }
