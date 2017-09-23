@@ -1,6 +1,6 @@
 import React from 'react';
 
-import GetNavBar from './GetNavBar.jsx';
+import GetNavBar from '../GetNavBar.jsx';
 
 export class UserNotFound extends React.Component {
   constructor(props) {
@@ -11,7 +11,7 @@ export class UserNotFound extends React.Component {
   render() {
     console.log("Rendering UserNotFound Component");
 
-    //CSS styles
+    //Local CSS styles
     const centerText = {
       textAlign: 'center'
     };
