@@ -100,7 +100,7 @@ export class UserLoginFormLocal extends React.Component {
                 this.props.dispatch(loginUser(username));
 
                 this.setState({
-                    redirectUri: '/user/' + username
+                    redirectUri: '/' + username
                 });
 
             }.bind(this),

@@ -22,7 +22,7 @@ export class IndexPageLocal extends React.Component {
         // if the user is logged in, we don't show index page anymore
         // and redirects to the user's own profile page
         if (this.props.user != null) {
-            const redirectUri = '/user/' + this.props.user;
+            const redirectUri = '/' + this.props.user;
             return (
                 <Redirect to={{pathname: redirectUri}} />
             );

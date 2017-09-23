@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
@@ -28,15 +28,17 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 const reactRender = () => {
     console.log('reactRender() called');
     ReactDOM.render((
-            <Router>
+        <Router>
             <Provider store={store}>
-            <div>
-            <Route exact path="/" component={IndexPage}/>
-            <Route path="/error/nonexist" component={UserNotFound}/>
-            <Route path="/user/:username" component={UserProfilePageWrapper}/>
-            </div>
+                <div>
+                    <Switch>
+                        <Route exact path="/" component={IndexPage}/>
+                        <Route path="/error/nonexist" component={UserNotFound}/>
+                        <Route path="/:username" component={UserProfilePageWrapper}/>
+                    </Switch>
+                </div>
             </Provider>
-            </Router>
+        </Router>
     ), document.getElementById('root'));
 };
 
