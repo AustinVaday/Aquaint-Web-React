@@ -4,15 +4,15 @@ import { NavBar } from './NavBar.jsx';
 
 const mapStateToProps = state => {
     return {
-	user: state.userAuth
+        user: state.userAuth
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-	onSignoutClick: () => {
-	    dispatch(logoffUser());
-	}
+        onSignoutClick: () => {
+            dispatch(logoffUser());
+        }
     };
 };
 

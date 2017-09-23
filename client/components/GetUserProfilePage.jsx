@@ -5,7 +5,7 @@ import UserProfilePage from './UserProfilePage.jsx';
 
 const mapStateToProps = state => {
     return {
-	userLoggedin: state.userAuth
+        userLoggedin: state.userAuth
     };
 };
 

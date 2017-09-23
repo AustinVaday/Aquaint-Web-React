@@ -15,11 +15,11 @@ class AddProfileForm extends React.Component {
     // (1) a graceful way to pass data (socialNamePendingToAdd) from a function in UserProfilePage (formPopUp) to this component
     // (2) access member variables and functions in UserProfilePage (perhaps the entire class?) from here: adduserSmp() should be used here
     // (3) "destruct" itself when user submits the form
-    
+
     constructor(props) {
-	super(props);
+        super(props);
     }
-    
+
     handleSubmit(event) {
 
     }
@@ -30,8 +30,7 @@ class AddProfileForm extends React.Component {
         });
     }
 
-    
     render() {
-	return null;
+        return null;
     }
 }

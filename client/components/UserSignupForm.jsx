@@ -4,15 +4,15 @@ import { Route, Redirect } from 'react-router';
 import { connect } from 'react-redux';
 
 import * as AwsConfig from './AwsConfig';
-import { loginUser } from '../states/actions'; 
+import { loginUser } from '../states/actions';
 import UserLoginForm from './UserLoginForm.jsx';
 
 // Initialize the Amazon Cognito credentials provider
 /*
-AWS.config.region = AwsConfig.COGNITO_REGION; // Region
-AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID});
-*/
+   AWS.config.region = AwsConfig.COGNITO_REGION; // Region
+   AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+   IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID});
+ */
 
 // React Component for User Signup, including registering a new user on AWS services
 class UserSignupFormLocal extends React.Component {
@@ -22,14 +22,14 @@ class UserSignupFormLocal extends React.Component {
 
     constructor(props) {
         super(props);
-	console.log("UserSignupForm constructor() called. Props: ", this.props);
+        console.log("UserSignupForm constructor() called. Props: ", this.props);
 
-	//this.FB = props.fb;  // Facebook SDK instance
-	this.identityId = null;  // Identifier from Cognito Federated Identity that uniquely distinguish a user
-	
+        //this.FB = props.fb;  // Facebook SDK instance
+        this.identityId = null;  // Identifier from Cognito Federated Identity that uniquely distinguish a user
+
         this.state = {
-	    // UI state of which part of the form it should display
-	    // TODO: make this an enum
+            // UI state of which part of the form it should display
+            // TODO: make this an enum
             currentPage: 0, // 0 for first part of sign-up, 1 for second part, 2 for user login, 3 for choosing a username if login by Facebook the first time, 4 is user is already logged in
 
             email: '',
@@ -38,99 +38,99 @@ class UserSignupFormLocal extends React.Component {
             password: '',
             passwordVerify: '',
 
-	    redirectUri: null,
-	    
-	    FbSignupUsername: ''
+            redirectUri: null,
+
+            FbSignupUsername: ''
         };
 
-	// determine if the signup/login form should be shown based on user login status
-	const isUserLoggedin = (this.props.user != null) ? true : false;
-	if (isUserLoggedin) {
-	    this.state.currentPage = 4;
-	}
-	
+        // determine if the signup/login form should be shown based on user login status
+        const isUserLoggedin = (this.props.user != null) ? true : false;
+        if (isUserLoggedin) {
+            this.state.currentPage = 4;
+        }
+
         this.handleChange = this.handleChange.bind(this);
         this.handleContinue = this.handleContinue.bind(this);
         this.handleSignup = this.handleSignup.bind(this);
         this.handleLogin = this.handleLogin.bind(this);
-	this.facebookLogin = this.facebookLogin.bind(this);
-	this.completeUserRegistration = this.completeUserRegistration.bind(this);
-	this.completeFacebookSignup = this.completeFacebookSignup.bind(this);
+        this.facebookLogin = this.facebookLogin.bind(this);
+        this.completeUserRegistration = this.completeUserRegistration.bind(this);
+        this.completeFacebookSignup = this.completeFacebookSignup.bind(this);
     };
 
     componentDidUpdate() {
-	//console.log("UserSignupForm componentDidUpdate; State: ", this.state);
+        //console.log("UserSignupForm componentDidUpdate; State: ", this.state);
     }
 
     componentWillReceiveProps(nextProps) {
-	console.log("UserSignupForm componentWillReceiveProps; nextProps: ", nextProps);
-	
-	// determine if the signup/login form should be shown based on user login status
-	// NOTE: if UserSignupForm's state is changed when the user logs in at UserLoginForm
-	// UserSignupForm will be unmounted and re-rendered first which interferes with
-	// UserLoginForm's synchronous re-direction by changing states
-	/*
-	if (this.props.user == null && nextProps.user != null) {
-	    this.setState({ currentPage: 4 });
-	}
-	*/
-	if (this.props.user != null && nextProps.user == null) {
-	    this.setState({ currentPage: 0 });
-	}
+        console.log("UserSignupForm componentWillReceiveProps; nextProps: ", nextProps);
+
+        // determine if the signup/login form should be shown based on user login status
+        // NOTE: if UserSignupForm's state is changed when the user logs in at UserLoginForm
+        // UserSignupForm will be unmounted and re-rendered first which interferes with
+        // UserLoginForm's synchronous re-direction by changing states
+        /*
+           if (this.props.user == null && nextProps.user != null) {
+           this.setState({ currentPage: 4 });
+           }
+         */
+        if (this.props.user != null && nextProps.user == null) {
+            this.setState({ currentPage: 0 });
+        }
     }
-    
+
     // Initialize a new Aquaint user in AWS databases
     completeUserRegistration(username, realname) {
-    	// generate user scan code on Lambda
-    	var lambda = new AWS.Lambda();
-    	var lambdaPayload = {
-    	    'action': 'createScanCodeForUser',
-    	    'target': username
-    	};
-    	var pullParams = {
-    	    FunctionName: 'mock_api',
-    	    InvocationType: 'Event',
-    	    LogType: 'None',
-    	    Payload: JSON.stringify(lambdaPayload)
-    	};
-    	var pullResults;
-    	lambda.invoke(pullParams, function(err, data) {
-    	    if (err) {
-    		console.log(err);
-    	    } else {
-    		//pullResults = JSON.parse(data.Payload);
-    		console.log("Invoking Lambda function successful: ", data);
-    	    }
-    	});
+        // generate user scan code on Lambda
+        var lambda = new AWS.Lambda();
+        var lambdaPayload = {
+            'action': 'createScanCodeForUser',
+            'target': username
+        };
+        var pullParams = {
+            FunctionName: 'mock_api',
+            InvocationType: 'Event',
+            LogType: 'None',
+            Payload: JSON.stringify(lambdaPayload)
+        };
+        var pullResults;
+        lambda.invoke(pullParams, function(err, data) {
+            if (err) {
+                console.log(err);
+            } else {
+                //pullResults = JSON.parse(data.Payload);
+                console.log("Invoking Lambda function successful: ", data);
+            }
+        });
 
-    	// create empty user entry on DynamoDB
-	let userTableNewEntryParams = {
-    	    TableName: 'aquaint-users',
-    	    Item: {
-    		'username': {S: username},
-		'realname': {S: realname}
-    	    }
-    	};
+        // create empty user entry on DynamoDB
+        let userTableNewEntryParams = {
+            TableName: 'aquaint-users',
+            Item: {
+                'username': {S: username},
+                'realname': {S: realname}
+            }
+        };
 
-	var ddb = new AWS.DynamoDB();
-	ddb.putItem(userTableNewEntryParams, function(err, data) {
-	    if (err) {
-		console.log(err);
-	    } else {
-		console.log("Initializing user's social media profiles list in DynamoDB successful.");
+        var ddb = new AWS.DynamoDB();
+        ddb.putItem(userTableNewEntryParams, function(err, data) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log("Initializing user's social media profiles list in DynamoDB successful.");
 
-		// Update Redux global state of user authentication
-		this.props.dispatch(loginUser(username));
+                // Update Redux global state of user authentication
+                this.props.dispatch(loginUser(username));
 
-		// User is now logged in; redirect user to his Aquaint profile
-		this.setState({
-		    redirectUri: '/' + username
-		});
-	    }
-	}.bind(this));
+                // User is now logged in; redirect user to his Aquaint profile
+                this.setState({
+                    redirectUri: '/' + username
+                });
+            }
+        }.bind(this));
 
     }
-    
+
     handleChange(event) {
         this.setState({
             [event.target.name]: event.target.value
@@ -178,59 +178,59 @@ class UserSignupFormLocal extends React.Component {
                 return;
             }
             var cognitoUser = result.user;
-	    let signupUsername = cognitoUser.getUsername();
+            let signupUsername = cognitoUser.getUsername();
             alert(`AWS Cognito User Pool signup successful; Welcome, ${signupUsername}!`);
 
-	    // Integrating User Pools with Cognito Identity to give permission
-	    // on AWS resources
-	    if (cognitoUser != null) {
-		// we still have to authenticate (Login) the user after it is
-		// signed up
-		var authenticationData = {
-		    Username: this.state.username,
-		    Password: this.state.password
-		};
-		var authenticationDetails = new AuthenticationDetails(authenticationData);
-		cognitoUser.authenticateUser(authenticationDetails, {
-		    onSuccess: function(result) {
-			cognitoUser.getSession(function(err, result) {
-			    if (err) {
-				console.log("cognitoUser getSession() error: ", err);
-				return;
-			    }
-			    if (result) {
-				AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-				    IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
-				    Logins: {
-					'cognito-idp.us-east-1.amazonaws.com/us-east-1_yyImSiaeD': result.getIdToken().getJwtToken()
-				    }
-				});
-				
-				// call refresh method in order to authenticate user and get new temp credentials
-				AWS.config.credentials.refresh(function(error) {
-				    if (error) {
-					console.error(error);
-					return;
-				    } else {
-					console.log('User authorization succeeds; AWS credentials refreshed.');
-					
-					this.completeUserRegistration(signupUsername, this.state.fullname);
+            // Integrating User Pools with Cognito Identity to give permission
+            // on AWS resources
+            if (cognitoUser != null) {
+                // we still have to authenticate (Login) the user after it is
+                // signed up
+                var authenticationData = {
+                    Username: this.state.username,
+                    Password: this.state.password
+                };
+                var authenticationDetails = new AuthenticationDetails(authenticationData);
+                cognitoUser.authenticateUser(authenticationDetails, {
+                    onSuccess: function(result) {
+                        cognitoUser.getSession(function(err, result) {
+                            if (err) {
+                                console.log("cognitoUser getSession() error: ", err);
+                                return;
+                            }
+                            if (result) {
+                                AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                                    IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
+                                    Logins: {
+                                        'cognito-idp.us-east-1.amazonaws.com/us-east-1_yyImSiaeD': result.getIdToken().getJwtToken()
+                                    }
+                                });
 
-					this.identityId = AWS.config.credentials.identityId;
-					console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${this.identityId}`);
-				    }
-				}.bind(this));
+                                // call refresh method in order to authenticate user and get new temp credentials
+                                AWS.config.credentials.refresh(function(error) {
+                                    if (error) {
+                                        console.error(error);
+                                        return;
+                                    } else {
+                                        console.log('User authorization succeeds; AWS credentials refreshed.');
 
-			    }
-			}.bind(this));
+                                        this.completeUserRegistration(signupUsername, this.state.fullname);
 
-		    }.bind(this),
+                                        this.identityId = AWS.config.credentials.identityId;
+                                        console.log(`Cognito User Pool signup: your Amazon Cognito Identity: ${this.identityId}`);
+                                    }
+                                }.bind(this));
 
-		    onFailure: function(err) {
-			console.log('User authentication failed after Cognito User Pool signup: ', err);
-		    }
-		});
-	    }
+                            }
+                        }.bind(this));
+
+                    }.bind(this),
+
+                    onFailure: function(err) {
+                        console.log('User authentication failed after Cognito User Pool signup: ', err);
+                    }
+                });
+            }
         }.bind(this));
 
     };
@@ -244,143 +244,143 @@ class UserSignupFormLocal extends React.Component {
 
     // Entry point of Login by Facebook
     facebookLogin(event) {
-	FB.login(function (response) {
+        FB.login(function (response) {
 
-	    // Check if the user logged in successfully.
-	    if (response.authResponse) {
+            // Check if the user logged in successfully.
+            if (response.authResponse) {
 
-		alert('You are now logged in from Facebook.');
+                alert('You are now logged in from Facebook.');
 
-		// Add the Facebook access token to the Cognito credentials login map.
-		AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-		    IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
-		    Logins: {
-			'graph.facebook.com': response.authResponse.accessToken
-		    }
-		});
+                // Add the Facebook access token to the Cognito credentials login map.
+                    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                        IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
+                        Logins: {
+                            'graph.facebook.com': response.authResponse.accessToken
+                        }
+                    });
 
-		// Obtain AWS credentials
-		AWS.config.credentials.get(function(){
-		    // Access AWS resources here.
-		    this.identityId = AWS.config.credentials.identityId;
-		    console.log(`Facebook Login: your Amazon Cognito Identity: ${this.identityId}`);
+                // Obtain AWS credentials
+                AWS.config.credentials.get(function(){
+                    // Access AWS resources here.
+                        this.identityId = AWS.config.credentials.identityId;
+                    console.log(`Facebook Login: your Amazon Cognito Identity: ${this.identityId}`);
 
-		    var ddb = new AWS.DynamoDB();
+                    var ddb = new AWS.DynamoDB();
 
-		    // first check if there is an Aquaint username associated
-		    // with this Identity ID
-		    var identityTableParams = {
-			TableName: 'aquaint-user-identity',
-			Key: {
-			    'identityId': {S: this.identityId}
-			}
-		    };
-		    ddb.getItem(identityTableParams, function(err, data) {
-			if (err) {
-			    console.log("Error accessing DynamoDB table: ", err);
-			} else {
-			    console.log("Accessing aquaint-user-identity DynamoDB table success: ", data.Item);
+                    // first check if there is an Aquaint username associated
+                    // with this Identity ID
+                    var identityTableParams = {
+                        TableName: 'aquaint-user-identity',
+                        Key: {
+                            'identityId': {S: this.identityId}
+                        }
+                    };
+                    ddb.getItem(identityTableParams, function(err, data) {
+                        if (err) {
+                            console.log("Error accessing DynamoDB table: ", err);
+                        } else {
+                            console.log("Accessing aquaint-user-identity DynamoDB table success: ", data.Item);
 
-			    if (data.Item != null) {
-				let username = data.Item['username']['S'];
-				console.log(`Cognito Identity has an Aquaint username assoicated: ${username}`);
+                            if (data.Item != null) {
+                                let username = data.Item['username']['S'];
+                                console.log(`Cognito Identity has an Aquaint username assoicated: ${username}`);
 
-				// Update Redux global state of user authentication
-				this.props.dispatch(loginUser(username));
-				
-				// User is now logged in; redirect user to his Aquaint profile
-				this.setState({
-				    redirectUri: '/' + username
-				});
-			    } else {
-				// the Facebook user hasn't used Aquaint before
-				// go to the page to let him choose an Aquaint username
-				this.setState({currentPage: 3});
-			    }
-			}
-		    }.bind(this));
-		}.bind(this));
+                                // Update Redux global state of user authentication
+                                this.props.dispatch(loginUser(username));
 
-	    } else {
-		alert("There is a problem logging you in from Facebook.");
-	    }
-	}.bind(this));
+                                // User is now logged in; redirect user to his Aquaint profile
+                                this.setState({
+                                    redirectUri: '/' + username
+                                });
+                            } else {
+                                // the Facebook user hasn't used Aquaint before
+                                // go to the page to let him choose an Aquaint username
+                                this.setState({currentPage: 3});
+                            }
+                        }
+                    }.bind(this));
+                }.bind(this));
 
-	// Note: these binds are necessary for anonymous functions
-	// to access React-buildin functions, Eg. setState()
+            } else {
+                alert("There is a problem logging you in from Facebook.");
+            }
+        }.bind(this));
+
+        // Note: these binds are necessary for anonymous functions
+        // to access React-buildin functions, Eg. setState()
     }
 
     // this function is called when a Facebook user uses Aquaint for the first time,
     // and just finishes entering an Aquaint username
     completeFacebookSignup(event) {
-	event.preventDefault();
-	
-	console.log("completeFacebookSignup function called.");
+        event.preventDefault();
 
-	var signup_username = this.state.FbSignupUsername;
-	if (signup_username != null || signup_username != '') {
-	    var ddb = new AWS.DynamoDB();
+        console.log("completeFacebookSignup function called.");
 
-	    // check if the username has been occupied or not
-	    // including users from Cognito User Pool or Facebook authentication
-	    let userTableParams = {
-		TableName: 'aquaint-users',
-		Key: {
-		    'username': {S: signup_username}
-		}
-	    };
-	    ddb.getItem(userTableParams, function(err, data) {
-		if (err == null) {
-		    if (data.Item != null) {
-			alert("This Aquaint username is not available; please try a different one.");
-			this.setState({ FbSignupUsername: '' });
-		    } else {
-			console.log(`completeFacebookSignup() reads identityID: ${this.identityId}`);
-			// Username is available, link the identity ID to the user name
-			let identityTableItem = {
-			    TableName: 'aquaint-user-identity',
-			    Item: {
-				'identityId': {S: this.identityId},
-				'username': {S: signup_username}
-			    }
-			};
-			ddb.putItem(identityTableItem, function(err, data) {
-			    if (err == null) {
-				console.log('Login by Facebook user signup successful; initializing the new user now.');
+        var signup_username = this.state.FbSignupUsername;
+        if (signup_username != null || signup_username != '') {
+            var ddb = new AWS.DynamoDB();
 
-				FB.api('/me', function(response) {
-				    this.completeUserRegistration(signup_username, response['name']);
-				}.bind(this));;
+            // check if the username has been occupied or not
+            // including users from Cognito User Pool or Facebook authentication
+            let userTableParams = {
+                TableName: 'aquaint-users',
+                Key: {
+                    'username': {S: signup_username}
+                }
+            };
+            ddb.getItem(userTableParams, function(err, data) {
+                if (err == null) {
+                    if (data.Item != null) {
+                        alert("This Aquaint username is not available; please try a different one.");
+                        this.setState({ FbSignupUsername: '' });
+                    } else {
+                        console.log(`completeFacebookSignup() reads identityID: ${this.identityId}`);
+                        // Username is available, link the identity ID to the user name
+                        let identityTableItem = {
+                            TableName: 'aquaint-user-identity',
+                            Item: {
+                                'identityId': {S: this.identityId},
+                                'username': {S: signup_username}
+                            }
+                        };
+                        ddb.putItem(identityTableItem, function(err, data) {
+                            if (err == null) {
+                                console.log('Login by Facebook user signup successful; initializing the new user now.');
 
-			    } else {
-				console.log("Error accessing DynamoDB table:", err);
-			    }
-			}.bind(this));
-		    }
-		} else {
-		    console.log("Error accessing DynamoDB table: ", err);
-		}
-	    }.bind(this));
-	}
+                                FB.api('/me', function(response) {
+                                    this.completeUserRegistration(signup_username, response['name']);
+                                }.bind(this));;
+
+                            } else {
+                                console.log("Error accessing DynamoDB table:", err);
+                            }
+                        }.bind(this));
+                    }
+                } else {
+                    console.log("Error accessing DynamoDB table: ", err);
+                }
+            }.bind(this));
+        }
     };
 
     render() {
-	
-	if (this.state.redirectUri) {
-	    return (
-		<Redirect to={{pathname: this.state.redirectUri}} />
-	    );
-	}
 
-	/*
-	const isUserLoggedin = (this.props.user != null) ? true : false;
-	if (isUserLoggedin) {
-	    this.setState({ currentPage: 4 });
-	} else {
-	    this.setState({ currentPage: 0 });
-	}
-	*/
-	
+        if (this.state.redirectUri) {
+            return (
+                <Redirect to={{pathname: this.state.redirectUri}} />
+            );
+        }
+
+        /*
+           const isUserLoggedin = (this.props.user != null) ? true : false;
+           if (isUserLoggedin) {
+           this.setState({ currentPage: 4 });
+           } else {
+           this.setState({ currentPage: 0 });
+           }
+         */
+
         if (this.state.currentPage == 0) {
             return (
                 <div className="welcome-div">
@@ -389,7 +389,7 @@ class UserSignupFormLocal extends React.Component {
                     <h2 className="welcome-subtitle">All your social media profiles in one place.</h2>
                     <p className ="welcome-instruction"> Sign up with...</p>
                     <button className="welcome-button" onClick={this.facebookLogin}>
-                      <img  id="image-padding" height="50%" src="./images/facebook_login_icon.svg" /><a id="fb-padding">Facebook</a>
+                        <img  id="image-padding" height="50%" src="./images/facebook_login_icon.svg" /><a id="fb-padding">Facebook</a>
                     </button>
                     <br/><br/><br/>
                     <p className ="welcome-instruction">
@@ -412,20 +412,20 @@ class UserSignupFormLocal extends React.Component {
 
         } else if (this.state.currentPage == 1) {
             return (
-              <div className ="welcome-div">
-                <img height="15%" src="./images/Aquaint_welcome_logo.svg" />
-                <h1 className="welcome-header">Welcome</h1>
-                <h2 className="welcome-subtitle">You're one step away from a brand new experience.</h2>
-                <br/><br/>
-                  <form onSubmit={this.handleSignup}>
-                     <input className="welcome-input" placeholder="Username"  name="username" value={this.state.username} onChange={this.handleChange} />
-                     <br />
-                     <input className="welcome-input" placeholder="Password" type="password" name="password" value={this.state.password} onChange={this.handleChange} />
-                     <br />
-                     <input className="welcome-input" placeholder="Verify Password" type="password" name="passwordVerify" value={this.state.passwordVerify} onChange={this.handleChange} />
-                    <br />
-                    <button className ="welcome-button" id="continue"><a className="welcome-continue">Join Aquaint</a></button>
-                  </form>
+                <div className ="welcome-div">
+                    <img height="15%" src="./images/Aquaint_welcome_logo.svg" />
+                    <h1 className="welcome-header">Welcome</h1>
+                    <h2 className="welcome-subtitle">You're one step away from a brand new experience.</h2>
+                    <br/><br/>
+                    <form onSubmit={this.handleSignup}>
+                        <input className="welcome-input" placeholder="Username"  name="username" value={this.state.username} onChange={this.handleChange} />
+                        <br />
+                        <input className="welcome-input" placeholder="Password" type="password" name="password" value={this.state.password} onChange={this.handleChange} />
+                        <br />
+                        <input className="welcome-input" placeholder="Verify Password" type="password" name="passwordVerify" value={this.state.passwordVerify} onChange={this.handleChange} />
+                        <br />
+                        <button className ="welcome-button" id="continue"><a className="welcome-continue">Join Aquaint</a></button>
+                    </form>
                 </div>
             );
 
@@ -435,10 +435,10 @@ class UserSignupFormLocal extends React.Component {
         } else if (this.state.currentPage == 3) {
             return (
                 <div className="welcome-div">
-                <img height="15%" src="./images/Aquaint_welcome_logo.svg" />
-                <h1 className="welcome-header">Welcome</h1>
-                <h2 className="welcome-subtitle">You're one step away from a brand new experience.</h2>
-                <br/><br/>
+                    <img height="15%" src="./images/Aquaint_welcome_logo.svg" />
+                    <h1 className="welcome-header">Welcome</h1>
+                    <h2 className="welcome-subtitle">You're one step away from a brand new experience.</h2>
+                    <br/><br/>
                     <form onSubmit={this.completeFacebookSignup}>
                         <input className="welcome-input" placeholder="Choose an username for your Aquaint profile..." name="FbSignupUsername" value={this.state.FbSignupUsername} onChange={this.handleChange}/>
                         <br/>
@@ -455,10 +455,10 @@ class UserSignupFormLocal extends React.Component {
                     <img height="15%" src="./images/Aquaint_welcome_logo.svg"/>
                     <h1 className="welcome-header">Let's get Aquainted.</h1>
                     <h2 className="welcome-subtitle">All your social media profiles in one place.</h2>
-		</div>
+                </div>
             );
         }
-	
+
         return null;
     }
 }
@@ -467,7 +467,7 @@ class UserSignupFormLocal extends React.Component {
 // TODO: make container components naming consistent: GetSomething or SomethingLocal
 const mapStateToProps = state => {
     return {
-	user: state.userAuth
+        user: state.userAuth
     };
 };
 
