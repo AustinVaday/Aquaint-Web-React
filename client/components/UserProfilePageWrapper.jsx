@@ -4,6 +4,7 @@ import {Redirect} from 'react-router';
 
 import GetNavBar from './GetNavBar.jsx';
 import GetUserProfilePage from './GetUserProfilePage.jsx';
+import { UserNotFound } from './error/UserNotFound.jsx';
 
 export class UserProfilePageWrapper extends React.Component {
 
@@ -109,35 +110,41 @@ export class UserProfilePageWrapper extends React.Component {
     }
 
     render() {
-        if (this.state.userNotFound) {
-            return(
-                <Redirect to={{pathname: '/error/nonexist'}} />
-            );
-        }
-
         //User data to send to UserProfilePage Component
         var userData = {
             userRealname: this.state.userRealname,
             userSmpDict: this.state.userSmpDict
         };
 
-        return (
-            <div>
-                <GetNavBar />
-                <header id = "full-intro" className = "intro-block" >
-                    <div className="container">
-                        <div className="profile-section">
-                            {/* Check to make sure we don't render the img and UserProfilePage Component if the user is not found */}
-                            { !this.state.userNotFound && this.state.userRealname &&
-                              <img src={this.state.userImageDisplay} className="profile-picture" />
-                            }
-                            { !this.state.userNotFound && this.state.userRealname &&
-                              <GetUserProfilePage {...this.props} userData={userData} />
-                            }
+        if (this.state.userNotFound && !this.state.userRealname) {
+            // If user doesn't exist then render the error page
+            return (
+                <div>
+                    <GetNavBar />
+                    <header id = "full-intro" className = "intro-block" >
+                        <UserNotFound {...this.props} />
+                    </header>
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <GetNavBar />
+                    <header id = "full-intro" className = "intro-block" >
+                        <div className="container">
+                            <div className="profile-section">
+                                {/* Check to make sure we don't render the img and UserProfilePage Component if the user is not found */}
+                                { !this.state.userNotFound && this.state.userRealname &&
+                                <img src={this.state.userImageDisplay} className="profile-picture" />
+                                }
+                                { !this.state.userNotFound && this.state.userRealname &&
+                                <GetUserProfilePage {...this.props} userData={userData} />
+                                }
+                            </div>
                         </div>
-                    </div>
-                </header>
-            </div>
-        );
+                    </header>
+                </div>
+            );
+        }
     }
 }
