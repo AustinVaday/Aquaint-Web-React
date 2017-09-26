@@ -12,6 +12,8 @@ import { DisplayProfile } from './components/DisplayProfile.jsx';
 import IndexPage from './components/IndexPage.jsx';
 import { UserProfilePageWrapper } from './components/UserProfilePageWrapper.jsx';
 import { UserNotFound } from './components/error/UserNotFound.jsx';
+import { Error404 } from './components/error/404Error.jsx';
+import { Error503 } from './components/error/503Error.jsx';
 import { loginUser } from './states/actions';
 
 // Redux store, which should be one and only one instance in the app
@@ -33,8 +35,10 @@ const reactRender = () => {
                 <div>
                     <Switch>
                         <Route exact path="/" component={IndexPage}/>
-                        <Route path="/error/nonexist" component={UserNotFound}/>
-                        <Route path="/:username" component={UserProfilePageWrapper}/>
+                        {/*<Route path="/error/nonexist" component={UserNotFound}/>*/}
+                        <Route path="/error/503" component={Error503} />
+                        <Route path="/:username" component={UserProfilePageWrapper} />
+                        <Route component={Error404} />
                     </Switch>
                 </div>
             </Provider>
