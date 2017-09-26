@@ -33,7 +33,6 @@ export class UserNotFound extends React.Component {
 
     return (
       <div>
-        <GetNavBar />
         <header id="" className="intro-block">
             <div className="container">
                 <div className="thumbnail" style={whiteBg}>
