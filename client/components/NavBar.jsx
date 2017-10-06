@@ -6,7 +6,12 @@ export class NavBar extends React.Component {
     // not when the component gets re-rendered
     constructor(props) {
         super(props);
-	console.log('NavBar constructor() called. Props:', this.props);
+  console.log('NavBar constructor() called. Props:', this.props);
+        this.state = {
+          userImage: null
+        };
+        this.getImageUrl = this.getImageUrl.bind(this);
+        this.getImageUrl();
     }
 
     /*
@@ -19,9 +24,23 @@ export class NavBar extends React.Component {
       }
     */
 
-    render() {
+    getImageUrl() {
+        var s3 = new AWS.S3();
+        var params = {
+            Bucket: 'aquaint-userfiles-mobilehub-146546989/public',
+            Key: this.props.user
+        };
 
-	var userImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/" + this.props.user;
+        s3.getSignedUrl('getObject', params, (function(err, data) {
+            if (err) console.log(err, err.stack);
+            else {
+                console.log('url', data);
+                this.setState({userImage: data});
+            }
+        }).bind(this));
+    }
+
+    render() {
         var userProfileUrl = "http://aquaint.us/" + this.props.user;
 
 	// If user exists, display username in upper right corner and picture!
@@ -35,7 +54,7 @@ export class NavBar extends React.Component {
 		      <li><a onClick={this.props.onSignoutClick}>Sign out</a> </li>
                     </ul>
                     <a className="navbar-user-image" href={userProfileUrl}>
-                      <img src={userImage} alt="Your username" className="img-circle" height="38" width="38" />
+                      <img src={this.state.userImage} alt="Your username" className="img-circle" height="38" width="38" />
                     </a>
 		  </div>
 		</nav>

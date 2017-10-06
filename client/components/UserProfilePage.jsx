@@ -358,18 +358,6 @@ export default class UserProfilePage extends React.Component {
 
     }
 
-    uploadPhoto() {
-        var selectedFile = document.getElementById('fileInput').files[0];
-        console.log('Handling files', selectedFile);
-
-        var upload = new AWS.S3.ManagedUpload({
-            params: {Bucket: 'aquaint-userfiles-mobilehub-146546989/public', Key: this.user, Body: selectedFile}
-        });
-        upload.send(function(err, res) {
-            console.log(err, res);
-        });
-    }
-
     render() {
         console.log(this.state.userSmpDict);
 
@@ -440,9 +428,8 @@ export default class UserProfilePage extends React.Component {
                 console.log("in state 1");
                 return (
                     <div>
-                        <input type="file" id="fileInput" accept="image/*" onChange={this.uploadPhoto} />
                         <h2 className="profile-name">{this.state.userRealname}</h2>
-                        <p className="profile-bio">{this.user}''s dummy bio...</p>
+                        <p className="profile-bio">{this.user}'s dummy bio...</p>
                         {activatedSMP}
                         { allowEdit &&
                           <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Add Profiles</button>
@@ -453,7 +440,7 @@ export default class UserProfilePage extends React.Component {
                 return (
                     <div>
                         <h2 className="profile-name">{this.user}</h2>
-                        <p className="profile-bio">{this.user}''s dummy bio... </p>
+                        <p className="profile-bio">{this.user}'s dummy bio... </p>
                         {allSMP}
                         <button type="submit" className="profile-edit-button" onClick={this.finishEdit}>Finish</button>
                     </div>);
@@ -462,7 +449,7 @@ export default class UserProfilePage extends React.Component {
                 return (
                     <div>
                         <h2 className="profile-name">{this.user}</h2>
-                        <p className="profile-bio">{this.user}''s dummy bio...</p>
+                        <p className="profile-bio">{this.user}'s dummy bio...</p>
                         {allSMP}
                         <div className="profile-add-box">
                             <form>

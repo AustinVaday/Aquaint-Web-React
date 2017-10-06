@@ -10,6 +10,16 @@
   height: 12em;
   width: 12em;
   border-radius: 0.3em;
+
+	-webkit-transition: all 0.5s linear;
+	-moz-transition: all 0.5s linear;
+	-ms-transition: all 0.5s linear;
+	-o-transition: all 0.5s linear;
+  transition: all 0.5s linear;
+}
+.profile-section .profile-picture:hover{
+  cursor: pointer;
+  filter: brightness(70%);
 }
 .profile-section .profile-name{
   margin-top: 0.4em;
@@ -18,4 +28,13 @@
 }
 .profile-section .profile-bio{
   margin-top: -9px;
+}
+.cropper-image-center{
+  margin: auto;
+}
+.modal-content{
+  padding: 0px;
+}
+.btn-primary{
+  background-color: #0F7A9D;
 }
