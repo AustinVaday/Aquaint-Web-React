@@ -4,7 +4,7 @@ import { Route, Redirect } from 'react-router';
 import { connect } from 'react-redux';
 
 import * as AwsConfig from './AwsConfig';
-import { loginUser } from '../states/actions'; 
+import { loginUser } from '../states/actions';
 
 // React Component for User Login, including user authentication on AWS Cognito
 export class UserLoginFormLocal extends React.Component {
@@ -17,7 +17,7 @@ export class UserLoginFormLocal extends React.Component {
             username: '',
             password: '',
 
-	    redirectUri: null
+            redirectUri: null
         };
 
         // Resolve error of "Cannot read property 'setState' of undefined"
@@ -47,7 +47,7 @@ export class UserLoginFormLocal extends React.Component {
         };
         var authenticationDetails = new AuthenticationDetails(authenticationData);
 
-	var poolData = {
+        var poolData = {
             UserPoolId: AwsConfig.COGNITO_USER_POOL_ID,
             ClientId: AwsConfig.COGNITO_CLIENT_ID
         };
@@ -61,49 +61,49 @@ export class UserLoginFormLocal extends React.Component {
             onSuccess: function(result) {
                 console.log('Cognito User Pool authentication successful: ' + result);
 
-		// Retrieve user attributes for an authenticated user
-		/*
-		cognitoUser.getUserAttributes(function(err, result) {
-		    if (err) {
-			console.log(err);
-			return;
-		    } else {
-			console.log(`Get authenticated user attributes: ${result}`);
-		    }
-		});
-		*/
-		
+                // Retrieve user attributes for an authenticated user
+                /*
+                   cognitoUser.getUserAttributes(function(err, result) {
+                   if (err) {
+                   console.log(err);
+                   return;
+                   } else {
+                   console.log(`Get authenticated user attributes: ${result}`);
+                   }
+                   });
+                 */
+
                 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
                     IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
                     Logins: {
                         // "you can not replace the login key with a variable because it will be interpreted literally"
-			// See Use case 17 on amazon-cognito-identity-js
+                        // See Use case 17 on amazon-cognito-identity-js
                         'cognito-idp.us-east-1.amazonaws.com/us-east-1_yyImSiaeD': result.getIdToken().getJwtToken()
                     }
                 });
 
                 // Instantiate aws sdk service objects now that the credentials have been updated.
                 // example: var s3 = new AWS.S3();
-		AWS.config.credentials.refresh((error) => {
-		    if (error) {
-			console.error(error);
-		    } else {
-			var identityId = AWS.config.credentials.identityId;
-			console.log(`Cognito User Pool login: your Amazon Cognito Identity: ${identityId}`);
-		    }
-		});
+                AWS.config.credentials.refresh((error) => {
+                    if (error) {
+                        console.error(error);
+                    } else {
+                        var identityId = AWS.config.credentials.identityId;
+                        console.log(`Cognito User Pool login: your Amazon Cognito Identity: ${identityId}`);
+                    }
+                });
 
-		let username = cognitoUser.getUsername();
-		alert(`AWS Cognito user login successful; Welcome, ${username}!`);
-		
-		// Update Redux global state of user authentication
-		this.props.dispatch(loginUser(username));
-		
-		this.setState({
-		    redirectUri: '/' + username
-		});
-		
-	    }.bind(this),
+                let username = cognitoUser.getUsername();
+                alert(`AWS Cognito user login successful; Welcome, ${username}!`);
+
+                // Update Redux global state of user authentication
+                this.props.dispatch(loginUser(username));
+
+                this.setState({
+                    redirectUri: '/' + username
+                });
+
+            }.bind(this),
 
             onFailure: function(err) {
                 alert(err);
@@ -112,25 +112,25 @@ export class UserLoginFormLocal extends React.Component {
     }
 
     render() {
-	if (this.state.redirectUri) {
-	    return (
-		<Redirect to={{pathname: this.state.redirectUri}} />
-	    );
-	}
-	
-        return (    
-	    <div className ="welcome-div">
-	        <img height="15%" src="./images/Aquaint_welcome_logo.svg" />
-		<h1 className="welcome-header">Welcome back!</h1>
-		<br/><br/>
-		<form onSubmit={this.handleSubmit}>
+        if (this.state.redirectUri) {
+            return (
+                <Redirect to={{pathname: this.state.redirectUri}} />
+            );
+        }
+
+        return (
+            <div className ="welcome-div">
+                <img height="15%" src="/images/Aquaint_welcome_logo.svg" />
+                <h1 className="welcome-header">Welcome back!</h1>
+                <br/><br/>
+                <form onSubmit={this.handleSubmit}>
                     <input className="welcome-input" placeholder="Username"  name="username" value={this.state.username} onChange={this.handleChange} />
                     <br />
                     <input className="welcome-input" placeholder="Password" type="password" name="password" value={this.state.password} onChange={this.handleChange} />
                     <br />
                     <button className ="welcome-button" id="continue"><a className="welcome-continue">Login</a></button>
-		</form>
-	    </div>
+                </form>
+            </div>
         );
     }
 }

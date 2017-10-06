@@ -25,9 +25,8 @@ export default class UserProfilePage extends React.Component {
             // 3 for adding a social media
             currentPage: 1,
             newUserProfile: "",
-            userNotFound: null,
-            userRealname: null,
-            userSmpDict: {}
+            userRealname: this.props.userData.userRealname,
+            userSmpDict: this.props.userData.userSmpDict
         };
         // TODO: this variable may not be really necessary
         this.socialNamePendingToAdd = null;  // the social media name being added in AddProfileForm
@@ -51,7 +50,6 @@ export default class UserProfilePage extends React.Component {
         this.orderedProfiles = this.profileList.sort();
 
         // member function bindings
-        this.getUserSmpDict = this.getUserSmpDict.bind(this);
         this.addUserSmp = this.addUserSmp.bind(this);
         this.editProfile = this.editProfile.bind(this);
         this.finishEdit = this.finishEdit.bind(this);
@@ -59,68 +57,10 @@ export default class UserProfilePage extends React.Component {
         this.finishAdd = this.finishAdd.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleProfileClick = this.handleProfileClick.bind(this);
-
-        this.getUserSmpDict();
     }
 
     componentDidUpdate() {
         console.log("UserProfilePage componentDidUpdate. State: ", this.state);
-    }
-
-    // get Aquaint user data (real name, social media profiles, etc.) from DynamoDB
-    // only needs to be called once in React component's constructor
-    getUserSmpDict() {
-        var ddb = new AWS.DynamoDB();
-        var ddbTableParams = {
-            TableName: 'aquaint-users',
-            Key: {
-                'username': {S: this.user}
-            }
-        };
-        ddb.getItem(ddbTableParams, function(err, data) {
-            if (err) {
-                console.log("Error accessing DynamoDB table: ", err, "; AWS.config.credentials: ", AWS.config.credentials);
-                // NOTE: temporary solution to possible race conditions on
-                // setting AWS credentials, when user logs out and the current profile page is automatically refreshed,
-                // or an un-logged in user goes to a profile page
-                // we simply wait for 2 seconds and try fetching from Dynamo again
-                console.log("WARNING: possible race condition, re-accessing DynamoDB soon...");
-                setTimeout(function(){
-                    this.getUserSmpDict();
-                }.bind(this), 2000);
-
-            } else {
-                console.log("User entry in aquaint-user table:", data);
-
-                if (!data.Item) {
-                    console.log("User entry does not exist in aquaint-users Dynamo table. Could not find user:", this.user);
-                    this.setState({ userNotFound: true });
-                    return;
-                } else {
-                    console.log("User exists in aquaint-users Dynamo table.");
-                    this.setState({ userNotFound: false });
-                }
-
-                if (this.state.userRealname == null) {
-                    this.setState({ userRealname: data.Item.realname.S });
-                }
-
-                var socialDict = {};
-                if (data.Item.accounts != null) {
-                    for (var socialMapElem in data.Item.accounts.M) {
-                        var singleSocialArray = [];
-                        for (var socialId in data.Item.accounts.M[socialMapElem].L) {
-                            //console.log(socialMapElem + ": " + data.Item.accounts.M[socialMapElem].L[socialId].S);
-                            singleSocialArray.push(data.Item.accounts.M[socialMapElem].L[socialId].S);
-                        }
-                        socialDict[socialMapElem] = singleSocialArray;
-                    }
-                }
-
-                this.setState({ userSmpDict: socialDict });
-                console.log("GetUserSmpDict: ", socialDict);
-            }
-        }.bind(this));
     }
 
     // add a social media profile to this Aquaint user
@@ -361,12 +301,6 @@ export default class UserProfilePage extends React.Component {
     render() {
         console.log(this.state.userSmpDict);
 
-        if (this.state.userNotFound) {
-            return(
-                <Redirect to={{pathname: '/nonexist'}}/>
-            );
-        }
-
         var activatedSMP = [];
 
         // Convert dictionary to a list of arrays i.e.:
@@ -407,7 +341,7 @@ export default class UserProfilePage extends React.Component {
         for (var i = 0; i < this.orderedProfiles.length; i++){
             if(!existingSMP.includes(this.orderedProfiles[i])){
                 let sm = this.orderedProfiles[i];
-                let dir = "./images/SMP/"+sm+"_bw.svg";
+                let dir = "/images/SMP/"+sm+"_bw.svg";
                 allSMP.push(
                     <button key={sm} type="submit" onClick={() => this.formPopUp(sm)} className="profile-button">
                         <img type="submit" className="profile-button-img" src={dir}/>
@@ -422,44 +356,42 @@ export default class UserProfilePage extends React.Component {
         const allowEdit = (this.props.userLoggedin != null && this.props.userLoggedin == this.user) ? true : false;
         console.log("Can I edit this profile page now? ", allowEdit);
 
-        if (this.state.userNotFound == false) {
-            console.log("User found! Rendering UserProfilePage.");
-            if (this.state.currentPage == 1) {
-                console.log("in state 1");
-                return (
-                    <div>
-                        <h2 className="profile-name">{this.state.userRealname}</h2>
-                        <p className="profile-bio">{this.user}'s dummy bio...</p>
-                        {activatedSMP}
-                        { allowEdit &&
-                          <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Add Profiles</button>
-                        }
-                    </div>);
-            } else if (this.state.currentPage == 2) {
-                console.log("in state 2");
-                return (
-                    <div>
-                        <h2 className="profile-name">{this.user}</h2>
-                        <p className="profile-bio">{this.user}'s dummy bio... </p>
-                        {allSMP}
-                        <button type="submit" className="profile-edit-button" onClick={this.finishEdit}>Finish</button>
-                    </div>);
-            } else if (this.state.currentPage == 3) {
-                console.log("in state 3");
-                return (
-                    <div>
-                        <h2 className="profile-name">{this.user}</h2>
-                        <p className="profile-bio">{this.user}'s dummy bio...</p>
-                        {allSMP}
-                        <div className="profile-add-box">
-                            <form>
-                                <input className="profile-new-username" placeholder="Your Username/URL"  name="newUserProfile" value={this.state.newUserProfile} onChange={this.handleChange} />
-                                <br/>
-                                <button type="submit" className="profile-edit-button" id="add" onClick={this.finishAdd}>Add</button>
-                            </form>
-                        </div>
-                    </div>);
-            }
+        console.log("User found! Rendering UserProfilePage.");
+        if (this.state.currentPage == 1) {
+            console.log("in state 1");
+            return (
+                <div>
+                    <h2 className="profile-name">{this.state.userRealname}</h2>
+                    <p className="profile-bio">{this.user}'s dummy bio...</p>
+                    {activatedSMP}
+                    { allowEdit &&
+                      <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Add Profiles</button>
+                    }
+                </div>);
+        } else if (this.state.currentPage == 2) {
+            console.log("in state 2");
+            return (
+                <div>
+                    <h2 className="profile-name">{this.userRealname}</h2>
+                    <p className="profile-bio">{this.user}'s dummy bio... </p>
+                    {allSMP}
+                    <button type="submit" className="profile-edit-button" onClick={this.finishEdit}>Finish</button>
+                </div>);
+        } else if (this.state.currentPage == 3) {
+            console.log("in state 3");
+            return (
+                <div>
+                    <h2 className="profile-name">{this.userRealname}</h2>
+                    <p className="profile-bio">{this.user}'s dummy bio...</p>
+                    {allSMP}
+                    <div className="profile-add-box">
+                        <form>
+                            <input className="profile-new-username" placeholder="Your Username/URL"  name="newUserProfile" value={this.state.newUserProfile} onChange={this.handleChange} />
+                            <br/>
+                            <button type="submit" className="profile-edit-button" id="add" onClick={this.finishAdd}>Add</button>
+                        </form>
+                    </div>
+                </div>);
         }
         return null;
     }
