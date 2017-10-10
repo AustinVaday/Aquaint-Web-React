@@ -1,7 +1,5 @@
 import React from 'react';
 
-import GetNavBar from '../GetNavBar.jsx';
-
 export class UserNotFound extends React.Component {
   constructor(props) {
     super(props);
@@ -33,7 +31,6 @@ export class UserNotFound extends React.Component {
 
     return (
       <div>
-        <GetNavBar />
         <header id="" className="intro-block">
             <div className="container">
                 <div className="thumbnail" style={whiteBg}>

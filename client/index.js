@@ -33,7 +33,7 @@ const reactRender = () => {
                 <div>
                     <Switch>
                         <Route exact path="/" component={IndexPage}/>
-                        <Route path="/error/nonexist" component={UserNotFound}/>
+                        {/*<Route path="/error/nonexist" component={UserNotFound}/>*/}
                         <Route path="/:username" component={UserProfilePageWrapper}/>
                     </Switch>
                 </div>
