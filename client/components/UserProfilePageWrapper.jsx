@@ -17,8 +17,7 @@ export class UserProfilePageWrapper extends React.Component {
 
     // Get username from the route
     this.user = this.props.match.params.username;
-    //this.userImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/" + this.user;
-    this.userImage = null;
+    this.userImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/" + this.user;
     this.userScanCodeImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/scancodes/" + this.user;
 
     this.state = {
