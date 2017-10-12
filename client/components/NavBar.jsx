@@ -26,7 +26,8 @@ export class NavBar extends React.Component {
   */
 
   componentWillMount() {
-    this.getImageUrl();
+    if (this.props.user)
+      this.getImageUrl();
   }
 
   getImageUrl() {

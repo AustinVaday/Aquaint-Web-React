@@ -42,6 +42,7 @@ export class UserProfilePageWrapper extends React.Component {
         if (this._isMounted) this.setState({userImageDisplay: this.userImage});
       }
     }.bind(this), 3000);  // every 3 seconds
+
     this.uploadPhoto = this.uploadPhoto.bind(this);
     this.close = this.close.bind(this);
     this.openImageCropDialog = this.openImageCropDialog.bind(this);
@@ -295,12 +296,15 @@ export class UserProfilePageWrapper extends React.Component {
           <div className="container">
             <div className="profile-section">
               {/* Check to make sure we don't render the img and UserProfilePage Component if the user is not found */}
-              {!this.state.userNotFound && this.state.userRealname &&
+              {!this.state.userNotFound && this.state.userRealname && this.props.userLoggedin &&
               <input type="file" id="fileInput" accept="image/*" onChange={this.openImageCropDialog} style={hide}/>
               }
-              {!this.state.userNotFound && this.state.userRealname &&
-              <img src={this.state.userImageDisplay} className="profile-picture"
+              {!this.state.userNotFound && this.state.userRealname && this.props.userLoggedin &&
+              <img src={this.state.userImageDisplay} className="profile-picture profile-picture-hover"
                    onClick={this.openFileBrowserDialog}/>
+              }
+              {!this.state.userNotFound && this.state.userRealname && !this.props.userLoggedin &&
+              <img src={this.state.userImageDisplay} className="profile-picture" />
               }
               {!this.state.userNotFound && this.state.userRealname &&
               <GetUserProfilePage {...this.props} userData={userData}/>
@@ -325,10 +329,7 @@ export class UserProfilePageWrapper extends React.Component {
   }
 
   render() {
-    console.log('uploadComplete', this.state.uploadComplete);
-    console.log('userNotFound', this.state.userNotFound);
-    console.log('userRealname', this.state.userRealname);
-
+    console.log(this.props);
     if (this.state.uploadComplete) {
       if (this.state.userNotFound && !this.state.userRealname) {
         return this.renderUserNotFoundPage();

@@ -17,7 +17,7 @@
 	-o-transition: all 0.5s linear;
   transition: all 0.5s linear;
 }
-.profile-section .profile-picture:hover{
+.profile-section .profile-picture-hover:hover{
   cursor: pointer;
   filter: brightness(70%);
 }
