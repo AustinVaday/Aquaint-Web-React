@@ -7,6 +7,7 @@ import Cropper from 'react-cropper';
 
 import GetNavBar from './GetNavBar.jsx';
 import GetUserProfilePage from './GetUserProfilePage.jsx';
+import {UserNotFound} from "./error/UserNotFound.jsx";
 
 export class UserProfilePageWrapper extends React.Component {
 
@@ -267,13 +268,15 @@ export class UserProfilePageWrapper extends React.Component {
     );
   }
 
-  render() {
-    if (this.state.userNotFound) {
-      return (
-        <Redirect to={{pathname: '/error/nonexist'}} />
-      );
-    }
+  renderLoadScreen() {
+    return (
+      <div id="preloader">
+        <div className="emblem"></div>
+      </div>
+    );
+  }
 
+  renderProfilePage() {
     //User data to send to UserProfilePage Component
     var userData = {
       userRealname: this.state.userRealname,
@@ -285,36 +288,55 @@ export class UserProfilePageWrapper extends React.Component {
       display: 'none'
     };
 
-    if (this.state.uploadComplete) {
-      return (
-        <div>
-          <GetNavBar />
-          <header id="full-intro" className="intro-block">
-            <div className="container">
-              <div className="profile-section">
-                {/* Check to make sure we don't render the img and UserProfilePage Component if the user is not found */}
-                {!this.state.userNotFound && this.state.userRealname &&
-                <input type="file" id="fileInput" accept="image/*" onChange={this.openImageCropDialog} style={hide} />
-                }
-                {!this.state.userNotFound && this.state.userRealname &&
-                <img src={this.state.userImageDisplay} className="profile-picture"
-                     onClick={this.openFileBrowserDialog} />
-                }
-                {!this.state.userNotFound && this.state.userRealname &&
-                <GetUserProfilePage {...this.props} userData={userData} />
-                }
-                {this.state.selectedImage && this.renderImageCropModal()}
-              </div>
+    return (
+      <div>
+        <GetNavBar/>
+        <header id="full-intro" className="intro-block">
+          <div className="container">
+            <div className="profile-section">
+              {/* Check to make sure we don't render the img and UserProfilePage Component if the user is not found */}
+              {!this.state.userNotFound && this.state.userRealname &&
+              <input type="file" id="fileInput" accept="image/*" onChange={this.openImageCropDialog} style={hide}/>
+              }
+              {!this.state.userNotFound && this.state.userRealname &&
+              <img src={this.state.userImageDisplay} className="profile-picture"
+                   onClick={this.openFileBrowserDialog}/>
+              }
+              {!this.state.userNotFound && this.state.userRealname &&
+              <GetUserProfilePage {...this.props} userData={userData}/>
+              }
+              {this.state.selectedImage && this.renderImageCropModal()}
             </div>
-          </header>
-        </div>
-      );
+          </div>
+        </header>
+      </div>
+    );
+  }
+
+  renderUserNotFoundPage() {
+    return (
+      <div>
+        <GetNavBar/>
+        <header id="full-intro" className="intro-block">
+          <UserNotFound {...this.props} />
+        </header>
+      </div>
+    );
+  }
+
+  render() {
+    console.log('uploadComplete', this.state.uploadComplete);
+    console.log('userNotFound', this.state.userNotFound);
+    console.log('userRealname', this.state.userRealname);
+
+    if (this.state.uploadComplete) {
+      if (this.state.userNotFound && !this.state.userRealname) {
+        return this.renderUserNotFoundPage();
+      } else {
+        return this.renderProfilePage();
+      }
     } else {
-      return (
-        <div id="preloader">
-          <div className="emblem"></div>
-        </div>
-      );
+      return this.renderLoadScreen()
     }
   }
 }
