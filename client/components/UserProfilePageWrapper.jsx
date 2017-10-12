@@ -17,8 +17,7 @@ export class UserProfilePageWrapper extends React.Component {
 
     // Get username from the route
     this.user = this.props.match.params.username;
-    //this.userImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/" + this.user;
-    this.userImage = null;
+    this.userImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/" + this.user;
     this.userScanCodeImage = "http://aquaint-userfiles-mobilehub-146546989.s3.amazonaws.com/public/scancodes/" + this.user;
 
     this.state = {
@@ -48,8 +47,11 @@ export class UserProfilePageWrapper extends React.Component {
     this.saveCropped = this.saveCropped.bind(this);
     this.getImageUrl = this.getImageUrl.bind(this);
 
-    this.getImageUrl();
     this.getUserSmpDict();
+  }
+
+  componentWillMount() {
+    this.getImageUrl();
   }
 
   componentDidMount() {
@@ -131,7 +133,7 @@ export class UserProfilePageWrapper extends React.Component {
     s3.getSignedUrl('getObject', params, (function (err, url) {
       if (err) console.log(err, err.stack);
       else {
-        //console.log('url', url);
+        this.userImage = url;
         this.setState({
           userImageDisplay: url,
           uploadComplete: true
@@ -268,7 +270,7 @@ export class UserProfilePageWrapper extends React.Component {
   render() {
     if (this.state.userNotFound) {
       return (
-        <Redirect to={{pathname: '/error/nonexist'}}/>
+        <Redirect to={{pathname: '/error/nonexist'}} />
       );
     }
 
@@ -286,20 +288,20 @@ export class UserProfilePageWrapper extends React.Component {
     if (this.state.uploadComplete) {
       return (
         <div>
-          <GetNavBar/>
+          <GetNavBar />
           <header id="full-intro" className="intro-block">
             <div className="container">
               <div className="profile-section">
                 {/* Check to make sure we don't render the img and UserProfilePage Component if the user is not found */}
                 {!this.state.userNotFound && this.state.userRealname &&
-                <input type="file" id="fileInput" accept="image/*" onChange={this.openImageCropDialog} style={hide}/>
+                <input type="file" id="fileInput" accept="image/*" onChange={this.openImageCropDialog} style={hide} />
                 }
                 {!this.state.userNotFound && this.state.userRealname &&
                 <img src={this.state.userImageDisplay} className="profile-picture"
-                     onClick={this.openFileBrowserDialog}/>
+                     onClick={this.openFileBrowserDialog} />
                 }
                 {!this.state.userNotFound && this.state.userRealname &&
-                <GetUserProfilePage {...this.props} userData={userData}/>
+                <GetUserProfilePage {...this.props} userData={userData} />
                 }
                 {this.state.selectedImage && this.renderImageCropModal()}
               </div>
