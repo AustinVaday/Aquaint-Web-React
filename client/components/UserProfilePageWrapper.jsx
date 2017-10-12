@@ -329,7 +329,6 @@ export class UserProfilePageWrapper extends React.Component {
   }
 
   render() {
-    console.log(this.props);
     if (this.state.uploadComplete) {
       if (this.state.userNotFound && !this.state.userRealname) {
         return this.renderUserNotFoundPage();

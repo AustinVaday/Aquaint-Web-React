@@ -11,6 +11,7 @@ import {UserSignupForm} from './components/UserSignupForm.jsx';
 import {DisplayProfile} from './components/DisplayProfile.jsx';
 import IndexPage from './components/IndexPage.jsx';
 import {UserProfilePageWrapper} from './components/UserProfilePageWrapper.jsx';
+import GetUserProfilePageWrapper from './components/GetUserProfilePageWrapper.jsx';
 import {UserNotFound} from './components/error/UserNotFound.jsx';
 import {loginUser} from './states/actions';
 
@@ -40,12 +41,6 @@ const reactRender = () => {
       </Provider>
     </Router>
   ), document.getElementById('root'));
-};
-
-const GetUserProfilePageWrapper = (props) => {
-  return (
-    <UserProfilePageWrapper {...props} userLoggedin={store.getState().userAuth} />
-  );
 };
 
 // if the user is logged in previous sessions, read JWT from localStorage and keep logged in state
