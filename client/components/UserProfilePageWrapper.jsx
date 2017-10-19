@@ -296,14 +296,15 @@ export class UserProfilePageWrapper extends React.Component {
           <div className="container">
             <div className="profile-section">
               {/* Check to make sure we don't render the img and UserProfilePage Component if the user is not found */}
-              {!this.state.userNotFound && this.state.userRealname && this.props.userLoggedin &&
+              {!this.state.userNotFound && this.state.userRealname && this.props.userLoggedin == this.user &&
               <input type="file" id="fileInput" accept="image/*" onChange={this.openImageCropDialog} style={hide}/>
               }
-              {!this.state.userNotFound && this.state.userRealname && this.props.userLoggedin &&
+              {!this.state.userNotFound && this.state.userRealname && this.props.userLoggedin == this.user &&
               <img src={this.state.userImageDisplay} className="profile-picture profile-picture-hover"
                    onClick={this.openFileBrowserDialog}/>
               }
-              {!this.state.userNotFound && this.state.userRealname && !this.props.userLoggedin &&
+              {/* Show non-actionable profile image if not logged in or not viewing own profile page */}
+              {!this.state.userNotFound && this.state.userRealname && this.props.userLoggedin != this.user &&
               <img src={this.state.userImageDisplay} className="profile-picture" />
               }
               {!this.state.userNotFound && this.state.userRealname &&
