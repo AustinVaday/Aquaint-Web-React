@@ -15,7 +15,7 @@ export default class UserProfilePage extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log("UserProfilePage constructor called. Props: ", this.props);
+        console.log("UserProfilePage WOOOOOO constructor called. Props: ", this.props);
         //console.log("It has access to AWS SDK global instance: ", AWS);
 
         this.user = this.props.match.params.username;

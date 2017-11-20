@@ -4,7 +4,7 @@ import { Route, Redirect } from 'react-router';
 import { connect } from 'react-redux';
 
 import * as AwsConfig from './AwsConfig';
-import { loginUser } from '../states/actions'; 
+import { loginUser } from '../states/actions';
 import UserLoginForm from './UserLoginForm.jsx';
 
 // Initialize the Amazon Cognito credentials provider
@@ -26,7 +26,7 @@ class UserSignupFormLocal extends React.Component {
 
 	//this.FB = props.fb;  // Facebook SDK instance
 	this.identityId = null;  // Identifier from Cognito Federated Identity that uniquely distinguish a user
-	
+
         this.state = {
 	    // UI state of which part of the form it should display
 	    // TODO: make this an enum
@@ -39,7 +39,7 @@ class UserSignupFormLocal extends React.Component {
             passwordVerify: '',
 
 	    redirectUri: null,
-	    
+
 	    FbSignupUsername: ''
         };
 
@@ -48,11 +48,12 @@ class UserSignupFormLocal extends React.Component {
 	if (isUserLoggedin) {
 	    this.state.currentPage = 4;
 	}
-	
+
         this.handleChange = this.handleChange.bind(this);
         this.handleContinue = this.handleContinue.bind(this);
         this.handleSignup = this.handleSignup.bind(this);
         this.handleLogin = this.handleLogin.bind(this);
+        this.handleGoBack = this.handleGoBack.bind(this);
 	this.facebookLogin = this.facebookLogin.bind(this);
 	this.completeUserRegistration = this.completeUserRegistration.bind(this);
 	this.completeFacebookSignup = this.completeFacebookSignup.bind(this);
@@ -64,7 +65,7 @@ class UserSignupFormLocal extends React.Component {
 
     componentWillReceiveProps(nextProps) {
 	console.log("UserSignupForm componentWillReceiveProps; nextProps: ", nextProps);
-	
+
 	// determine if the signup/login form should be shown based on user login status
 	// NOTE: if UserSignupForm's state is changed when the user logs in at UserLoginForm
 	// UserSignupForm will be unmounted and re-rendered first which interferes with
@@ -78,7 +79,7 @@ class UserSignupFormLocal extends React.Component {
 	    this.setState({ currentPage: 0 });
 	}
     }
-    
+
     // Initialize a new Aquaint user in AWS databases
     completeUserRegistration(username, realname) {
     	// generate user scan code on Lambda
@@ -130,7 +131,7 @@ class UserSignupFormLocal extends React.Component {
 	}.bind(this));
 
     }
-    
+
     handleChange(event) {
         this.setState({
             [event.target.name]: event.target.value
@@ -205,7 +206,7 @@ class UserSignupFormLocal extends React.Component {
 					'cognito-idp.us-east-1.amazonaws.com/us-east-1_yyImSiaeD': result.getIdToken().getJwtToken()
 				    }
 				});
-				
+
 				// call refresh method in order to authenticate user and get new temp credentials
 				AWS.config.credentials.refresh(function(error) {
 				    if (error) {
@@ -213,7 +214,7 @@ class UserSignupFormLocal extends React.Component {
 					return;
 				    } else {
 					console.log('User authorization succeeds; AWS credentials refreshed.');
-					
+
 					this.completeUserRegistration(signupUsername, this.state.fullname);
 
 					this.identityId = AWS.config.credentials.identityId;
@@ -240,6 +241,11 @@ class UserSignupFormLocal extends React.Component {
         event.preventDefault();
 
         this.setState({currentPage: 2});
+    }
+
+    handleGoBack(event) {
+        event.preventDefault();
+        this.setState({currentPage: 0});
     }
 
     // Entry point of Login by Facebook
@@ -287,7 +293,7 @@ class UserSignupFormLocal extends React.Component {
 
 				// Update Redux global state of user authentication
 				this.props.dispatch(loginUser(username));
-				
+
 				// User is now logged in; redirect user to his Aquaint profile
 				this.setState({
 				    redirectUri: '/' + username
@@ -314,7 +320,7 @@ class UserSignupFormLocal extends React.Component {
     // and just finishes entering an Aquaint username
     completeFacebookSignup(event) {
 	event.preventDefault();
-	
+
 	console.log("completeFacebookSignup function called.");
 
 	var signup_username = this.state.FbSignupUsername;
@@ -365,7 +371,7 @@ class UserSignupFormLocal extends React.Component {
     };
 
     render() {
-	
+
 	if (this.state.redirectUri) {
 	    return (
 		<Redirect to={{pathname: this.state.redirectUri}} />
@@ -380,7 +386,7 @@ class UserSignupFormLocal extends React.Component {
 	    this.setState({ currentPage: 0 });
 	}
 	*/
-	
+
         if (this.state.currentPage == 0) {
             return (
                 <div className="welcome-div">
@@ -425,12 +431,13 @@ class UserSignupFormLocal extends React.Component {
                      <input className="welcome-input" placeholder="Verify Password" type="password" name="passwordVerify" value={this.state.passwordVerify} onChange={this.handleChange} />
                     <br />
                     <button className ="welcome-button" id="continue"><a className="welcome-continue">Join Aquaint</a></button>
+                    <button onClick={this.handleGoBack} className ="welcome-button">Go Back</button>
                   </form>
                 </div>
             );
 
         } else if (this.state.currentPage == 2) {
-            return (<UserLoginForm indexPageUpdateState={this.props.indexPageUpdateState}/>);
+            return (<UserLoginForm handleGoBack= {this.handleGoBack} indexPageUpdateState={this.props.indexPageUpdateState}/>);
 
         } else if (this.state.currentPage == 3) {
             return (
@@ -445,6 +452,7 @@ class UserSignupFormLocal extends React.Component {
                         <button className="welcome-button" type="submit" value="Join Aquaint">
                             <a>Join Aquaint</a>
                         </button>
+                        <button onClick={this.handleGoBack} className ="welcome-button">Go Back</button>
                     </form>
                 </div>
             );
@@ -458,7 +466,7 @@ class UserSignupFormLocal extends React.Component {
 		</div>
             );
         }
-	
+
         return null;
     }
 }

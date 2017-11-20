@@ -40,7 +40,7 @@
  height: 2.75em;
  width: 18em;
  border-style: solid;
- border-width: 0.25px;
+ border-width: 0.05em;
  border-color: #95989A;
  background-color:transparent;
  border-radius: 50px;
@@ -58,7 +58,7 @@
   height: 2.75em;
   width: 23em;
   border-style: solid;
-  border-width: 0.25px;
+  border-width: 0.05em;
   border-color: #95989A;
   background-color:transparent;
   border-radius: 0.25em;

@@ -129,7 +129,9 @@ export class UserLoginFormLocal extends React.Component {
                     <input className="welcome-input" placeholder="Password" type="password" name="password" value={this.state.password} onChange={this.handleChange} />
                     <br />
                     <button className ="welcome-button" id="continue"><a className="welcome-continue">Login</a></button>
+                    <button onClick={this.props.handleGoBack} className ="welcome-button">Go Back</button>
                 </form>
+
             </div>
         );
     }
