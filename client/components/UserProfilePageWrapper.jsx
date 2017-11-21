@@ -48,12 +48,13 @@ export class UserProfilePageWrapper extends React.Component {
     this.openImageCropDialog = this.openImageCropDialog.bind(this);
     this.saveCropped = this.saveCropped.bind(this);
     this.getImageUrl = this.getImageUrl.bind(this);
-
-    this.getUserSmpDict();
+    this.getUserSmpDict = this.getUserSmpDict.bind(this);
+    // this.getUserSmpDict();
   }
 
   componentWillMount() {
     this.getImageUrl();
+    this.getUserSmpDict();
   }
 
   componentDidMount() {
@@ -103,12 +104,6 @@ export class UserProfilePageWrapper extends React.Component {
           if (this._isMounted) this.setState({userNotFound: false});
         }
 
-        if (this.state.userRealname == null) {
-          if (this._isMounted) this.setState({userRealname: data.Item.realname.S});
-          alert("Setting realname");
-
-        }
-
         var socialDict = {};
         if (data.Item.accounts != null) {
           for (var socialMapElem in data.Item.accounts.M) {
@@ -122,10 +117,13 @@ export class UserProfilePageWrapper extends React.Component {
         }
 
         if (this._isMounted) this.setState({userSmpDict: socialDict});
-        alert("Setting userSmpDict");
         console.log("WHOAAAA GetUserSmpDict IS: ", socialDict);
         console.log("WHOAAAA state value username IS: ", this.state.userRealname);
         console.log("WHOAAAA state value smpDict IS: ", this.state.userSmpDict);
+
+        if (this.state.userRealname == null) {
+          if (this._isMounted) this.setState({userRealname: data.Item.realname.S});
+        }
       }
     }.bind(this));
   }
@@ -289,7 +287,7 @@ export class UserProfilePageWrapper extends React.Component {
       userSmpDict: this.state.userSmpDict
     };
 
-    alert("Setting userData");
+    // alert("Setting userData");
     //Local CSS style
     const hide = {
       display: 'none'
