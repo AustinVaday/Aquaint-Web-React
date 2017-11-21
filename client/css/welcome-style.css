@@ -113,7 +113,6 @@ a:hover{
 .profile-button{
 	background-color: white;
 	border-radius: 50px;
-	margin-left: 1em;
 }
 
 .profile-button:focus{
@@ -136,15 +135,17 @@ transform: scale(1.2);
 	text-align: center;
 }
 .profile-add-box{
-	margin-top: 5em;
+	margin-top: 2em;
 	text-align: center;
+	border: 0.5px solid #777;
 }
 
 .profile-new-username{
-	border: 0px solid #000000;
+border: 0px solid #000000;
 border-bottom-width: 1px;
 background-color: transparent;
-margin-bottom: 3em;
+margin-bottom: 1em;
+margin-top: .8em;
 letter-spacing: 1px;
 font-size:1.25em;
 font-weight:300;
