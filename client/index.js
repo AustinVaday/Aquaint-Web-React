@@ -89,6 +89,7 @@ if (cognitoUser != null) {
 } else {
   // #2: Facebook Login
   // NOTE: check Facebook login status only if user is not logged in through Cognito User Pool
+  reactRender();
   FB.getLoginStatus(function (response) {
     console.log("Login status in FB SDK: ", response);
 
