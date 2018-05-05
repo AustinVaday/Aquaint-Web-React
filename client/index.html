@@ -90,9 +90,39 @@
         </script>
 
         <!-- Facebook Login -->
+        <!-- use asynchronous loading which is the only official method provided -->
+        <!-- To wait until FB SDK is loaded, see: https://medium.com/@broncha/waiting-till-facebook-sdk-or-any-other-async-sdk-has-loaded-6682839b9538 -->
+        <script>
+            let Deferred = function() {
+                this.promise = new Promise((resolve, reject) => {
+                    this.resolve = resolve;
+                    this.reject = reject;
+                })
+            }
+            window.fbDidLoad = new Deferred();
+
+            window.fbAsyncInit = function() {
+              FB.init({
+                appId            : '544667035683597',
+                autoLogAppEvents : true,
+                xfbml            : true,
+                version          : 'v2.40'
+              });
+              window.fbDidLoad.resolve();
+            };
+          
+            (function(d, s, id){
+               var js, fjs = d.getElementsByTagName(s)[0];
+               if (d.getElementById(id)) {return;}
+               js = d.createElement(s); js.id = id;
+               js.src = "https://connect.facebook.net/en_US/sdk.js";
+               fjs.parentNode.insertBefore(js, fjs);
+             }(document, 'script', 'facebook-jssdk'));
+          </script>
+        
         <!-- using synchronous loading here, otherwise React may not find FB instance when rendering DOM -->
         <!-- See: https://iamalivingcontradiction.wordpress.com/2015/09/21/how-to-use-facebook-login-with-react-and-babel/ -->
-        <script src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.4&appId=544667035683597">
+        <!-- <script src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.4&appId=544667035683597">
          FB.init({
              appId            : '544667035683597',
              autoLogAppEvents : true,
@@ -100,7 +130,7 @@
              version          : 'v2.40'
          });
          FB.AppEvents.logPageView();
-        </script>
+        </script> -->
 
         <!-- Third-party social SDKs for linking profiles -->
         <script type="text/javascript" src="//platform.linkedin.com/in.js">

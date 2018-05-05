@@ -89,59 +89,82 @@ if (cognitoUser != null) {
 } else {
   // #2: Facebook Login
   // NOTE: check Facebook login status only if user is not logged in through Cognito User Pool
-  reactRender();
-  FB.getLoginStatus(function (response) {
-    console.log("Login status in FB SDK: ", response);
-
-    if (response.status == "connected") {
-      console.log("User is logged into Facebook and Aquaint app; restore login status: ", response);
-
-      // Add the Facebook access token to the Cognito credentials login map.
-      AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
-        Logins: {
-          'graph.facebook.com': response.authResponse.accessToken
-        }
-      });
-
-      // retrieve the associated Aquaint username of this FB user
-      AWS.config.credentials.get(function () {
-        const identityId = AWS.config.credentials.identityId;
-
-        var ddb = new AWS.DynamoDB();
-        var identityTableParams = {
-          TableName: 'aquaint-user-identity',
-          Key: {
-            'identityId': {S: identityId}
-          }
-        };
-        ddb.getItem(identityTableParams, function (err, data) {
-          if (err) {
-            console.log("Error accessing DynamoDB table: ", err);
-          } else {
-            console.log("Accessing aquaint-user-identity DynamoDB table success: ", data.Item);
-
-            if (data.Item != null) {
-              let username = data.Item['username']['S'];
-              console.log(`Cognito Identity has an Aquaint username assoicated: ${username}`);
-
-              // Update Redux global state of user authentication
-              store.dispatch(loginUser(username));
-
-              reactRender();
-              return;
-
-            } else {
-              console.err("User has logged into the app by Facebook before, but no cognitoIdentity-username mapping is found.");
-            }
+  // reactRender();
+  console.log("cognitoUser not present in localStorage; going to check Facebook login.");
+  // console.log("Is FB SDK finished loading? FB instance: ", FB);
+  /*
+  setTimeout(() => {
+    FB.getLoginStatus(response => {
+      console.log("FB.getLoginStatus = ", response);
+    })
+  }, 1000)
+  */
+  /*
+  FB.getLoginStatus(response => {
+    console.log("FB.getLoginStatus = ", response);
+  }, true)
+  console.log("FB.getLoginStatus() callback registered.");
+  */
+   
+  /*
+  if (window.fbDidLoad == null) {
+    console.err("No fbDidLoad promise found to ensure Facebook SDK has finished loading.");
+  }
+  */
+  window.fbDidLoad != null && window.fbDidLoad.promise.then(() => {
+    FB.getLoginStatus(function (response) {
+      console.log("Login status in FB SDK: ", response);
+  
+      if (response.status == "connected") {
+        console.log("User is logged into Facebook and Aquaint app; restore login status: ", response);
+  
+        // Add the Facebook access token to the Cognito credentials login map.
+        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+          IdentityPoolId: AwsConfig.COGNITO_IDENTITY_POOL_ID,
+          Logins: {
+            'graph.facebook.com': response.authResponse.accessToken
           }
         });
-      });
-
-    } else {
-      // User is not logged into either Cognito User Pool or Facebook
-      reactRender();
-      return;
-    }
+  
+        // retrieve the associated Aquaint username of this FB user
+        AWS.config.credentials.get(function () {
+          const identityId = AWS.config.credentials.identityId;
+  
+          var ddb = new AWS.DynamoDB();
+          var identityTableParams = {
+            TableName: 'aquaint-user-identity',
+            Key: {
+              'identityId': {S: identityId}
+            }
+          };
+          ddb.getItem(identityTableParams, function (err, data) {
+            if (err) {
+              console.log("Error accessing DynamoDB table: ", err);
+            } else {
+              console.log("Accessing aquaint-user-identity DynamoDB table success: ", data.Item);
+  
+              if (data.Item != null) {
+                let username = data.Item['username']['S'];
+                console.log(`Cognito Identity has an Aquaint username assoicated: ${username}`);
+  
+                // Update Redux global state of user authentication
+                store.dispatch(loginUser(username));
+  
+                reactRender();
+                return;
+  
+              } else {
+                console.err("User has logged into the app by Facebook before, but no cognitoIdentity-username mapping is found.");
+              }
+            }
+          });
+        });
+  
+      } else {
+        // User is not logged into either Cognito User Pool or Facebook
+        reactRender();
+        return;
+      }
+    });
   });
 }
