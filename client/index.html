@@ -120,17 +120,7 @@
              }(document, 'script', 'facebook-jssdk'));
           </script>
         
-        <!-- using synchronous loading here, otherwise React may not find FB instance when rendering DOM -->
-        <!-- See: https://iamalivingcontradiction.wordpress.com/2015/09/21/how-to-use-facebook-login-with-react-and-babel/ -->
-        <!-- <script src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.4&appId=544667035683597">
-         FB.init({
-             appId            : '544667035683597',
-             autoLogAppEvents : true,
-             xfbml            : true,
-             version          : 'v2.40'
-         });
-         FB.AppEvents.logPageView();
-        </script> -->
+        <!-- Synchronous loading of FB SDK, see: https://iamalivingcontradiction.wordpress.com/2015/09/21/how-to-use-facebook-login-with-react-and-babel/ -->
 
         <!-- Third-party social SDKs for linking profiles -->
         <script type="text/javascript" src="//platform.linkedin.com/in.js">

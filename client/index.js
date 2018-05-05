@@ -89,28 +89,6 @@ if (cognitoUser != null) {
 } else {
   // #2: Facebook Login
   // NOTE: check Facebook login status only if user is not logged in through Cognito User Pool
-  // reactRender();
-  console.log("cognitoUser not present in localStorage; going to check Facebook login.");
-  // console.log("Is FB SDK finished loading? FB instance: ", FB);
-  /*
-  setTimeout(() => {
-    FB.getLoginStatus(response => {
-      console.log("FB.getLoginStatus = ", response);
-    })
-  }, 1000)
-  */
-  /*
-  FB.getLoginStatus(response => {
-    console.log("FB.getLoginStatus = ", response);
-  }, true)
-  console.log("FB.getLoginStatus() callback registered.");
-  */
-   
-  /*
-  if (window.fbDidLoad == null) {
-    console.err("No fbDidLoad promise found to ensure Facebook SDK has finished loading.");
-  }
-  */
   window.fbDidLoad != null && window.fbDidLoad.promise.then(() => {
     FB.getLoginStatus(function (response) {
       console.log("Login status in FB SDK: ", response);
