@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import {BrowserRouter as Router, Route, Link, Switch} from 'react-router-dom';
 import {createStore} from 'redux';
 import {Provider} from 'react-redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import {CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails} from 'amazon-cognito-identity-js';
 
 import * as AwsConfig from './components/AwsConfig';
@@ -16,7 +17,7 @@ import {UserNotFound} from './components/error/UserNotFound.jsx';
 import {loginUser} from './states/actions';
 
 // Redux store, which should be one and only one instance in the app
-let store = createStore(aquaintApp);
+let store = createStore(aquaintApp, composeWithDevTools());
 
 // Initialize the Amazon Cognito credentials provider
 // TODO: change this variable name to AWS_REGION
