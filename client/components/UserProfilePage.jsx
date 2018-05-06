@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Redirect } from 'react-router';
 
 //import AddProfileForm from './AddProfileForm.jsx';
+import { UserProfilePageBio } from './UserProfilePageBio.jsx';
 import * as AwsConfig from './AwsConfig';
 
 /*
@@ -362,7 +363,7 @@ export default class UserProfilePage extends React.Component {
             return (
                 <div>
                     <h2 className="profile-name">{this.state.userRealname}</h2>
-                    <p className="profile-bio">{this.user}'s dummy bio...</p>
+                    <UserProfilePageBio {...this.props}/>
                     {activatedSMP}
                     { allowEdit &&
                       <button type="submit" className="profile-edit-button" onClick={this.editProfile}>Add Profiles</button>
@@ -373,7 +374,7 @@ export default class UserProfilePage extends React.Component {
             return (
                 <div>
                     <h2 className="profile-name">{this.userRealname}</h2>
-                    <p className="profile-bio">{this.user}'s dummy bio... </p>
+                    <UserProfilePageBio {...this.props}/>
                     {allSMP}
                     <button type="submit" className="profile-edit-button" onClick={this.finishEdit}>Finish</button>
                 </div>);
@@ -382,7 +383,7 @@ export default class UserProfilePage extends React.Component {
             return (
                 <div>
                     <h2 className="profile-name">{this.userRealname}</h2>
-                    <p className="profile-bio">{this.user}'s dummy bio...</p>
+                    <UserProfilePageBio {...this.props}/>
                     {allSMP}
                     <div className="profile-add-box">
                         <form>

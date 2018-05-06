@@ -167,6 +167,22 @@ font-weight:300;
 	background-color:#0F7A9D;
 	border-radius: 25px;
 }
+
+.profile-bio-edit-button {
+	display: inline-block;
+	margin-left: 1em;
+	letter-spacing: 1px;
+	font-size:1.25em;
+	font-weight:300;
+	color: white;
+	height: 4%;
+	width: 4em;
+	border-style: solid;
+	border-width: 0.25px;
+	background-color:#0F7A9D;
+	border-radius: 10px;
+}
+
 #add{
 	margin-left: 0em;
 }
